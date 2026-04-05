@@ -1,0 +1,72 @@
+{
+  "common": {
+    "appName": "CuidaMascotas",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "save": "Save",
+    "cancel": "Cancel",
+    "search": "Search",
+    "login": "Log in",
+    "signup": "Sign up",
+    "logout": "Log out"
+  },
+  "home": {
+    "title": "Find trusted pet sitters near you",
+    "subtitle": "Verified sitters with background checks, GPS tracking, and real-time updates.",
+    "searchPlaceholder": "Where do you need a sitter?",
+    "ctaOwner": "Find sitters",
+    "ctaSitter": "Become a sitter",
+    "trustBadge": "All sitters verified with background checks",
+    "features": {
+      "gps": "Real-time GPS tracking",
+      "gpsDesc": "Know when your sitter arrives and leaves",
+      "verified": "Verified sitters",
+      "verifiedDesc": "Background checks and identity verification",
+      "photos": "Photo updates",
+      "photosDesc": "Receive photos and videos of your pet during the visit",
+      "payments": "Secure payments",
+      "paymentsDesc": "Pay securely with Bizum or card"
+    }
+  },
+  "auth": {
+    "loginTitle": "Log in to your account",
+    "signupTitle": "Create your account",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "forgotPassword": "Forgot your password?",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "orContinueWith": "Or continue with"
+  },
+  "sitter": {
+    "nearYou": "Sitters near you",
+    "perVisit": "per visit",
+    "verified": "Verified",
+    "reviews": "reviews",
+    "bookNow": "Book now",
+    "viewProfile": "View profile",
+    "available": "Available",
+    "unavailable": "Unavailable"
+  },
+  "booking": {
+    "title": "Book a sitter",
+    "selectDates": "Select dates",
+    "selectService": "Service type",
+    "dogWalking": "Dog walking",
+    "petSitting": "Pet sitting",
+    "dropIn": "Drop-in visit",
+    "overnight": "Overnight stay",
+    "confirm": "Confirm booking",
+    "total": "Total",
+    "commission": "Service fee"
+  },
+  "footer": {
+    "about": "About us",
+    "terms": "Terms of service",
+    "privacy": "Privacy policy",
+    "legal": "Legal notice",
+    "contact": "Contact",
+    "help": "Help center"
+  }
+}

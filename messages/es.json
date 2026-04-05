@@ -1,0 +1,72 @@
+{
+  "common": {
+    "appName": "CuidaMascotas",
+    "loading": "Cargando...",
+    "error": "Ha ocurrido un error",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "search": "Buscar",
+    "login": "Iniciar sesión",
+    "signup": "Registrarse",
+    "logout": "Cerrar sesión"
+  },
+  "home": {
+    "title": "Encuentra cuidadores de mascotas de confianza cerca de ti",
+    "subtitle": "Cuidadores verificados con control de antecedentes, seguimiento GPS y actualizaciones en tiempo real.",
+    "searchPlaceholder": "¿Dónde necesitas un cuidador?",
+    "ctaOwner": "Buscar cuidadores",
+    "ctaSitter": "Hazte cuidador",
+    "trustBadge": "Todos los cuidadores verificados con control de antecedentes",
+    "features": {
+      "gps": "Seguimiento GPS en tiempo real",
+      "gpsDesc": "Sabe cuándo llega y se va tu cuidador",
+      "verified": "Cuidadores verificados",
+      "verifiedDesc": "Control de antecedentes y verificación de identidad",
+      "photos": "Actualizaciones con fotos",
+      "photosDesc": "Recibe fotos y vídeos de tu mascota durante la visita",
+      "payments": "Pagos seguros",
+      "paymentsDesc": "Paga con Bizum o tarjeta de forma segura"
+    }
+  },
+  "auth": {
+    "loginTitle": "Inicia sesión en tu cuenta",
+    "signupTitle": "Crea tu cuenta",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes cuenta?",
+    "hasAccount": "¿Ya tienes cuenta?",
+    "orContinueWith": "O continúa con"
+  },
+  "sitter": {
+    "nearYou": "Cuidadores cerca de ti",
+    "perVisit": "por visita",
+    "verified": "Verificado",
+    "reviews": "opiniones",
+    "bookNow": "Reservar ahora",
+    "viewProfile": "Ver perfil",
+    "available": "Disponible",
+    "unavailable": "No disponible"
+  },
+  "booking": {
+    "title": "Reservar cuidador",
+    "selectDates": "Selecciona las fechas",
+    "selectService": "Tipo de servicio",
+    "dogWalking": "Paseo de perros",
+    "petSitting": "Cuidado de mascotas",
+    "dropIn": "Visita a domicilio",
+    "overnight": "Estancia nocturna",
+    "confirm": "Confirmar reserva",
+    "total": "Total",
+    "commission": "Comisión de servicio"
+  },
+  "footer": {
+    "about": "Sobre nosotros",
+    "terms": "Condiciones de uso",
+    "privacy": "Política de privacidad",
+    "legal": "Aviso legal",
+    "contact": "Contacto",
+    "help": "Centro de ayuda"
+  }
+}
