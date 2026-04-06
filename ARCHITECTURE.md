@@ -85,6 +85,16 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 - Date/time formatting: Spanish format (DD/MM/YYYY, 24h) as default
 - Currency: EUR with Spanish locale formatting (1.234,56 €)
 
+### 11. Admin Portal (`/admin`)
+- **Role-based access** — admin role stored in Supabase `profiles.role` column (not env vars)
+- **Overview dashboard** — total users, sitters, bookings, revenue, ratings, pending verifications
+- **Sitter management** — approve/reject ID verifications, view all sitters, toggle verified status
+- **Booking management** — view all bookings across all users, commission tracking
+- **User management** — view all profiles, roles, registration dates, locations
+- **Partner discounts** — create/edit/deactivate discount codes for local businesses
+- Admin RLS policies allow full read access to all tables
+- `admin_dashboard_stats()` PostgreSQL function for aggregated metrics
+
 ---
 
 ## Architecture
