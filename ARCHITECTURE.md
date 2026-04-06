@@ -78,8 +78,8 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 - **English (en)** as secondary locale — for expats, tourists, and international users
 - Language auto-detected from browser/device settings, user can override in profile
 - **Default locale is es-ES** — the app is designed for Spain, English is a convenience for expats/tourists
-- Implementation: `react-i18next` (web) / `i18next` (React Native)
-- All content stored in translation JSON files (`/locales/es/`, `/locales/en/`)
+- Implementation: `next-intl` (web) / `i18next` (React Native)
+- All content stored in translation JSON files (`/messages/es.json`, `/messages/en.json`)
 - Reviews displayed in original language with optional translation toggle
 - Legal documents (Terms of Service, Privacy Policy) must exist in both languages
 - Date/time formatting: Spanish format (DD/MM/YYYY, 24h) as default
@@ -94,6 +94,47 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 - **Partner discounts** — create/edit/deactivate discount codes for local businesses
 - Admin RLS policies allow full read access to all tables
 - `admin_dashboard_stats()` PostgreSQL function for aggregated metrics
+
+### 12. Pet Management (`/dashboard/pets`)
+- **List pets** — owner's pet profiles with species icons, photos, breed, age, weight, microchip
+- **Add pet** — species picker (dog/cat/bird/rabbit/other), photo upload, health info, sitter instructions
+- **Edit pet** — update any field, change photo
+- **Delete pet** — with confirmation dialog
+- Required before booking (no pets = can't book)
+
+### 13. Brand Voice — Pet Perspective
+- All marketing copy written from the pet's point of view
+- Hero: "Encuentra a alguien que me cuide mientras no estás"
+- Features: "Siempre saben dónde estoy", "Mira lo bien que estoy"
+- Testimonials: reviews "translated by their humans"
+- Functional UI (forms, dashboards) stays human-readable
+- Unique differentiator vs competitors (Rover, Wag, etc.)
+
+### 14. Notifications — Toast System
+- **Sonner** toast library for non-blocking notifications
+- Top-right positioned, auto-dismiss
+- Success toasts on login, signup, pet CRUD
+- Error toasts replace inline error messages
+- Styled to match app design (rounded, stone borders, shadow)
+
+### 15. UI Component Library (`/components/ui`)
+- **Button** — primary/secondary/outline/ghost, sm/md/lg
+- **Input / Textarea** — with labels, errors, icons
+- **Card** — hover and padding variants
+- **Badge** — green/amber/red/blue/purple/stone
+- **Avatar** — initials fallback with gradient, or image
+- **Header** — sticky glassmorphic, auth-aware (logo links to dashboard when logged in)
+- **PageShell** — consistent max-width and padding
+- **AdminHeader** — admin badge, dashboard link, sign out
+- All exported from `components/ui/index.ts`
+
+### 16. Security Hardening
+- RLS policy prevents role self-escalation (users can't change own role)
+- Server-side price recalculation in checkout API
+- Input validation on all API endpoints
+- Security headers (HSTS, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy)
+- Generic error messages (no database schema leaks)
+- Lazy Stripe initialization (no build-time env var requirement)
 
 ---
 

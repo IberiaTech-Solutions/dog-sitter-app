@@ -4,18 +4,17 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/navigation";
+import { toast } from "sonner";
 
 export function LoginForm() {
   const t = useTranslations();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     const supabase = createClient();
@@ -25,10 +24,12 @@ export function LoginForm() {
     });
 
     if (authError) {
-      setError(authError.message);
+      toast.error(authError.message);
       setLoading(false);
       return;
     }
+
+    toast.success(t("common.appName"), { description: "Welcome back!" });
 
     // Check if user is admin and redirect accordingly
     const { data: { user } } = await supabase.auth.getUser();
@@ -97,12 +98,6 @@ export function LoginForm() {
             className="w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm placeholder:text-stone-400 focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
           />
         </div>
-
-        {error && (
-          <div className="rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm text-red-600">
-            {error}
-          </div>
-        )}
 
         <button
           type="submit"

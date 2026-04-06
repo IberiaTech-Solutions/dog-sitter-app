@@ -5,6 +5,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/navigation";
 import { Search, Heart } from "lucide-react";
+import { toast } from "sonner";
 
 export function SignupForm() {
   const t = useTranslations();
@@ -14,12 +15,10 @@ export function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"owner" | "sitter">("owner");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     const supabase = createClient();
@@ -36,11 +35,14 @@ export function SignupForm() {
     });
 
     if (authError) {
-      setError(authError.message);
+      toast.error(authError.message);
       setLoading(false);
       return;
     }
 
+    toast.success(locale === "es" ? "Cuenta creada" : "Account created", {
+      description: locale === "es" ? "Bienvenido a CuidaMascotas" : "Welcome to CuidaMascotas",
+    });
     router.push("/");
     router.refresh();
   }
@@ -136,12 +138,6 @@ export function SignupForm() {
             className="w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm placeholder:text-stone-400 focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
           />
         </div>
-
-        {error && (
-          <div className="rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm text-red-600">
-            {error}
-          </div>
-        )}
 
         <button
           type="submit"

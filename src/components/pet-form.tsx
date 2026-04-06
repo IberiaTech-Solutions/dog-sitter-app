@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/navigation";
 import { Dog, Cat, Bird, Rabbit, PawPrint, Upload } from "lucide-react";
 import { Button, Card } from "@/components/ui";
+import { toast } from "sonner";
 
 type Pet = {
   id: string;
@@ -102,11 +103,17 @@ export function PetForm({ existing }: { existing?: Pet }) {
       : await supabase.from("pets").insert(petData);
 
     if (dbError) {
-      setError(es ? "No se pudo guardar la mascota" : "Could not save pet");
+      toast.error(es ? "No se pudo guardar la mascota" : "Could not save pet");
       setLoading(false);
       return;
     }
 
+    toast.success(
+      existing
+        ? es ? `${name} actualizado` : `${name} updated`
+        : es ? `${name} añadido` : `${name} added`,
+      { description: es ? "Perfil de mascota guardado" : "Pet profile saved" }
+    );
     router.push("/dashboard/pets");
     router.refresh();
   }
