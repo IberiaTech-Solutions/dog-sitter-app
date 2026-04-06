@@ -4,6 +4,28 @@ import { useTranslations, useLocale } from "next-intl";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/navigation";
+import { toast } from "sonner";
+
+// Spanish city coordinates for auto-geocoding
+const CITY_COORDS: Record<string, { lat: number; lng: number }> = {
+  "gijón": { lat: 43.5322, lng: -5.6611 },
+  "gijon": { lat: 43.5322, lng: -5.6611 },
+  "oviedo": { lat: 43.3614, lng: -5.8493 },
+  "madrid": { lat: 40.4168, lng: -3.7038 },
+  "barcelona": { lat: 41.3874, lng: 2.1686 },
+  "valencia": { lat: 39.4699, lng: -0.3763 },
+  "sevilla": { lat: 37.3891, lng: -5.9845 },
+  "bilbao": { lat: 43.2630, lng: -2.9350 },
+  "málaga": { lat: 36.7213, lng: -4.4214 },
+  "malaga": { lat: 36.7213, lng: -4.4214 },
+  "zaragoza": { lat: 41.6488, lng: -0.8891 },
+  "santander": { lat: 43.4623, lng: -3.8100 },
+  "a coruña": { lat: 43.3623, lng: -8.4115 },
+  "vigo": { lat: 42.2406, lng: -8.7207 },
+  "granada": { lat: 37.1773, lng: -3.5986 },
+  "murcia": { lat: 37.9922, lng: -1.1307 },
+  "alicante": { lat: 38.3452, lng: -0.4810 },
+};
 
 type SitterProfile = {
   hourly_rate: number;
@@ -56,7 +78,6 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
   const [address, setAddress] = useState(existing?.address ?? "");
   const [radius, setRadius] = useState(existing?.radius_km?.toString() ?? "10");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [geoLoading, setGeoLoading] = useState(false);
   const [location, setLocation] = useState<{
     lat: number;
@@ -83,7 +104,6 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     const supabase = createClient();
@@ -92,7 +112,7 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      setError("Not authenticated");
+      toast.error("Not authenticated");
       setLoading(false);
       return;
     }
@@ -103,6 +123,28 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
       .update({ role: "both" })
       .eq("id", user.id);
 
+    // Auto-geocode from address if no GPS location
+    let finalLocation = location;
+    if (!finalLocation && address) {
+      const lower = address.toLowerCase().trim();
+      for (const [city, coords] of Object.entries(CITY_COORDS)) {
+        if (lower.includes(city) || city.includes(lower.split(",")[0].trim())) {
+          finalLocation = coords;
+          break;
+        }
+      }
+    }
+
+    if (!finalLocation) {
+      toast.error(
+        locale === "es"
+          ? "Necesitamos tu ubicación para que los dueños te encuentren. Usa el GPS o escribe una ciudad conocida."
+          : "We need your location so owners can find you. Use GPS or type a known city."
+      );
+      setLoading(false);
+      return;
+    }
+
     const sitterData = {
       id: user.id,
       hourly_rate: parseFloat(rate),
@@ -112,9 +154,7 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
       address: address || null,
       radius_km: parseInt(radius),
       is_available: true,
-      ...(location && {
-        location: `SRID=4326;POINT(${location.lng} ${location.lat})`,
-      }),
+      location: `SRID=4326;POINT(${finalLocation.lng} ${finalLocation.lat})`,
     };
 
     const { error: dbError } = existing
@@ -125,11 +165,14 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
       : await supabase.from("sitter_profiles").insert(sitterData);
 
     if (dbError) {
-      setError(dbError.message);
+      toast.error(locale === "es" ? "No se pudo guardar el perfil" : "Could not save profile");
       setLoading(false);
       return;
     }
 
+    toast.success(
+      locale === "es" ? "Perfil de cuidador guardado" : "Sitter profile saved"
+    );
     router.push("/dashboard");
     router.refresh();
   }
@@ -262,8 +305,6 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
           <p className="mt-1 text-sm text-zinc-500">{radius} km</p>
         </div>
       </div>
-
-      {error && <p className="text-sm text-red-600 text-center">{error}</p>}
 
       <button
         type="submit"
