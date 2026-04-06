@@ -51,10 +51,10 @@ export default async function DashboardPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-[#faf9f7]">
-      <Header appName={t("common.appName")}>
+      <Header appName={t("common.appName")} isLoggedIn>
         <span className="text-sm text-stone-500">{profile?.full_name}</span>
         <form action="/api/auth/logout" method="POST">
-          <button className="text-sm text-stone-400 hover:text-stone-700 transition-colors">
+          <button className="text-sm text-stone-400 hover:text-red-600 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors">
             {t("common.logout")}
           </button>
         </form>
@@ -70,12 +70,17 @@ export default async function DashboardPage({ params }: Props) {
             </h1>
           </div>
           <div className="flex flex-wrap gap-2">
+            {isOwner && (
+              <LinkButton href="/dashboard/pets" variant="ghost" size="sm">
+                {locale === "es" ? "Mis mascotas" : "My pets"}
+              </LinkButton>
+            )}
             <LinkButton href="/dashboard/messages" variant="ghost" size="sm">
-              💬 {locale === "es" ? "Mensajes" : "Messages"}
+              {locale === "es" ? "Mensajes" : "Messages"}
             </LinkButton>
             {isOwner && (
               <LinkButton href="/search" variant="primary" size="sm">
-                🔍 {t("home.ctaOwner")}
+                {t("home.ctaOwner")}
               </LinkButton>
             )}
             <LinkButton
@@ -84,8 +89,8 @@ export default async function DashboardPage({ params }: Props) {
               size="sm"
             >
               {isSitter
-                ? locale === "es" ? "🐾 Mi perfil cuidador" : "🐾 Sitter profile"
-                : locale === "es" ? "💚 Hazte cuidador" : "💚 Become a sitter"}
+                ? locale === "es" ? "Mi perfil cuidador" : "Sitter profile"
+                : locale === "es" ? "Hazte cuidador" : "Become a sitter"}
             </LinkButton>
           </div>
         </div>

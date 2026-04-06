@@ -1,5 +1,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import Image from "next/image";
+import { PawPrint } from "lucide-react";
 import { SignupForm } from "@/components/signup-form";
 
 export default function SignupPage() {
@@ -7,36 +9,38 @@ export default function SignupPage() {
 
   return (
     <div className="flex min-h-screen bg-[#faf9f7]">
-      {/* Left side - decorative (hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-amber-500 to-orange-500 items-center justify-center p-12">
-        <div className="max-w-md text-center">
-          <span className="text-7xl block mb-6">🏠</span>
-          <h2 className="text-3xl font-bold text-white">
+      {/* Left side — pet photo */}
+      <div className="hidden lg:block lg:w-1/2 relative">
+        <Image
+          src="/images/dogs-playing.jpg"
+          alt="Dogs playing together"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
+        <div className="absolute bottom-12 left-12 right-12">
+          <h2 className="text-3xl font-bold text-white leading-snug">
             {t("home.ctaOwner") === "Find sitters"
-              ? "Join the community"
-              : "Forma parte de la comunidad"}
+              ? "Join thousands of pet lovers"
+              : "Únete a miles de amantes de los animales"}
           </h2>
-          <p className="mt-3 text-amber-100 text-lg">
+          <p className="mt-2 text-white/70">
             {t("home.ctaOwner") === "Find sitters"
               ? "Whether you need care for your pet or want to become a sitter"
               : "Ya necesites cuidado para tu mascota o quieras ser cuidador"}
           </p>
-          <div className="mt-10 flex justify-center gap-3">
-            {["🐕", "🐈", "🐇", "🐦", "🐾"].map((emoji, i) => (
-              <div key={i} className="bg-white/15 rounded-2xl p-3 backdrop-blur-sm">
-                <span className="text-2xl">{emoji}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
-      {/* Right side - form */}
+      {/* Right side — form */}
       <div className="flex flex-1 items-center justify-center px-5 py-12">
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
-            <Link href="/" className="inline-flex items-center gap-2">
-              <span className="text-3xl">🐾</span>
+            <Link href="/" className="inline-flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-green-600 flex items-center justify-center">
+                <PawPrint className="w-5 h-5 text-white" strokeWidth={2.5} />
+              </div>
               <span className="text-xl font-bold text-stone-900">
                 {t("common.appName")}
               </span>

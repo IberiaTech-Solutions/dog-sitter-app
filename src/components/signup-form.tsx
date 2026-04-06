@@ -4,6 +4,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/navigation";
+import { Search, Heart } from "lucide-react";
 
 export function SignupForm() {
   const t = useTranslations();
@@ -47,13 +48,13 @@ export function SignupForm() {
   const roles = [
     {
       value: "owner" as const,
-      emoji: "🐕",
+      icon: Search,
       label: locale === "es" ? "Busco cuidador" : "I need a sitter",
       desc: locale === "es" ? "Para mi mascota" : "For my pet",
     },
     {
       value: "sitter" as const,
-      emoji: "💚",
+      icon: Heart,
       label: locale === "es" ? "Quiero cuidar" : "I want to sit",
       desc: locale === "es" ? "Mascotas de otros" : "Others' pets",
     },
@@ -79,7 +80,7 @@ export function SignupForm() {
                     : "border-stone-200 bg-white hover:border-stone-300"
                 }`}
               >
-                <span className="text-2xl block mb-2">{r.emoji}</span>
+                <r.icon className={`w-6 h-6 mb-2 ${role === r.value ? "text-green-600" : "text-stone-400"}`} />
                 <span className="text-sm font-semibold text-stone-900 block">{r.label}</span>
                 <span className="text-xs text-stone-500">{r.desc}</span>
                 {role === r.value && (

@@ -1,6 +1,7 @@
 import { requireAdmin } from "@/lib/admin";
 import { getTranslations } from "next-intl/server";
-import { Header, PageShell, Card } from "@/components/ui";
+import { PageShell, Card } from "@/components/ui";
+import { AdminHeader } from "@/components/admin-header";
 import { AdminNav } from "@/components/admin-nav";
 
 type Props = {
@@ -32,9 +33,7 @@ export default async function AdminOverviewPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-[#faf9f7]">
-      <Header appName={t("common.appName")}>
-        <span className="text-xs font-semibold bg-red-100 text-red-700 px-3 py-1 rounded-full">ADMIN</span>
-      </Header>
+      <AdminHeader appName={t("common.appName")} locale={locale} />
 
       <PageShell>
         <div className="flex items-center gap-3 mb-6">
