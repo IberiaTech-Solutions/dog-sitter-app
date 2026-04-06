@@ -107,7 +107,7 @@ export function LandingPage() {
 
               <div className="relative hidden lg:block">
                 <div className="relative rounded-3xl overflow-hidden aspect-[4/5] shadow-2xl shadow-stone-300/30">
-                  <Image src="/images/hero-dog.jpg" alt="Happy golden retriever" fill className="object-cover" priority />
+                  <Image src="/images/hero-dog.jpg" alt="Happy golden retriever" fill sizes="(max-width: 1024px) 0px, 50vw" className="object-cover" priority />
                 </div>
                 <div className="absolute -left-8 bottom-12 bg-white rounded-2xl p-4 shadow-xl shadow-stone-200/50 border border-stone-100 max-w-[220px]">
                   <div className="flex items-center gap-3">
@@ -161,7 +161,7 @@ export function LandingPage() {
               ].map((item, i) => (
                 <div key={i} className="group">
                   <div className="relative rounded-2xl overflow-hidden aspect-[4/3] mb-5">
-                    <Image src={item.image} alt="" fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <Image src={item.image} alt="" fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
                     <div className="absolute top-4 left-4 w-10 h-10 rounded-xl bg-white/90 backdrop-blur-sm flex items-center justify-center">
                       <span className="text-sm font-bold text-green-600">{i + 1}</span>
@@ -329,7 +329,7 @@ export function LandingPage() {
         <section className="py-20">
           <div className="mx-auto max-w-6xl px-5 sm:px-8">
             <div className="relative rounded-3xl overflow-hidden">
-              <Image src="/images/dog-walk.jpg" alt="" fill className="object-cover" />
+              <Image src="/images/dog-walk.jpg" alt="" fill sizes="100vw" className="object-cover" />
               <div className="absolute inset-0 bg-gradient-to-r from-green-900/90 to-green-800/70" />
               <div className="relative p-10 sm:p-16 max-w-lg">
                 <Heart className="w-10 h-10 text-green-300 mb-4" />
