@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { Link } from "@/i18n/navigation";
+import { Header, PageShell, Card, Avatar, Badge, LinkButton } from "@/components/ui";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -26,7 +27,6 @@ export default async function DashboardPage({ params }: Props) {
     .eq("id", user.id)
     .single();
 
-  // Get user's bookings (as owner or sitter)
   const { data: bookings } = await supabase
     .from("bookings")
     .select(
@@ -39,108 +39,77 @@ export default async function DashboardPage({ params }: Props) {
   const isOwner = profile?.role === "owner" || profile?.role === "both";
   const isSitter = profile?.role === "sitter" || profile?.role === "both";
 
-  const statusLabels: Record<string, Record<string, string>> = {
-    es: {
-      requested: "Solicitada",
-      accepted: "Aceptada",
-      confirmed: "Confirmada",
-      in_progress: "En curso",
-      completed: "Completada",
-      cancelled: "Cancelada",
-      disputed: "En disputa",
-    },
-    en: {
-      requested: "Requested",
-      accepted: "Accepted",
-      confirmed: "Confirmed",
-      in_progress: "In progress",
-      completed: "Completed",
-      cancelled: "Cancelled",
-      disputed: "Disputed",
-    },
-  };
-
-  const statusColors: Record<string, string> = {
-    requested: "bg-yellow-100 text-yellow-800",
-    accepted: "bg-blue-100 text-blue-800",
-    confirmed: "bg-emerald-100 text-emerald-800",
-    in_progress: "bg-purple-100 text-purple-800",
-    completed: "bg-zinc-100 text-zinc-800",
-    cancelled: "bg-red-100 text-red-800",
-    disputed: "bg-orange-100 text-orange-800",
+  const statusConfig: Record<string, { labelEs: string; labelEn: string; variant: "green" | "amber" | "red" | "blue" | "purple" | "stone" }> = {
+    requested: { labelEs: "Solicitada", labelEn: "Requested", variant: "amber" },
+    accepted: { labelEs: "Aceptada", labelEn: "Accepted", variant: "blue" },
+    confirmed: { labelEs: "Confirmada", labelEn: "Confirmed", variant: "green" },
+    in_progress: { labelEs: "En curso", labelEn: "In progress", variant: "purple" },
+    completed: { labelEs: "Completada", labelEn: "Completed", variant: "stone" },
+    cancelled: { labelEs: "Cancelada", labelEn: "Cancelled", variant: "red" },
+    disputed: { labelEs: "En disputa", labelEn: "Disputed", variant: "red" },
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <header className="border-b border-zinc-200 bg-white">
-        <div className="mx-auto max-w-6xl flex items-center justify-between px-6 py-4">
-          <Link href="/" className="text-xl font-bold text-emerald-600">
-            {t("common.appName")}
-          </Link>
-          <div className="flex items-center gap-4">
-            <span className="text-sm text-zinc-600">
-              {profile?.full_name}
-            </span>
-            <form action="/api/auth/logout" method="POST">
-              <button className="text-sm text-zinc-500 hover:text-zinc-700">
-                {t("common.logout")}
-              </button>
-            </form>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#faf9f7]">
+      <Header appName={t("common.appName")}>
+        <span className="text-sm text-stone-500">{profile?.full_name}</span>
+        <form action="/api/auth/logout" method="POST">
+          <button className="text-sm text-stone-400 hover:text-stone-700 transition-colors">
+            {t("common.logout")}
+          </button>
+        </form>
+      </Header>
 
-      <main className="mx-auto max-w-6xl px-6 py-8">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-zinc-900">
-            {locale === "es" ? "Mi panel" : "My dashboard"}
-          </h1>
-          <div className="flex gap-3">
-            <Link
-              href="/dashboard/messages"
-              className="rounded-full border border-zinc-300 px-5 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
-            >
-              {locale === "es" ? "Mensajes" : "Messages"}
-            </Link>
+      <PageShell>
+        {/* Top bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🏠</span>
+            <h1 className="text-2xl font-bold text-stone-900">
+              {locale === "es" ? "Mi panel" : "My dashboard"}
+            </h1>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <LinkButton href="/dashboard/messages" variant="ghost" size="sm">
+              💬 {locale === "es" ? "Mensajes" : "Messages"}
+            </LinkButton>
             {isOwner && (
-              <Link
-                href="/search"
-                className="rounded-full bg-emerald-600 px-6 py-2 text-sm font-medium text-white hover:bg-emerald-700"
-              >
-                {t("home.ctaOwner")}
-              </Link>
+              <LinkButton href="/search" variant="primary" size="sm">
+                🔍 {t("home.ctaOwner")}
+              </LinkButton>
             )}
-            {isSitter && (
-              <Link
-                href="/dashboard/sitter-setup"
-                className="rounded-full border border-emerald-600 px-5 py-2 text-sm font-medium text-emerald-600 hover:bg-emerald-50"
-              >
-                {locale === "es" ? "Mi perfil cuidador" : "Sitter profile"}
-              </Link>
-            )}
-            {!isSitter && (
-              <Link
-                href="/dashboard/sitter-setup"
-                className="rounded-full border border-zinc-300 px-5 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-50"
-              >
-                {locale === "es" ? "Hazte cuidador" : "Become a sitter"}
-              </Link>
-            )}
+            <LinkButton
+              href="/dashboard/sitter-setup"
+              variant={isSitter ? "outline" : "ghost"}
+              size="sm"
+            >
+              {isSitter
+                ? locale === "es" ? "🐾 Mi perfil cuidador" : "🐾 Sitter profile"
+                : locale === "es" ? "💚 Hazte cuidador" : "💚 Become a sitter"}
+            </LinkButton>
           </div>
         </div>
 
         {/* Bookings list */}
         <div className="mt-8">
-          <h2 className="text-lg font-semibold text-zinc-900">
+          <h2 className="text-lg font-semibold text-stone-900">
             {locale === "es" ? "Mis reservas" : "My bookings"}
           </h2>
 
           {!bookings || bookings.length === 0 ? (
-            <p className="mt-4 text-sm text-zinc-500">
-              {locale === "es"
-                ? "No tienes reservas todavía."
-                : "You don't have any bookings yet."}
-            </p>
+            <Card className="mt-4 text-center py-12">
+              <span className="text-4xl block mb-3">🐾</span>
+              <p className="text-stone-400">
+                {locale === "es"
+                  ? "No tienes reservas todavia."
+                  : "You don't have any bookings yet."}
+              </p>
+              {isOwner && (
+                <LinkButton href="/search" variant="primary" size="md" className="mt-4">
+                  {t("home.ctaOwner")}
+                </LinkButton>
+              )}
+            </Card>
           ) : (
             <div className="mt-4 space-y-3">
               {bookings.map((booking) => {
@@ -148,72 +117,62 @@ export default async function DashboardPage({ params }: Props) {
                   booking.owner_id === user.id
                     ? (booking.sitter as { full_name: string })
                     : (booking.owner as { full_name: string });
+                const config = statusConfig[booking.status];
 
                 return (
-                  <div
-                    key={booking.id}
-                    className="flex items-center justify-between rounded-xl bg-white p-5 shadow-sm"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-sm font-semibold text-emerald-700">
-                        {otherPerson?.full_name?.charAt(0) ?? "?"}
+                  <Card key={booking.id} hover padding="md">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                      <div className="flex items-center gap-3.5 flex-1 min-w-0">
+                        <Avatar name={otherPerson?.full_name ?? "?"} />
+                        <div className="min-w-0">
+                          <p className="font-semibold text-stone-900 truncate">
+                            {otherPerson?.full_name}
+                          </p>
+                          <p className="text-sm text-stone-400">
+                            {(booking.pet as { name: string })?.name} —{" "}
+                            {new Date(booking.start_date).toLocaleDateString(
+                              locale === "es" ? "es-ES" : "en-GB",
+                              { day: "numeric", month: "short" }
+                            )}
+                            {" → "}
+                            {new Date(booking.end_date).toLocaleDateString(
+                              locale === "es" ? "es-ES" : "en-GB",
+                              { day: "numeric", month: "short" }
+                            )}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium text-zinc-900">
-                          {otherPerson?.full_name}
-                        </p>
-                        <p className="text-sm text-zinc-500">
-                          {(booking.pet as { name: string })?.name} —{" "}
-                          {new Date(booking.start_date).toLocaleDateString(
-                            locale === "es" ? "es-ES" : "en-GB",
-                            { day: "numeric", month: "short" }
-                          )}
-                          {" → "}
-                          {new Date(booking.end_date).toLocaleDateString(
-                            locale === "es" ? "es-ES" : "en-GB",
-                            { day: "numeric", month: "short" }
-                          )}
-                        </p>
+                      <div className="flex items-center gap-3 sm:shrink-0">
+                        <span className="text-sm font-semibold text-stone-900">
+                          {Number(booking.total_amount)
+                            .toFixed(2)
+                            .replace(".", ",")} €
+                        </span>
+                        <Badge variant={config?.variant ?? "stone"}>
+                          {locale === "es"
+                            ? config?.labelEs ?? booking.status
+                            : config?.labelEn ?? booking.status}
+                        </Badge>
+                        {(booking.status === "confirmed" ||
+                          booking.status === "in_progress") && (
+                          <LinkButton href={`/dashboard/booking/${booking.id}`} variant="primary" size="sm">
+                            📍 {locale === "es" ? "Ver" : "View"}
+                          </LinkButton>
+                        )}
+                        {booking.status === "completed" && (
+                          <LinkButton href={`/dashboard/review/${booking.id}`} variant="outline" size="sm">
+                            ⭐ {locale === "es" ? "Opinar" : "Review"}
+                          </LinkButton>
+                        )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
-                      <span className="text-sm font-medium text-zinc-900">
-                        {Number(booking.total_amount)
-                          .toFixed(2)
-                          .replace(".", ",")}{" "}
-                        €
-                      </span>
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-medium ${statusColors[booking.status] ?? "bg-zinc-100 text-zinc-600"}`}
-                      >
-                        {statusLabels[locale]?.[booking.status] ??
-                          booking.status}
-                      </span>
-                      {(booking.status === "confirmed" ||
-                        booking.status === "in_progress") && (
-                        <Link
-                          href={`/dashboard/booking/${booking.id}`}
-                          className="rounded-full bg-emerald-600 px-4 py-1.5 text-xs font-medium text-white hover:bg-emerald-700"
-                        >
-                          {locale === "es" ? "Ver visita" : "View visit"}
-                        </Link>
-                      )}
-                      {booking.status === "completed" && (
-                        <Link
-                          href={`/dashboard/review/${booking.id}`}
-                          className="rounded-full border border-emerald-600 px-4 py-1.5 text-xs font-medium text-emerald-600 hover:bg-emerald-50"
-                        >
-                          {locale === "es" ? "Opinar" : "Review"}
-                        </Link>
-                      )}
-                    </div>
-                  </div>
+                  </Card>
                 );
               })}
             </div>
           )}
         </div>
-      </main>
+      </PageShell>
     </div>
   );
 }
