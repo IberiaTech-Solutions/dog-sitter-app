@@ -37,7 +37,7 @@ export default async function ProfilePage({ params }: Props) {
       backHref="/dashboard"
       title={locale === "es" ? "Mi perfil" : "My profile"}
     >
-      <div className="max-w-2xl">
+      <div>
         <h1 className="text-2xl font-bold text-stone-900">
           {locale === "es" ? "Mi perfil" : "My profile"}
         </h1>

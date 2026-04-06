@@ -1,7 +1,8 @@
 import { Link } from "@/i18n/navigation";
-import { ChevronLeft, User, MessageCircle, Search, CalendarDays, Settings, Dog } from "lucide-react";
+import { ChevronLeft, MessageCircle, Search, CalendarDays, Settings, Dog } from "lucide-react";
 import { Avatar } from "./avatar";
 import { UserMenu } from "../user-menu";
+import { DashboardNav, DashboardBottomNav } from "../dashboard-nav";
 
 type Props = {
   appName: string;
@@ -30,13 +31,27 @@ export function DashboardShell({
   const isOwner = userRole === "owner";
   const isSitter = userRole === "sitter";
 
-  const navItems = [
-    { href: "/dashboard", icon: CalendarDays, label: es ? "Reservas" : "Bookings", show: true },
-    { href: "/search", icon: Search, label: es ? "Buscar" : "Search", show: isOwner },
-    { href: "/dashboard/pets", icon: Dog, label: es ? "Mascotas" : "Pets", show: isOwner },
-    { href: "/dashboard/sitter-setup", icon: Settings, label: es ? "Servicio" : "Service", show: isSitter },
-    { href: "/dashboard/messages", icon: MessageCircle, label: es ? "Mensajes" : "Messages", show: true },
+  const navItemsDef = [
+    { href: "/dashboard", Icon: CalendarDays, label: es ? "Reservas" : "Bookings", show: true, badge: "bookings" as const },
+    { href: "/search", Icon: Search, label: es ? "Buscar" : "Search", show: isOwner, badge: undefined },
+    { href: "/dashboard/pets", Icon: Dog, label: es ? "Mascotas" : "Pets", show: isOwner, badge: undefined },
+    { href: "/dashboard/sitter-setup", Icon: Settings, label: es ? "Servicio" : "Service", show: isSitter, badge: undefined },
+    { href: "/dashboard/messages", Icon: MessageCircle, label: es ? "Mensajes" : "Messages", show: true, badge: "messages" as const },
   ].filter((item) => item.show);
+
+  const navItems = navItemsDef.map((item) => ({
+    href: item.href,
+    label: item.label,
+    iconHtml: <item.Icon className="w-4 h-4" />,
+    badge: item.badge,
+  }));
+
+  const mobileNavItems = navItemsDef.map((item) => ({
+    href: item.href,
+    label: item.label,
+    iconHtml: <item.Icon className="w-5 h-5" />,
+    badge: item.badge,
+  }));
 
   return (
     <div className="min-h-screen bg-[#faf9f7] pb-20 lg:pb-0">
@@ -69,20 +84,11 @@ export function DashboardShell({
           {/* Right: desktop nav + avatar */}
           <div className="flex items-center gap-1">
             <nav className="hidden lg:flex items-center gap-1 mr-2">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="flex items-center gap-1.5 px-3 py-2 text-sm text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors"
-                >
-                  <item.icon className="w-4 h-4" />
-                  {item.label}
-                </Link>
-              ))}
+              <DashboardNav items={navItems} />
             </nav>
 
             {/* Avatar dropdown */}
-            <UserMenu userName={userName} avatarUrl={avatarUrl} locale={locale} />
+            <UserMenu userName={userName} avatarUrl={avatarUrl} locale={locale} userRole={userRole} />
           </div>
         </div>
       </header>
@@ -94,25 +100,18 @@ export function DashboardShell({
 
       {/* Mobile bottom tab bar */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-stone-200/60 safe-area-bottom">
-        <div className="flex items-center justify-around py-2">
-          {navItems.map((item) => (
+        <DashboardBottomNav
+          items={mobileNavItems}
+          profileSlot={
             <Link
-              key={item.href}
-              href={item.href}
+              href="/dashboard/profile"
               className="flex flex-col items-center gap-0.5 px-3 py-1.5 text-stone-400 hover:text-green-600 transition-colors"
             >
-              <item.icon className="w-5 h-5" />
-              <span className="text-[10px] font-medium">{item.label}</span>
+              <Avatar name={userName} src={avatarUrl} size="sm" className="w-5 h-5 text-[8px]" />
+              <span className="text-[10px] font-medium">{es ? "Perfil" : "Profile"}</span>
             </Link>
-          ))}
-          <Link
-            href="/dashboard/profile"
-            className="flex flex-col items-center gap-0.5 px-3 py-1.5 text-stone-400 hover:text-green-600 transition-colors"
-          >
-            <Avatar name={userName} src={avatarUrl} size="sm" className="w-5 h-5 text-[8px]" />
-            <span className="text-[10px] font-medium">{es ? "Perfil" : "Profile"}</span>
-          </Link>
-        </div>
+          }
+        />
       </nav>
     </div>
   );

@@ -15,7 +15,9 @@ type Verification = {
   notes: string | null;
 } | null;
 
-export function VerificationForm({ userId, existing }: { userId: string; existing: Verification }) {
+type VerificationType = "dni_nie" | "sitter_insurance";
+
+export function VerificationForm({ userId, existing, type = "dni_nie" }: { userId: string; existing: Verification; type?: VerificationType }) {
   const locale = useLocale();
   const es = locale === "es";
   const [uploading, setUploading] = useState(false);
@@ -51,6 +53,29 @@ export function VerificationForm({ userId, existing }: { userId: string; existin
 
   const current = statusDisplay[status] ?? statusDisplay.none;
   const StatusIcon = current.icon;
+
+  const isInsurance = type === "sitter_insurance";
+  const title = isInsurance
+    ? (es ? "Seguro de responsabilidad civil" : "Liability insurance")
+    : (es ? "Verificación de identidad" : "Identity verification");
+  const description = isInsurance
+    ? (es
+        ? "Sube tu póliza de seguro de responsabilidad civil (RC profesional). Es obligatorio para recibir reservas."
+        : "Upload your liability insurance policy (professional RC). Required to receive bookings.")
+    : (es
+        ? "Sube una foto de tu DNI o NIE para verificar tu identidad. Esto aumenta la confianza de los dueños."
+        : "Upload a photo of your DNI or NIE to verify your identity. This builds trust with pet owners.");
+  const uploadLabel = isInsurance
+    ? (es ? "Subir póliza de seguro" : "Upload insurance policy")
+    : (es ? "Subir DNI / NIE" : "Upload DNI / NIE");
+  const approvedMsg = isInsurance
+    ? (es
+        ? "Tu seguro ha sido verificado. Los dueños verán el badge de asegurado en tu perfil."
+        : "Your insurance is verified. Owners will see the insured badge on your profile.")
+    : (es
+        ? "Tu identidad ha sido verificada. Los dueños verán el badge de verificado en tu perfil."
+        : "Your identity is verified. Owners will see the verified badge on your profile.");
+  const TitleIcon = isInsurance ? Shield : Shield;
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -96,7 +121,7 @@ export function VerificationForm({ userId, existing }: { userId: string; existin
     } else {
       await supabase.from("verifications").insert({
         user_id: userId,
-        type: "dni_nie",
+        type,
         document_url: publicUrl,
         status: "submitted",
         submitted_at: new Date().toISOString(),
@@ -112,10 +137,8 @@ export function VerificationForm({ userId, existing }: { userId: string; existin
   return (
     <Card padding="lg">
       <div className="flex items-center gap-3 mb-4">
-        <Shield className="w-5 h-5 text-green-600" />
-        <h3 className="font-semibold text-stone-900">
-          {es ? "Verificación de identidad" : "Identity verification"}
-        </h3>
+        <TitleIcon className="w-5 h-5 text-green-600" />
+        <h3 className="font-semibold text-stone-900">{title}</h3>
       </div>
 
       <div className="flex items-center gap-2 mb-4">
@@ -125,9 +148,7 @@ export function VerificationForm({ userId, existing }: { userId: string; existin
 
       {status === "approved" ? (
         <p className="text-sm text-green-700 bg-green-50 rounded-xl p-4">
-          {es
-            ? "Tu identidad ha sido verificada. Los dueños verán el badge de verificado en tu perfil."
-            : "Your identity is verified. Owners will see the verified badge on your profile."}
+          {approvedMsg}
         </p>
       ) : status === "submitted" ? (
         <p className="text-sm text-blue-700 bg-blue-50 rounded-xl p-4">
@@ -144,9 +165,7 @@ export function VerificationForm({ userId, existing }: { userId: string; existin
           )}
 
           <p className="text-sm text-stone-500 mb-4">
-            {es
-              ? "Sube una foto de tu DNI o NIE para verificar tu identidad. Esto aumenta la confianza de los dueños."
-              : "Upload a photo of your DNI or NIE to verify your identity. This builds trust with pet owners."}
+            {description}
           </p>
 
           <label className="inline-flex items-center gap-2 cursor-pointer">
@@ -154,7 +173,7 @@ export function VerificationForm({ userId, existing }: { userId: string; existin
               <Upload className="w-4 h-4" />
               {uploading
                 ? (es ? "Subiendo..." : "Uploading...")
-                : (es ? "Subir DNI / NIE" : "Upload DNI / NIE")}
+                : uploadLabel}
             </Button>
             <input
               type="file"

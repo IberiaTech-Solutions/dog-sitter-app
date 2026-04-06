@@ -10,9 +10,10 @@ import { toast } from "sonner";
 type Props = {
   verificationId: string;
   userId: string;
+  verificationType?: string;
 };
 
-export function AdminSitterActions({ verificationId, userId }: Props) {
+export function AdminSitterActions({ verificationId, userId, verificationType }: Props) {
   const locale = useLocale();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -31,13 +32,23 @@ export function AdminSitterActions({ verificationId, userId }: Props) {
       .eq("id", verificationId);
 
     if (approve) {
-      await supabase
-        .from("sitter_profiles")
-        .update({
-          is_verified: true,
-          verified_at: new Date().toISOString(),
-        })
-        .eq("id", userId);
+      if (verificationType === "sitter_insurance") {
+        await supabase
+          .from("sitter_profiles")
+          .update({
+            has_insurance: true,
+            insurance_verified_at: new Date().toISOString(),
+          })
+          .eq("id", userId);
+      } else {
+        await supabase
+          .from("sitter_profiles")
+          .update({
+            is_verified: true,
+            verified_at: new Date().toISOString(),
+          })
+          .eq("id", userId);
+      }
     }
 
     toast.success(approve

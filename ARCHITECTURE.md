@@ -59,12 +59,11 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 | Avatar dropdown menu | ✅ Done | Profile avatar in navbar with dropdown (profile link, logout), replaces text "Salir" |
 | Branded icons | ✅ Done | Two-paw logo from source image — favicon, PWA icons, navbar, no emojis anywhere |
 | Landing → search flow | ✅ Done | City input on landing page passes to search page and auto-searches |
-
-### Partially Implemented
-
-| Feature | Status | Notes |
-|---------|--------|-------|
-| Insurance / guarantee | 🔶 Planning | Need Spanish insurer partner (Caser, Mapfre); MVP: platform guarantee up to €500 |
+| Cancellation policy tiers | ✅ Done | Flexible/moderate/strict — sitter chooses, shown on profile |
+| Sitter response metrics | ✅ Done | Response rate + avg time, calculated from booking data via RPC |
+| GPS live map for owners | ✅ Done | Real-time sitter location on Leaflet map during active visits, with trail polyline |
+| Navbar notification badges | ✅ Done | Realtime unread message count + pending booking badges on nav items |
+| Sitter insurance requirement | ✅ Done | Upload proof of liability insurance (RC profesional), admin approve/reject, "Asegurado" badge on profile |
 
 ### Not Yet Started
 
@@ -73,9 +72,6 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 | Bizum payments | ❌ | Schema supports `method: 'bizum'`, no implementation |
 | WhatsApp integration | ❌ | Not implemented |
 | Background checks API | ❌ | No external provider connected (DNI upload works, external verification not wired) |
-| GPS live map for owners | ❌ | Real-time sitter location on map during visit |
-| Cancellation policy tiers | ✅ Done | Flexible/moderate/strict — sitter chooses, shown on profile |
-| Sitter response metrics | ✅ Done | Response rate + avg time, calculated from booking data via RPC |
 | Mobile app (React Native) | ❌ | Phase 2 — PWA covers mobile for now |
 
 ---
@@ -144,7 +140,10 @@ dog_sitter_app/
 │   │   ├── review-form.tsx
 │   │   ├── payment-toast.tsx         # Post-payment feedback
 │   │   ├── message-list.tsx
-│   │   ├── active-booking-view.tsx   # Multi-day visit tracking
+│   │   ├── active-booking-view.tsx   # Multi-day visit tracking + live map
+│   │   ├── sitter-live-map.tsx       # Real-time sitter location map (Leaflet)
+│   │   ├── dashboard-nav.tsx         # Client nav with notification badges
+│   │   ├── nav-badges.tsx            # Realtime unread/pending count hook
 │   │   ├── admin-nav.tsx
 │   │   ├── admin-header.tsx
 │   │   ├── admin-sitter-actions.tsx
@@ -169,7 +168,9 @@ dog_sitter_app/
 │   ├── 003_security_fixes.sql        # RLS hardening
 │   ├── 004_pending_payment_status.sql # Add pending_payment booking status
 │   ├── 005_sitter_coords_in_search.sql # Return lat/lng from nearby search
-│   └── 006_sitter_availability.sql   # Sitter availability calendar table
+│   ├── 006_sitter_availability.sql   # Sitter availability calendar table
+│   ├── ...                           # 007–012: meet & greet, push, cancellation, response stats
+│   └── 013_sitter_insurance.sql      # Insurance verification type + has_insurance on sitter_profiles
 │
 ├── messages/
 │   ├── es.json                       # Spanish translations (~82 keys)
@@ -234,10 +235,10 @@ dog_sitter_app/
 │  └────────────┘  └────────────┘  └────────────┘│
 │                                                  │
 │  ┌────────────┐  ┌────────────┐  ┌────────────┐│
-│  │ Background │  │ Map UI     │  │ Push       ││
-│  │ Check API  │  │ (Mapbox /  │  │ Notifs     ││
-│  │ ❌ Planned │  │  Google)   │  │ ❌ Planned ││
-│  │            │  │ ❌ Planned │  │            ││
+│  │ Background │  │ Leaflet /  │  │ Push       ││
+│  │ Check API  │  │ OpenStreet │  │ Notifs     ││
+│  │ ❌ Planned │  │ Map        │  │ ✅ Ready   ││
+│  │            │  │ ✅ Ready   │  │            ││
 │  └────────────┘  └────────────┘  └────────────┘│
 └─────────────────────────────────────────────────┘
 ```

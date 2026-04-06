@@ -5,10 +5,18 @@ import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, Button } from "@/components/ui";
 import { toast } from "sonner";
+import dynamic from "next/dynamic";
+import { extractLocations } from "./sitter-live-map";
+
+const SitterLiveMap = dynamic(
+  () => import("./sitter-live-map").then((m) => ({ default: m.SitterLiveMap })),
+  { ssr: false }
+);
 
 type VisitLog = {
   id: string;
   event_type: string;
+  location: string | null;
   note: string | null;
   media_url: string | null;
   created_at: string;
@@ -19,6 +27,7 @@ type Props = {
   isSitter: boolean;
   initialLogs: VisitLog[];
   bookingStatus: string;
+  sitterName?: string;
 };
 
 export function ActiveBookingView({
@@ -26,6 +35,7 @@ export function ActiveBookingView({
   isSitter,
   initialLogs,
   bookingStatus,
+  sitterName,
 }: Props) {
   const locale = useLocale();
   const supabase = createClient();
@@ -333,6 +343,19 @@ export function ActiveBookingView({
           </div>
         </Card>
       )}
+
+      {/* Live map for owners */}
+      {!isSitter && bookingStatus === "in_progress" && (() => {
+        const locs = extractLocations(logs);
+        return locs.length > 0 ? (
+          <Card>
+            <h2 className="font-semibold text-stone-900 mb-3">
+              {locale === "es" ? "Ubicación en tiempo real" : "Live location"}
+            </h2>
+            <SitterLiveMap locations={locs} sitterName={sitterName ?? ""} />
+          </Card>
+        ) : null;
+      })()}
 
       {/* Visit log timeline */}
       <Card>

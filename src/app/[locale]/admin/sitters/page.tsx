@@ -4,6 +4,7 @@ import { PageShell, Card, Avatar, Badge } from "@/components/ui";
 import { AdminHeader } from "@/components/admin-header";
 import { AdminNav } from "@/components/admin-nav";
 import { AdminSitterActions } from "@/components/admin-sitter-actions";
+import { AdminUserActions } from "@/components/admin-user-actions";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -12,7 +13,7 @@ type Props = {
 export default async function AdminSittersPage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale });
-  const { supabase } = await requireAdmin(locale);
+  const { supabase, profile } = await requireAdmin(locale);
   const es = locale === "es";
 
   const { data: sitters } = await supabase
@@ -23,12 +24,12 @@ export default async function AdminSittersPage({ params }: Props) {
   const { data: pendingVerifications } = await supabase
     .from("verifications")
     .select("*, user:profiles!user_id(full_name, email)")
-    .eq("status", "pending")
+    .in("status", ["pending", "submitted"])
     .order("created_at", { ascending: false });
 
   return (
     <div className="min-h-screen bg-[#faf9f7]">
-      <AdminHeader appName={t("common.appName")} locale={locale} />
+      <AdminHeader appName={t("common.appName")} locale={locale} userName={profile.full_name} avatarUrl={profile.avatar_url} />
 
       <PageShell>
         <div className="flex items-center gap-3 mb-6">
@@ -60,13 +61,14 @@ export default async function AdminSittersPage({ params }: Props) {
                           {(v.user as unknown as { email: string })?.email}
                         </p>
                         <p className="text-xs text-stone-400">
-                          {v.type === "dni_nie" ? "DNI/NIE" : v.type === "background_check" ? (es ? "Antecedentes" : "Background") : v.type}
+                          {v.type === "dni_nie" ? "DNI/NIE" : v.type === "sitter_insurance" ? (es ? "Seguro RC" : "Insurance") : v.type === "background_check" ? (es ? "Antecedentes" : "Background") : v.type}
                         </p>
                       </div>
                     </div>
                     <AdminSitterActions
                       verificationId={v.id}
                       userId={v.user_id}
+                      verificationType={v.type}
                     />
                   </div>
                 </Card>
@@ -124,6 +126,11 @@ export default async function AdminSittersPage({ params }: Props) {
                         <Badge variant={sitter.is_available ? "green" : "stone"}>
                           {sitter.is_available ? (es ? "Disponible" : "Available") : (es ? "No disponible" : "Unavailable")}
                         </Badge>
+                        <AdminUserActions
+                          userId={sitter.id}
+                          userName={profile?.full_name ?? "?"}
+                          currentRole="sitter"
+                        />
                       </div>
                     </div>
                   </Card>

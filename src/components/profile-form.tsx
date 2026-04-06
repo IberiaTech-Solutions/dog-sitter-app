@@ -84,6 +84,7 @@ export function ProfileForm({ profile, userId }: { profile: Profile; userId: str
   const roleLabel = {
     owner: es ? "Dueño de mascota" : "Pet owner",
     sitter: es ? "Cuidador de mascotas" : "Pet sitter",
+    both: es ? "Dueño y cuidador" : "Owner & sitter",
     admin: "Admin",
   }[profile.role] ?? profile.role;
 

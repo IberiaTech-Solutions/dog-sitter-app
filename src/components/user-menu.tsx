@@ -10,9 +10,17 @@ type Props = {
   userName: string;
   avatarUrl?: string | null;
   locale: string;
+  userRole?: string;
 };
 
-export function UserMenu({ userName, avatarUrl, locale }: Props) {
+const roleBadge: Record<string, { label: { es: string; en: string }; color: string }> = {
+  owner: { label: { es: "Dueno", en: "Owner" }, color: "bg-blue-100 text-blue-700" },
+  sitter: { label: { es: "Cuidador", en: "Sitter" }, color: "bg-green-100 text-green-700" },
+  both: { label: { es: "Dueno y cuidador", en: "Owner & Sitter" }, color: "bg-purple-100 text-purple-700" },
+  admin: { label: { es: "Admin", en: "Admin" }, color: "bg-red-100 text-red-700" },
+};
+
+export function UserMenu({ userName, avatarUrl, locale, userRole }: Props) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const es = locale === "es";
@@ -41,6 +49,11 @@ export function UserMenu({ userName, avatarUrl, locale }: Props) {
           {/* User info */}
           <div className="px-4 py-3 border-b border-stone-100">
             <p className="text-sm font-semibold text-stone-900 truncate">{userName}</p>
+            {userRole && roleBadge[userRole] && (
+              <span className={`inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ${roleBadge[userRole].color}`}>
+                {es ? roleBadge[userRole].label.es : roleBadge[userRole].label.en}
+              </span>
+            )}
           </div>
 
           {/* Menu items */}

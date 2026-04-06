@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { PageShell, Card, Avatar, Badge } from "@/components/ui";
 import { AdminHeader } from "@/components/admin-header";
 import { AdminNav } from "@/components/admin-nav";
+import { AdminUserActions } from "@/components/admin-user-actions";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -11,7 +12,7 @@ type Props = {
 export default async function AdminUsersPage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale });
-  const { supabase } = await requireAdmin(locale);
+  const { supabase, profile } = await requireAdmin(locale);
   const es = locale === "es";
 
   const { data: users } = await supabase
@@ -27,7 +28,7 @@ export default async function AdminUsersPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-[#faf9f7]">
-      <AdminHeader appName={t("common.appName")} locale={locale} />
+      <AdminHeader appName={t("common.appName")} locale={locale} userName={profile.full_name} avatarUrl={profile.avatar_url} />
 
       <PageShell>
         <div className="flex items-center gap-3 mb-6">
@@ -70,6 +71,11 @@ export default async function AdminUsersPage({ params }: Props) {
                           { day: "numeric", month: "short", year: "numeric" }
                         )}
                       </span>
+                      <AdminUserActions
+                        userId={user.id}
+                        userName={user.full_name || "?"}
+                        currentRole={user.role}
+                      />
                     </div>
                   </div>
                 </Card>

@@ -42,6 +42,13 @@ export default async function SitterSetupPage({ params }: Props) {
     .eq("type", "dni_nie")
     .single();
 
+  const { data: insuranceVerification } = await supabase
+    .from("verifications")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("type", "sitter_insurance")
+    .single();
+
   return (
     <DashboardShell
       appName={t("common.appName")}
@@ -67,6 +74,10 @@ export default async function SitterSetupPage({ params }: Props) {
 
         <div className="mt-8">
           <VerificationForm userId={user.id} existing={verification} />
+        </div>
+
+        <div className="mt-6">
+          <VerificationForm userId={user.id} existing={insuranceVerification} type="sitter_insurance" />
         </div>
 
         <div className="mt-8">

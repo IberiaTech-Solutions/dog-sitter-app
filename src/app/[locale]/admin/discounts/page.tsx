@@ -4,6 +4,7 @@ import { PageShell, Card, Badge } from "@/components/ui";
 import { AdminHeader } from "@/components/admin-header";
 import { AdminNav } from "@/components/admin-nav";
 import { DiscountForm } from "@/components/discount-form";
+import { AdminDiscountActions } from "@/components/admin-discount-actions";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -12,7 +13,7 @@ type Props = {
 export default async function AdminDiscountsPage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale });
-  const { supabase } = await requireAdmin(locale);
+  const { supabase, profile } = await requireAdmin(locale);
   const es = locale === "es";
 
   const { data: discounts } = await supabase
@@ -29,7 +30,7 @@ export default async function AdminDiscountsPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-[#faf9f7]">
-      <AdminHeader appName={t("common.appName")} locale={locale} />
+      <AdminHeader appName={t("common.appName")} locale={locale} userName={profile.full_name} avatarUrl={profile.avatar_url} />
 
       <PageShell>
         <div className="flex items-center gap-3 mb-6">
@@ -81,6 +82,7 @@ export default async function AdminDiscountsPage({ params }: Props) {
                       <span className="text-stone-400">{d.city}</span>
                       <span className="font-mono bg-stone-100 px-3 py-1 rounded-lg text-stone-700">{d.discount_code}</span>
                       <span className="text-lg font-bold text-green-600">-{d.discount_percent}%</span>
+                      <AdminDiscountActions discountId={d.id} isActive={d.is_active} partnerName={d.partner_name} />
                     </div>
                   </div>
                 </Card>

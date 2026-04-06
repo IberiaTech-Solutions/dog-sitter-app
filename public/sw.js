@@ -39,11 +39,13 @@ self.addEventListener("fetch", (event) => {
   // Network-first for page navigations and API calls
   if (request.mode === "navigate" || url.pathname.startsWith("/api/")) {
     event.respondWith(
-      fetch(request).catch(() =>
-        request.mode === "navigate"
-          ? caches.match(OFFLINE_URL)
-          : new Response("Network error", { status: 503 })
-      )
+      fetch(request).catch(async () => {
+        if (request.mode === "navigate") {
+          const cached = await caches.match(OFFLINE_URL);
+          return cached || new Response("Offline", { status: 503, headers: { "Content-Type": "text/html" } });
+        }
+        return new Response("Network error", { status: 503 });
+      })
     );
     return;
   }
@@ -81,7 +83,10 @@ self.addEventListener("fetch", (event) => {
         }
         return response;
       })
-      .catch(() => caches.match(request))
+      .catch(async () => {
+        const cached = await caches.match(request);
+        return cached || new Response("Network error", { status: 503 });
+      })
   );
 });
 

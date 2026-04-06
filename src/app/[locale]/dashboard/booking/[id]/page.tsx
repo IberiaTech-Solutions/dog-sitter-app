@@ -84,6 +84,7 @@ export default async function ActiveBookingPage({ params }: Props) {
         isSitter={isSitter}
         initialLogs={visitLogs ?? []}
         bookingStatus={booking.status}
+        sitterName={(booking.sitter as { full_name: string })?.full_name}
       />
     </DashboardShell>
   );

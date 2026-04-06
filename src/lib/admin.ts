@@ -11,7 +11,7 @@ export async function requireAdmin(locale: string) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, full_name, avatar_url")
     .eq("id", user.id)
     .single();
 
@@ -19,5 +19,5 @@ export async function requireAdmin(locale: string) {
     redirect(`/${locale}/dashboard`);
   }
 
-  return { user, supabase };
+  return { user, supabase, profile };
 }

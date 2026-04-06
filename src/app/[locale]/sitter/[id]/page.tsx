@@ -91,6 +91,14 @@ export default async function SitterProfilePage({ params }: Props) {
                         </span>
                       </div>
                     )}
+                    {sitterProfile.has_insurance && (
+                      <div className="flex items-center gap-1.5 bg-blue-50 border border-blue-200/60 rounded-full px-3 py-1">
+                        <Shield className="w-3.5 h-3.5 text-blue-600" />
+                        <span className="text-xs font-medium text-blue-700">
+                          {es ? "Asegurado" : "Insured"}
+                        </span>
+                      </div>
+                    )}
                   </div>
                   {profile.city && (
                     <div className="flex items-center gap-1.5 mt-1.5 text-sm text-stone-500">
@@ -285,10 +293,20 @@ export default async function SitterProfilePage({ params }: Props) {
                   </div>
                 )}
 
-                {sitterProfile.is_verified && (
-                  <div className="mt-4 flex items-center gap-2 justify-center text-xs text-green-700">
-                    <Shield className="w-3.5 h-3.5" />
-                    {es ? "Identidad y antecedentes verificados" : "Identity and background verified"}
+                {(sitterProfile.is_verified || sitterProfile.has_insurance) && (
+                  <div className="mt-4 space-y-1.5">
+                    {sitterProfile.is_verified && (
+                      <div className="flex items-center gap-2 justify-center text-xs text-green-700">
+                        <Shield className="w-3.5 h-3.5" />
+                        {es ? "Identidad verificada" : "Identity verified"}
+                      </div>
+                    )}
+                    {sitterProfile.has_insurance && (
+                      <div className="flex items-center gap-2 justify-center text-xs text-blue-700">
+                        <Shield className="w-3.5 h-3.5" />
+                        {es ? "Seguro de responsabilidad civil" : "Liability insurance"}
+                      </div>
+                    )}
                   </div>
                 )}
               </Card>
