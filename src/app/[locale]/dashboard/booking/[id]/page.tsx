@@ -55,8 +55,6 @@ export default async function ActiveBookingPage({ params }: Props) {
       userName={profile?.full_name ?? ""}
       userRole={profile?.role ?? "owner"}
       avatarUrl={profile?.avatar_url}
-      backHref="/dashboard"
-      title={`${petName} — ${otherName}`}
     >
       {/* Booking summary */}
       <div className="rounded-2xl bg-white border border-stone-100 p-6 shadow-sm">

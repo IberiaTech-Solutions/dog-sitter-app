@@ -1,9 +1,11 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
-import { Card, Select, Textarea, Input, Button } from "@/components/ui";
+import { createClient } from "@/lib/supabase/client";
+import { Card, Select, Textarea, Button } from "@/components/ui";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Pet = {
   id: string;
@@ -37,9 +39,26 @@ const serviceLabels: Record<string, Record<string, string>> = {
   },
 };
 
+const monthNames: Record<string, string[]> = {
+  es: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+  en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+};
+
+const dayNames: Record<string, string[]> = {
+  es: ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"],
+  en: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+};
+
+function toDateStr(y: number, m: number, d: number) {
+  return `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+}
+
 export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
   const t = useTranslations();
   const locale = useLocale();
+  const es = locale === "es";
+  const lang = es ? "es" : "en";
+
   const [serviceType, setServiceType] = useState(services[0] ?? "pet_sitting");
   const [petId, setPetId] = useState(pets[0]?.id ?? "");
   const [startDate, setStartDate] = useState("");
@@ -47,23 +66,114 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Calendar state
+  const now = new Date();
+  const [month, setMonth] = useState(now.getMonth());
+  const [year, setYear] = useState(now.getFullYear());
+  const [availability, setAvailability] = useState<Record<string, boolean>>({});
+  const todayStr = toDateStr(now.getFullYear(), now.getMonth(), now.getDate());
+
+  const supabase = createClient();
+
+  const fetchAvailability = useCallback(async () => {
+    const firstDay = 1;
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    const startStr = toDateStr(year, month, firstDay);
+    const endStr = toDateStr(year, month, lastDay);
+
+    // Also fetch next month for range selection
+    const nextMonth = month === 11 ? 0 : month + 1;
+    const nextYear = month === 11 ? year + 1 : year;
+    const nextLastDay = new Date(nextYear, nextMonth + 1, 0).getDate();
+    const nextEndStr = toDateStr(nextYear, nextMonth, nextLastDay);
+
+    const { data } = await supabase
+      .from("sitter_availability")
+      .select("date, is_available")
+      .eq("sitter_id", sitterId)
+      .gte("date", startStr)
+      .lte("date", nextEndStr);
+
+    const map: Record<string, boolean> = {};
+    data?.forEach((row) => {
+      map[row.date] = row.is_available;
+    });
+    setAvailability(map);
+  }, [year, month, sitterId, supabase]);
+
+  useEffect(() => {
+    fetchAvailability();
+  }, [fetchAvailability]);
+
+  // Date selection logic
+  function handleDayClick(dateStr: string) {
+    if (!availability[dateStr]) return; // Not available
+
+    if (!startDate || (startDate && endDate)) {
+      // Start new selection
+      setStartDate(dateStr);
+      setEndDate("");
+    } else {
+      // Set end date
+      if (dateStr < startDate) {
+        setStartDate(dateStr);
+        setEndDate("");
+      } else {
+        // Check all dates in range are available
+        const start = new Date(startDate);
+        const end = new Date(dateStr);
+        let allAvailable = true;
+        const check = new Date(start);
+        while (check <= end) {
+          const checkStr = toDateStr(check.getFullYear(), check.getMonth(), check.getDate());
+          if (!availability[checkStr]) {
+            allAvailable = false;
+            break;
+          }
+          check.setDate(check.getDate() + 1);
+        }
+
+        if (allAvailable) {
+          setEndDate(dateStr);
+        } else {
+          toast.error(es
+            ? "Hay días no disponibles en ese rango"
+            : "Some days in that range are unavailable"
+          );
+          setStartDate(dateStr);
+          setEndDate("");
+        }
+      }
+    }
+  }
+
+  function isInRange(dateStr: string) {
+    if (!startDate || !endDate) return false;
+    return dateStr >= startDate && dateStr <= endDate;
+  }
+
+  // Calendar navigation
+  function prevMonth() {
+    if (month === 0) { setMonth(11); setYear(year - 1); }
+    else setMonth(month - 1);
+  }
+  function nextMonthFn() {
+    if (month === 11) { setMonth(0); setYear(year + 1); }
+    else setMonth(month + 1);
+  }
+
   // Calculate days and total
-  const days =
-    startDate && endDate
-      ? Math.max(
-          1,
-          Math.ceil(
-            (new Date(endDate).getTime() - new Date(startDate).getTime()) /
-              (1000 * 60 * 60 * 24)
-          )
-        )
-      : 0;
+  const days = startDate && endDate
+    ? Math.max(1, Math.ceil((new Date(endDate).getTime() - new Date(startDate).getTime()) / (1000 * 60 * 60 * 24)))
+    : startDate && !endDate ? 1 : 0;
   const subtotal = days * sitterRate;
   const commission = subtotal * COMMISSION_RATE;
   const total = subtotal + commission;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!startDate) return;
+    const finalEnd = endDate || startDate;
     setLoading(true);
 
     try {
@@ -75,7 +185,7 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
           pet_id: petId,
           service_type: serviceType,
           start_date: startDate,
-          end_date: endDate,
+          end_date: finalEnd,
           daily_rate: sitterRate,
           total_amount: total,
           commission_amount: commission,
@@ -85,25 +195,27 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
       });
 
       const data = await res.json();
-
       if (!res.ok) {
-        toast.error(data.error ?? (locale === "es" ? "Error al crear la reserva" : "Could not create booking"));
+        toast.error(data.error ?? (es ? "Error al crear la reserva" : "Could not create booking"));
         setLoading(false);
         return;
       }
-
-      // Redirect to Stripe Checkout
-      if (data.url) {
-        window.location.href = data.url;
-      }
+      if (data.url) window.location.href = data.url;
     } catch {
-      toast.error(locale === "es" ? "Error al procesar la reserva" : "Booking failed");
+      toast.error(es ? "Error al procesar la reserva" : "Booking failed");
       setLoading(false);
     }
   }
 
-  const formatEur = (n: number) =>
-    n.toFixed(2).replace(".", ",") + " €";
+  const formatEur = (n: number) => n.toFixed(2).replace(".", ",") + " €";
+
+  // Build calendar grid
+  const firstDayOfMonth = new Date(year, month, 1).getDay();
+  const startOffset = (firstDayOfMonth + 6) % 7;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells: (number | null)[] = [];
+  for (let i = 0; i < startOffset; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-6">
@@ -134,7 +246,7 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
       {pets.length > 0 && (
         <Card>
           <Select
-            label={locale === "es" ? "Mascota" : "Pet"}
+            label={es ? "Mascota" : "Pet"}
             value={petId}
             onChange={(e) => setPetId(e.target.value)}
           >
@@ -147,43 +259,124 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
         </Card>
       )}
 
-      {/* Dates */}
+      {/* Date selection calendar */}
       <Card>
-        <label className="block text-sm font-medium text-stone-700">
+        <label className="block text-sm font-medium text-stone-700 mb-1">
           {t("booking.selectDates")}
         </label>
-        <div className="mt-3 grid grid-cols-2 gap-4">
-          <Input
-            type="date"
-            label={locale === "es" ? "Inicio" : "Start"}
-            required
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            min={new Date().toISOString().split("T")[0]}
-          />
-          <Input
-            type="date"
-            label={locale === "es" ? "Fin" : "End"}
-            required
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            min={startDate || new Date().toISOString().split("T")[0]}
-          />
+        <p className="text-xs text-stone-400 mb-4">
+          {es
+            ? startDate && !endDate
+              ? "Selecciona el último día"
+              : "Selecciona el primer y último día"
+            : startDate && !endDate
+              ? "Select the last day"
+              : "Select the first and last day"}
+        </p>
+
+        {/* Calendar */}
+        <div className="flex items-center justify-between mb-3">
+          <button type="button" onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-stone-100 text-stone-500">
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <span className="text-sm font-semibold text-stone-900">
+            {monthNames[lang][month]} {year}
+          </span>
+          <button type="button" onClick={nextMonthFn} className="p-1.5 rounded-lg hover:bg-stone-100 text-stone-500">
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
+
+        <div className="grid grid-cols-7 gap-1 mb-1">
+          {dayNames[lang].map((d) => (
+            <div key={d} className="text-center text-xs font-medium text-stone-400 py-1">{d}</div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-7 gap-1">
+          {cells.map((day, i) => {
+            if (day === null) return <div key={`e-${i}`} />;
+
+            const dateStr = toDateStr(year, month, day);
+            const isPast = dateStr < todayStr;
+            const isAvailable = availability[dateStr] === true;
+            const isStart = dateStr === startDate;
+            const isEnd = dateStr === endDate;
+            const inRange = isInRange(dateStr);
+            const isToday = dateStr === todayStr;
+
+            let bgClass: string;
+            if (isStart || isEnd) {
+              bgClass = "bg-green-600 text-white font-bold";
+            } else if (inRange) {
+              bgClass = "bg-green-100 text-green-700";
+            } else if (isPast || !isAvailable) {
+              bgClass = "bg-stone-50 text-stone-300 cursor-not-allowed";
+            } else {
+              bgClass = "bg-green-50 text-green-600 border border-green-200 cursor-pointer hover:bg-green-100";
+            }
+
+            return (
+              <button
+                key={dateStr}
+                type="button"
+                disabled={isPast || !isAvailable}
+                onClick={() => handleDayClick(dateStr)}
+                className={`aspect-square flex items-center justify-center rounded-lg text-sm transition-colors ${bgClass} ${
+                  isToday && !isStart && !isEnd ? "ring-2 ring-green-600 ring-offset-1" : ""
+                }`}
+              >
+                {day}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Legend */}
+        <div className="flex items-center gap-4 mt-3 text-xs text-stone-400">
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block w-3 h-3 rounded bg-green-50 border border-green-200" />
+            {es ? "Disponible" : "Available"}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block w-3 h-3 rounded bg-stone-50" />
+            {es ? "No disponible" : "Unavailable"}
+          </span>
+          {startDate && (
+            <span className="flex items-center gap-1.5">
+              <span className="inline-block w-3 h-3 rounded bg-green-600" />
+              {es ? "Seleccionado" : "Selected"}
+            </span>
+          )}
+        </div>
+
+        {/* Selected dates summary */}
+        {startDate && (
+          <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-sm">
+            <span className="text-stone-500">
+              {new Date(startDate).toLocaleDateString(es ? "es-ES" : "en-GB", { day: "numeric", month: "short" })}
+              {endDate && endDate !== startDate && (
+                <> → {new Date(endDate).toLocaleDateString(es ? "es-ES" : "en-GB", { day: "numeric", month: "short" })}</>
+              )}
+            </span>
+            <span className="font-medium text-stone-700">
+              {days} {days === 1 ? (es ? "día" : "day") : (es ? "días" : "days")}
+            </span>
+          </div>
+        )}
       </Card>
 
       {/* Notes */}
       <Card>
         <Textarea
-          label={locale === "es" ? "Notas para el cuidador" : "Notes for the sitter"}
+          label={es ? "Notas para el cuidador" : "Notes for the sitter"}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={3}
-          placeholder={
-            locale === "es"
-              ? "Instrucciones especiales, horarios, etc."
-              : "Special instructions, schedules, etc."
-          }
+          maxLength={500}
+          placeholder={es
+            ? "Instrucciones especiales, horarios, etc."
+            : "Special instructions, schedules, etc."}
         />
       </Card>
 
@@ -192,10 +385,7 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
         <Card>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between text-stone-600">
-              <span>
-                {formatEur(sitterRate)} x {days}{" "}
-                {locale === "es" ? "días" : "days"}
-              </span>
+              <span>{formatEur(sitterRate)} x {days} {es ? "días" : "days"}</span>
               <span>{formatEur(subtotal)}</span>
             </div>
             <div className="flex justify-between text-stone-600">

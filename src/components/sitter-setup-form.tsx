@@ -12,6 +12,8 @@ const CITY_COORDS: Record<string, { lat: number; lng: number }> = {
   "gijón": { lat: 43.5322, lng: -5.6611 },
   "gijon": { lat: 43.5322, lng: -5.6611 },
   "oviedo": { lat: 43.3614, lng: -5.8493 },
+  "avilés": { lat: 43.5567, lng: -5.9246 },
+  "aviles": { lat: 43.5567, lng: -5.9246 },
   "madrid": { lat: 40.4168, lng: -3.7038 },
   "barcelona": { lat: 41.3874, lng: 2.1686 },
   "valencia": { lat: 39.4699, lng: -0.3763 },
@@ -26,6 +28,10 @@ const CITY_COORDS: Record<string, { lat: number; lng: number }> = {
   "granada": { lat: 37.1773, lng: -3.5986 },
   "murcia": { lat: 37.9922, lng: -1.1307 },
   "alicante": { lat: 38.3452, lng: -0.4810 },
+  "san sebastián": { lat: 43.3183, lng: -1.9812 },
+  "valladolid": { lat: 41.6523, lng: -4.7245 },
+  "palma de mallorca": { lat: 39.5696, lng: 2.6502 },
+  "las palmas": { lat: 28.1235, lng: -15.4363 },
 };
 
 type SitterProfile = {
@@ -253,10 +259,11 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
       <Card>
         <Input
           type="text"
-          label={locale === "es" ? "Ubicación" : "Location"}
+          label={locale === "es" ? "Tu zona o localidad" : "Your area or town"}
           value={address}
           onChange={(e) => setAddress(e.target.value)}
-          placeholder={locale === "es" ? "Tu dirección o zona" : "Your address or area"}
+          placeholder={locale === "es" ? "Ej: Gijón, Villaviciosa, Cangas de Onís..." : "E.g. Gijón, Villaviciosa, Cangas de Onís..."}
+          maxLength={100}
         />
         <div className="mt-3 flex items-center gap-4">
           <Button

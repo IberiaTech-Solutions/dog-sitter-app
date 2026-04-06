@@ -6,18 +6,40 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui";
 import { toast } from "sonner";
+import { Eye } from "lucide-react";
 
 type Props = {
   verificationId: string;
   userId: string;
   verificationType?: string;
+  documentPath?: string | null;
 };
 
-export function AdminSitterActions({ verificationId, userId, verificationType }: Props) {
+export function AdminSitterActions({ verificationId, userId, verificationType, documentPath }: Props) {
   const locale = useLocale();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const es = locale === "es";
+
+  async function handleViewDocument() {
+    if (!documentPath) return;
+    const supabase = createClient();
+
+    // Try signed URL first (private bucket)
+    const { data } = await supabase.storage
+      .from("verification-docs")
+      .createSignedUrl(documentPath, 300); // 5 min expiry
+
+    if (data?.signedUrl) {
+      window.open(data.signedUrl, "_blank");
+    } else {
+      // Fallback: try as public URL (legacy uploads)
+      const { data: pub } = supabase.storage
+        .from("verification-docs")
+        .getPublicUrl(documentPath);
+      window.open(pub.publicUrl, "_blank");
+    }
+  }
 
   async function handleAction(approve: boolean) {
     setLoading(true);
@@ -61,6 +83,17 @@ export function AdminSitterActions({ verificationId, userId, verificationType }:
 
   return (
     <div className="flex gap-2">
+      {documentPath && (
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={loading}
+          onClick={handleViewDocument}
+        >
+          <Eye className="w-3.5 h-3.5" />
+          {es ? "Ver" : "View"}
+        </Button>
+      )}
       <Button
         variant="primary"
         size="sm"

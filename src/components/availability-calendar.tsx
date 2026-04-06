@@ -5,6 +5,7 @@ import { useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { Card, Button } from "@/components/ui";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
 
 type Props = {
   sitterId: string;
@@ -76,13 +77,16 @@ export function AvailabilityCalendar({ sitterId, isEditable }: Props) {
 
     setAvailability((prev) => ({ ...prev, [dateStr]: newValue }));
 
-    await supabase
+    const { error } = await supabase
       .from("sitter_availability")
       .upsert(
         { sitter_id: sitterId, date: dateStr, is_available: newValue },
         { onConflict: "sitter_id,date" }
       );
 
+    if (error) {
+      toast.error(locale === "es" ? "Error al guardar" : "Failed to save");
+    }
     setLoading(false);
   }
 
@@ -179,14 +183,19 @@ export function AvailabilityCalendar({ sitterId, isEditable }: Props) {
       </div>
 
       {isEditable && (
-        <div className="flex items-center gap-4 mt-4 text-xs text-stone-500">
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block w-3 h-3 rounded bg-green-50 border border-green-200" />
-            {lang === "es" ? "Disponible" : "Available"}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="inline-block w-3 h-3 rounded bg-stone-200" />
-            {lang === "es" ? "No disponible" : "Unavailable"}
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex items-center gap-4 text-xs text-stone-500">
+            <span className="flex items-center gap-1.5">
+              <span className="inline-block w-3 h-3 rounded bg-green-50 border border-green-200" />
+              {lang === "es" ? "Disponible" : "Available"}
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="inline-block w-3 h-3 rounded bg-stone-200" />
+              {lang === "es" ? "No disponible" : "Unavailable"}
+            </span>
+          </div>
+          <span className="text-xs text-stone-400">
+            {lang === "es" ? "Se guarda automáticamente" : "Auto-saved"}
           </span>
         </div>
       )}

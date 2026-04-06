@@ -21,14 +21,10 @@ export default function SignupPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
         <div className="absolute bottom-12 left-12 right-12">
           <h2 className="text-3xl font-bold text-white leading-snug">
-            {t("home.ctaOwner") === "Find sitters"
-              ? "They deserve someone who cares as much as you do"
-              : "Merezco a alguien que me cuide como tú"}
+            {t("auth.signupHeroTitle")}
           </h2>
           <p className="mt-2 text-white/70">
-            {t("home.ctaOwner") === "Find sitters"
-              ? "Find verified sitters near you, or become one"
-              : "Encuentra cuidadores verificados cerca de ti, o conviértete en uno"}
+            {t("auth.signupHeroDesc")}
           </p>
         </div>
       </div>

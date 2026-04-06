@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { Shield, Star, MapPin, Clock, Dog, Cat, Bird, Rabbit, PawPrint } from "lucide-react";
-import { Header, PageShell, Card, Avatar, Badge, LinkButton } from "@/components/ui";
+import { Header, Card, Avatar, Badge, LinkButton, DashboardShell, PageShell } from "@/components/ui";
 import { AvailabilityCalendar } from "@/components/availability-calendar";
 import { MeetGreetButton } from "@/components/meet-greet-button";
 
@@ -56,21 +56,12 @@ export default async function SitterProfilePage({ params }: Props) {
     sitter_uuid: id,
   });
 
-  return (
-    <div className="min-h-screen bg-[#faf9f7]">
-      <Header appName={t("common.appName")} isLoggedIn={!!user}>
-        {user ? (
-          <Link href="/dashboard" className="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">
-            {es ? "Mi panel" : "Dashboard"}
-          </Link>
-        ) : (
-          <Link href="/login" className="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">
-            {t("common.login")}
-          </Link>
-        )}
-      </Header>
+  // Fetch logged-in user's profile for DashboardShell
+  const { data: myProfile } = user
+    ? await supabase.from("profiles").select("full_name, role, avatar_url").eq("id", user.id).single()
+    : { data: null };
 
-      <PageShell maxWidth="lg">
+  const content = (
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main content */}
           <div className="lg:col-span-2 space-y-6">
@@ -324,6 +315,31 @@ export default async function SitterProfilePage({ params }: Props) {
             </div>
           </div>
         </div>
+  );
+
+  if (user && myProfile) {
+    return (
+      <DashboardShell
+        appName={t("common.appName")}
+        locale={locale}
+        userName={myProfile.full_name}
+        userRole={myProfile.role}
+        avatarUrl={myProfile.avatar_url}
+      >
+        {content}
+      </DashboardShell>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#faf9f7]">
+      <Header appName={t("common.appName")} isLoggedIn={false}>
+        <Link href="/login" className="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">
+          {t("common.login")}
+        </Link>
+      </Header>
+      <PageShell maxWidth="lg">
+        {content}
       </PageShell>
     </div>
   );

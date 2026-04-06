@@ -13,7 +13,7 @@ type Props = {
 export default async function AdminSittersPage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale });
-  const { supabase, profile } = await requireAdmin(locale);
+  const { supabase, profile, pendingVerifications } = await requireAdmin(locale);
   const es = locale === "es";
 
   const { data: sitters } = await supabase
@@ -21,7 +21,7 @@ export default async function AdminSittersPage({ params }: Props) {
     .select("*, profile:profiles!id(full_name, email, city, created_at)")
     .order("created_at", { ascending: false });
 
-  const { data: pendingVerifications } = await supabase
+  const { data: pendingVerificationsList } = await supabase
     .from("verifications")
     .select("*, user:profiles!user_id(full_name, email)")
     .in("status", ["pending", "submitted"])
@@ -38,17 +38,17 @@ export default async function AdminSittersPage({ params }: Props) {
           </h1>
         </div>
 
-        <AdminNav locale={locale} active="sitters" />
+        <AdminNav locale={locale} active="sitters" pendingVerifications={pendingVerifications} />
 
         {/* Pending verifications */}
-        {pendingVerifications && pendingVerifications.length > 0 && (
+        {pendingVerificationsList && pendingVerificationsList.length > 0 && (
           <div className="mt-8">
             <h2 className="text-lg font-semibold text-stone-900 flex items-center gap-2">
               {es ? "Verificaciones pendientes" : "Pending verifications"}
-              <Badge variant="amber">{pendingVerifications.length}</Badge>
+              <Badge variant="amber">{pendingVerificationsList.length}</Badge>
             </h2>
             <div className="mt-4 space-y-3">
-              {pendingVerifications.map((v) => (
+              {pendingVerificationsList.map((v) => (
                 <Card key={v.id} padding="md">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
@@ -69,6 +69,7 @@ export default async function AdminSittersPage({ params }: Props) {
                       verificationId={v.id}
                       userId={v.user_id}
                       verificationType={v.type}
+                      documentPath={v.document_url}
                     />
                   </div>
                 </Card>

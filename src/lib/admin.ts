@@ -19,5 +19,11 @@ export async function requireAdmin(locale: string) {
     redirect(`/${locale}/dashboard`);
   }
 
-  return { user, supabase, profile };
+  // Fetch pending verification count for admin nav badge
+  const { count: pendingVerifications } = await supabase
+    .from("verifications")
+    .select("*", { count: "exact", head: true })
+    .in("status", ["pending", "submitted"]);
+
+  return { user, supabase, profile, pendingVerifications: pendingVerifications ?? 0 };
 }

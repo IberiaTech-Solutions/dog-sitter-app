@@ -43,8 +43,6 @@ export default async function ProfilePage({ params }: Props) {
       userName={profile.full_name}
       userRole={profile.role}
       avatarUrl={profile.avatar_url}
-      backHref="/dashboard"
-      title={locale === "es" ? "Mi perfil" : "My profile"}
     >
       <div>
         <h1 className="text-2xl font-bold text-stone-900">

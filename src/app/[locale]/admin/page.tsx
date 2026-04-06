@@ -12,7 +12,7 @@ type Props = {
 export default async function AdminOverviewPage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale });
-  const { supabase, profile } = await requireAdmin(locale);
+  const { supabase, profile, pendingVerifications } = await requireAdmin(locale);
   const es = locale === "es";
 
   const { data: stats } = await supabase.rpc("admin_dashboard_stats");
@@ -43,7 +43,7 @@ export default async function AdminOverviewPage({ params }: Props) {
           </h1>
         </div>
 
-        <AdminNav locale={locale} active="overview" />
+        <AdminNav locale={locale} active="overview" pendingVerifications={pendingVerifications} />
 
         <div className="mt-8 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {statCards.map((stat) => (

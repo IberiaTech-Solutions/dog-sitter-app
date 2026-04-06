@@ -57,8 +57,6 @@ export default async function ReviewPage({ params }: Props) {
       userName={profile?.full_name ?? ""}
       userRole={profile?.role ?? "owner"}
       avatarUrl={profile?.avatar_url}
-      backHref="/dashboard"
-      title={locale === "es" ? "Dejar opinión" : "Leave review"}
     >
       <div className="max-w-lg">
         <h1 className="text-2xl font-bold text-stone-900">

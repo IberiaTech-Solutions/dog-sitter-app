@@ -12,7 +12,7 @@ type Props = {
 export default async function AdminBookingsPage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale });
-  const { supabase, profile } = await requireAdmin(locale);
+  const { supabase, profile, pendingVerifications } = await requireAdmin(locale);
   const es = locale === "es";
 
   const { data: bookings } = await supabase
@@ -44,7 +44,7 @@ export default async function AdminBookingsPage({ params }: Props) {
           </h1>
         </div>
 
-        <AdminNav locale={locale} active="bookings" />
+        <AdminNav locale={locale} active="bookings" pendingVerifications={pendingVerifications} />
 
         <div className="mt-8 space-y-3">
           {!bookings || bookings.length === 0 ? (

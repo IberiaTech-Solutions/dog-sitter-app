@@ -40,7 +40,12 @@ export function PetForm({ existing }: { existing?: Pet }) {
   const es = locale === "es";
 
   const [name, setName] = useState(existing?.name ?? "");
-  const [species, setSpecies] = useState(existing?.species ?? "dog");
+  const [species, setSpecies] = useState(
+    existing?.species && !["dog", "cat", "bird", "rabbit"].includes(existing.species) ? "other" : (existing?.species ?? "dog")
+  );
+  const [customSpecies, setCustomSpecies] = useState(
+    existing?.species && !["dog", "cat", "bird", "rabbit"].includes(existing.species) ? existing.species : ""
+  );
   const [breed, setBreed] = useState(existing?.breed ?? "");
   const [age, setAge] = useState(existing?.age_years?.toString() ?? "");
   const [weight, setWeight] = useState(existing?.weight_kg?.toString() ?? "");
@@ -55,6 +60,11 @@ export function PetForm({ existing }: { existing?: Pet }) {
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error(es ? "La foto es demasiado grande (máx 5MB)" : "Photo too large (max 5MB)");
+      e.target.value = "";
+      return;
+    }
     setUploading(true);
 
     const supabase = createClient();
@@ -85,10 +95,23 @@ export function PetForm({ existing }: { existing?: Pet }) {
       return;
     }
 
+    if (age && (parseInt(age) < 0 || parseInt(age) > 30)) {
+      toast.error(es ? "Edad no válida (0-30)" : "Invalid age (0-30)");
+      setLoading(false);
+      return;
+    }
+    if (weight && (parseFloat(weight) < 0 || parseFloat(weight) > 200)) {
+      toast.error(es ? "Peso no válido (0-200 kg)" : "Invalid weight (0-200 kg)");
+      setLoading(false);
+      return;
+    }
+
+    const finalSpecies = species === "other" && customSpecies.trim() ? customSpecies.trim().toLowerCase() : species;
+
     const petData = {
       owner_id: user.id,
       name,
-      species,
+      species: finalSpecies,
       breed: breed || null,
       age_years: age ? parseInt(age) : null,
       weight_kg: weight ? parseFloat(weight) : null,
@@ -136,11 +159,22 @@ export function PetForm({ existing }: { existing?: Pet }) {
               <PawPrint className="w-8 h-8 text-stone-300" />
             </div>
           )}
-          <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">
-            <Upload className="w-4 h-4" />
-            {uploading ? (es ? "Subiendo..." : "Uploading...") : es ? "Subir foto" : "Upload photo"}
-            <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
-          </label>
+          <div className="flex flex-col gap-2">
+            <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">
+              <Upload className="w-4 h-4" />
+              {uploading ? (es ? "Subiendo..." : "Uploading...") : es ? "Subir foto" : "Upload photo"}
+              <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+            </label>
+            {photoUrl && (
+              <button
+                type="button"
+                onClick={() => setPhotoUrl("")}
+                className="text-xs text-red-500 hover:text-red-700 transition-colors"
+              >
+                {es ? "Quitar foto" : "Remove photo"}
+              </button>
+            )}
+          </div>
         </div>
       </Card>
 
@@ -168,6 +202,16 @@ export function PetForm({ existing }: { existing?: Pet }) {
             </button>
           ))}
         </div>
+        {species === "other" && (
+          <input
+            type="text"
+            value={customSpecies}
+            onChange={(e) => setCustomSpecies(e.target.value)}
+            className="mt-3 w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm placeholder:text-stone-400 focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+            placeholder={es ? "Ej: hámster, tortuga, pez..." : "E.g. hamster, turtle, fish..."}
+            maxLength={30}
+          />
+        )}
       </Card>
 
       {/* Basic info */}
@@ -185,6 +229,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
               onChange={(e) => setName(e.target.value)}
               className={inputClass}
               placeholder={es ? "Nombre de tu mascota" : "Your pet's name"}
+              maxLength={50}
             />
           </div>
 
@@ -199,6 +244,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
               onChange={(e) => setBreed(e.target.value)}
               className={inputClass}
               placeholder={es ? "Ej: Golden Retriever" : "E.g. Golden Retriever"}
+              maxLength={50}
             />
           </div>
 
@@ -251,9 +297,10 @@ export function PetForm({ existing }: { existing?: Pet }) {
               id="microchip"
               type="text"
               value={microchip}
-              onChange={(e) => setMicrochip(e.target.value)}
+              onChange={(e) => setMicrochip(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))}
               className={inputClass}
               placeholder="941000XXXXXXXXX"
+              maxLength={20}
             />
           </div>
 
@@ -267,6 +314,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
               value={medical}
               onChange={(e) => setMedical(e.target.value)}
               className={inputClass}
+              maxLength={1000}
               placeholder={es
                 ? "Alergias, medicación, condiciones especiales..."
                 : "Allergies, medication, special conditions..."}
@@ -283,6 +331,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
               value={instructions}
               onChange={(e) => setInstructions(e.target.value)}
               className={inputClass}
+              maxLength={1000}
               placeholder={es
                 ? "Horarios de comida, rutinas, cosas que le gustan..."
                 : "Feeding times, routines, things they like..."}

@@ -22,9 +22,15 @@ type Sitter = {
   services: string[];
   pet_types: string[];
   is_verified: boolean;
+  has_insurance: boolean;
   distance_meters: number;
   sitter_lat: number;
   sitter_lng: number;
+  bio: string | null;
+  city: string | null;
+  review_count: number;
+  avg_rating: number | null;
+  experience_years: number;
 };
 
 const serviceLabels: Record<string, Record<string, string>> = {
@@ -90,6 +96,52 @@ export function SitterSearch() {
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
   const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [availableSitterIds, setAvailableSitterIds] = useState<Set<string> | null>(null);
+
+  const todayStr = new Date().toISOString().split("T")[0];
+
+  // Fetch availability when dates change
+  useEffect(() => {
+    if (!dateFrom || sitters.length === 0) {
+      setAvailableSitterIds(null);
+      return;
+    }
+
+    const finalTo = dateTo || dateFrom;
+    const supabase = createClient();
+
+    async function checkAvailability() {
+      const { data } = await supabase
+        .from("sitter_availability")
+        .select("sitter_id, date, is_available")
+        .gte("date", dateFrom)
+        .lte("date", finalTo)
+        .eq("is_available", true);
+
+      if (!data) { setAvailableSitterIds(null); return; }
+
+      // Count available days per sitter
+      const start = new Date(dateFrom);
+      const end = new Date(finalTo);
+      const totalDays = Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+
+      const counts: Record<string, number> = {};
+      data.forEach((row) => {
+        counts[row.sitter_id] = (counts[row.sitter_id] || 0) + 1;
+      });
+
+      // Only include sitters available for ALL requested days
+      const ids = new Set<string>();
+      for (const [id, count] of Object.entries(counts)) {
+        if (count >= totalDays) ids.add(id);
+      }
+      setAvailableSitterIds(ids);
+    }
+
+    checkAvailability();
+  }, [dateFrom, dateTo, sitters]);
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
@@ -97,8 +149,9 @@ export function SitterSearch() {
     if (selectedPets.size > 0) count++;
     if (priceMin || priceMax) count++;
     if (verifiedOnly) count++;
+    if (dateFrom) count++;
     return count;
-  }, [selectedServices.size, selectedPets.size, priceMin, priceMax, verifiedOnly]);
+  }, [selectedServices.size, selectedPets.size, priceMin, priceMax, verifiedOnly, dateFrom]);
 
   function clearFilters() {
     setSelectedServices(new Set());
@@ -106,6 +159,8 @@ export function SitterSearch() {
     setPriceMin("");
     setPriceMax("");
     setVerifiedOnly(false);
+    setDateFrom("");
+    setDateTo("");
   }
 
   function toggleInSet(set: Set<string>, value: string): Set<string> {
@@ -131,9 +186,10 @@ export function SitterSearch() {
       if (priceMin && s.hourly_rate < Number(priceMin)) return false;
       if (priceMax && s.hourly_rate > Number(priceMax)) return false;
       if (verifiedOnly && !s.is_verified) return false;
+      if (availableSitterIds !== null && !availableSitterIds.has(s.id)) return false;
       return true;
     });
-  }, [sitters, selectedServices, selectedPets, priceMin, priceMax, verifiedOnly]);
+  }, [sitters, selectedServices, selectedPets, priceMin, priceMax, verifiedOnly, availableSitterIds]);
 
   async function searchByCoords(lat: number, lng: number) {
     setLoading(true);
@@ -299,15 +355,16 @@ export function SitterSearch() {
         </Card>
       )}
 
-      {/* Results with map */}
+      {/* Results with filters + map */}
       {!loading && searched && sitters.length > 0 && (
-        <>
-          {/* Filter bar */}
-          <Card className="mt-6">
+        <div className="mt-6 grid md:grid-cols-[240px_1fr] gap-4">
+          {/* Filters sidebar — always visible on desktop, toggle on mobile */}
+          <div>
+            {/* Mobile toggle */}
             <button
               type="button"
               onClick={() => setFiltersOpen((v) => !v)}
-              className="w-full flex items-center justify-between px-5 py-3"
+              className="md:hidden w-full flex items-center justify-between rounded-2xl bg-white border border-stone-100 px-5 py-3 shadow-sm mb-3"
             >
               <div className="flex items-center gap-2">
                 <span className="text-sm font-semibold text-stone-900">
@@ -317,15 +374,33 @@ export function SitterSearch() {
                   <Badge variant="green">{activeFilterCount}</Badge>
                 )}
               </div>
-              {filtersOpen ? (
-                <ChevronUp className="w-4 h-4 text-stone-400" />
-              ) : (
-                <ChevronDown className="w-4 h-4 text-stone-400" />
-              )}
+              {filtersOpen ? <ChevronUp className="w-4 h-4 text-stone-400" /> : <ChevronDown className="w-4 h-4 text-stone-400" />}
             </button>
 
-            {filtersOpen && (
-              <div className="px-5 pb-5 space-y-5 border-t border-stone-100 pt-4">
+            <div className={`rounded-2xl bg-white border border-stone-100 p-5 shadow-sm space-y-5 ${filtersOpen ? "block" : "hidden md:block"}`}>
+                {/* Dates */}
+                <div>
+                  <p className="text-xs font-medium text-stone-500 mb-2">
+                    {es ? "Fechas" : "Dates"}
+                  </p>
+                  <div className="space-y-2">
+                    <input
+                      type="date"
+                      value={dateFrom}
+                      onChange={(e) => setDateFrom(e.target.value)}
+                      min={todayStr}
+                      className="w-full rounded-xl border border-stone-200 bg-stone-50 px-3 py-2 text-sm focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+                    />
+                    <input
+                      type="date"
+                      value={dateTo}
+                      onChange={(e) => setDateTo(e.target.value)}
+                      min={dateFrom || todayStr}
+                      className="w-full rounded-xl border border-stone-200 bg-stone-50 px-3 py-2 text-sm focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
                 {/* Service type */}
                 <div>
                   <p className="text-xs font-medium text-stone-500 mb-2">
@@ -441,12 +516,13 @@ export function SitterSearch() {
                     {es ? "Limpiar filtros" : "Clear filters"}
                   </Button>
                 )}
-              </div>
-            )}
-          </Card>
+            </div>
+          </div>
 
+          {/* Results column */}
+          <div>
           {/* Results header with view toggle */}
-          <div className="mt-6 flex items-center justify-between">
+          <div className="flex items-center justify-between">
             <p className="text-sm text-stone-400">
               {filteredSitters.length !== sitters.length
                 ? `${filteredSitters.length} / ${sitters.length} ${es ? "cuidadores" : "sitters"}`
@@ -505,7 +581,7 @@ export function SitterSearch() {
                       className="group block rounded-2xl bg-white p-5 border border-stone-100 hover:border-stone-200 hover:shadow-lg hover:shadow-stone-100/50 transition-all"
                     >
                       <div className="flex items-start gap-3.5">
-                        <Avatar name={sitter.full_name} src={sitter.avatar_url} size="md" />
+                        <Avatar name={sitter.full_name} src={sitter.avatar_url} size="lg" />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <h3 className="font-semibold text-stone-900 truncate group-hover:text-green-700 transition-colors">
@@ -514,11 +590,41 @@ export function SitterSearch() {
                             {sitter.is_verified && (
                               <Shield className="w-4 h-4 text-green-500 shrink-0" />
                             )}
+                            {sitter.has_insurance && (
+                              <Shield className="w-4 h-4 text-blue-500 shrink-0" />
+                            )}
                           </div>
-                          <div className="flex items-center gap-1 text-xs text-stone-400 mt-0.5">
-                            <MapPin className="w-3 h-3" />
-                            {Math.round(sitter.distance_meters / 1000)} km
+                          <div className="flex items-center gap-3 mt-1 text-xs text-stone-400">
+                            {sitter.city && (
+                              <span className="flex items-center gap-1">
+                                <MapPin className="w-3 h-3" />
+                                {sitter.city}
+                              </span>
+                            )}
+                            <span>{Math.round(sitter.distance_meters / 1000)} km</span>
+                            {sitter.experience_years > 0 && (
+                              <span>{sitter.experience_years} {es ? "años exp." : "yrs exp."}</span>
+                            )}
                           </div>
+                          {/* Rating */}
+                          {sitter.review_count > 0 && (
+                            <div className="flex items-center gap-1.5 mt-1.5">
+                              <div className="flex text-amber-400">
+                                {[...Array(5)].map((_, i) => (
+                                  <Star key={i} className={`w-3 h-3 ${i < Math.round(sitter.avg_rating ?? 0) ? "fill-current" : "text-stone-200"}`} />
+                                ))}
+                              </div>
+                              <span className="text-xs text-stone-500">
+                                {sitter.avg_rating} ({sitter.review_count})
+                              </span>
+                            </div>
+                          )}
+                          {/* Bio excerpt */}
+                          {sitter.bio && (
+                            <p className="mt-1.5 text-xs text-stone-400 line-clamp-2">
+                              {sitter.bio}
+                            </p>
+                          )}
                         </div>
                         <div className="text-right shrink-0">
                           <span className="text-lg font-bold text-stone-900">
@@ -528,17 +634,6 @@ export function SitterSearch() {
                             {t("sitter.perVisit")}
                           </span>
                         </div>
-                      </div>
-
-                      <div className="mt-3 flex gap-2">
-                        {sitter.pet_types.map((pet) => {
-                          const Icon = petIcons[pet] ?? PawPrint;
-                          return (
-                            <div key={pet} className="w-7 h-7 rounded-lg bg-stone-50 flex items-center justify-center" title={pet}>
-                              <Icon className="w-3.5 h-3.5 text-stone-500" />
-                            </div>
-                          );
-                        })}
                       </div>
 
                       <div className="mt-3 flex flex-wrap gap-1.5">
@@ -556,7 +651,7 @@ export function SitterSearch() {
 
             {/* Map — always shows ALL sitters, unfiltered */}
             {showMap && (
-              <div className={viewMode === "map" ? "h-[600px]" : "h-[600px] hidden lg:block"}>
+              <div className={viewMode === "map" ? "h-[600px]" : "h-[600px] hidden md:block"}>
                 <Suspense fallback={
                   <div className="h-full rounded-2xl bg-stone-100 border border-stone-200 flex items-center justify-center">
                     <div className="w-8 h-8 border-[3px] border-green-200 border-t-green-600 rounded-full animate-spin" />
@@ -567,7 +662,8 @@ export function SitterSearch() {
               </div>
             )}
           </div>
-        </>
+          </div>
+        </div>
       )}
     </div>
   );

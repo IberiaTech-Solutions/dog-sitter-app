@@ -56,8 +56,14 @@ export function ProfileForm({ profile, userId, referralCredit }: { profile: Prof
     e.target.value = "";
   }
 
+  const phoneValid = !phone || /^\+\d{1,3}[\s\-]?\d[\d\s\-()]{6,16}$/.test(phone);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!phoneValid) {
+      toast.error(es ? "Teléfono no válido" : "Invalid phone number");
+      return;
+    }
     setLoading(true);
 
     const supabase = createClient();
@@ -76,7 +82,7 @@ export function ProfileForm({ profile, userId, referralCredit }: { profile: Prof
       toast.error(es ? "No se pudo guardar" : "Could not save");
     } else {
       toast.success(es ? "Perfil actualizado" : "Profile updated");
-      router.refresh();
+      router.push("/dashboard");
     }
 
     setLoading(false);
@@ -124,6 +130,7 @@ export function ProfileForm({ profile, userId, referralCredit }: { profile: Prof
             required
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
+            maxLength={100}
           />
           <div>
             <label className="block text-sm font-medium text-stone-700 mb-1.5">
@@ -136,18 +143,30 @@ export function ProfileForm({ profile, userId, referralCredit }: { profile: Prof
               {es ? "No se puede cambiar" : "Cannot be changed"}
             </p>
           </div>
-          <Input
-            label={es ? "Teléfono" : "Phone"}
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder={es ? "+34 600 000 000" : "+34 600 000 000"}
-          />
+          <div>
+            <Input
+              label={es ? "Teléfono" : "Phone"}
+              type="tel"
+              value={phone}
+              onChange={(e) => {
+                const v = e.target.value.replace(/[^\d\s+\-()]/g, "");
+                setPhone(v);
+              }}
+              placeholder="+34 600 000 000"
+              maxLength={20}
+            />
+            {phone && !/^\+\d{1,3}[\s\-]?\d[\d\s\-()]{6,16}$/.test(phone) && (
+              <p className="mt-1 text-xs text-amber-500">
+                {es ? "Introduce un número válido con prefijo internacional" : "Enter a valid number with country code"}
+              </p>
+            )}
+          </div>
           <Input
             label={es ? "Ciudad" : "City"}
             value={city}
             onChange={(e) => setCity(e.target.value)}
             placeholder={es ? "Gijón, Asturias" : "Gijón, Asturias"}
+            maxLength={100}
           />
         </div>
       </Card>
@@ -159,27 +178,13 @@ export function ProfileForm({ profile, userId, referralCredit }: { profile: Prof
           value={bio}
           onChange={(e) => setBio(e.target.value)}
           rows={4}
+          maxLength={500}
           placeholder={
             es
               ? "Cuéntanos un poco sobre ti..."
               : "Tell us a bit about yourself..."
           }
         />
-      </Card>
-
-      {/* Role info */}
-      <Card>
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-stone-700">
-              {es ? "Tipo de cuenta" : "Account type"}
-            </p>
-            <p className="text-sm text-stone-500 mt-0.5">{roleLabel}</p>
-          </div>
-          <span className="text-xs text-stone-400 bg-stone-50 px-3 py-1.5 rounded-full border border-stone-200">
-            {es ? "No se puede cambiar" : "Cannot be changed"}
-          </span>
-        </div>
       </Card>
 
       <Button

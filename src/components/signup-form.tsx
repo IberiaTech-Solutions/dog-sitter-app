@@ -39,7 +39,7 @@ export function SignupForm() {
     setLoading(true);
 
     const supabase = createClient();
-    const { error: authError } = await supabase.auth.signUp({
+    const { data: signUpData, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -51,8 +51,15 @@ export function SignupForm() {
       },
     });
 
-    if (authError) {
-      toast.error(authError.message);
+    if (authError || !signUpData.user) {
+      toast.error(es ? "No se pudo crear la cuenta. Inténtalo de nuevo." : "Could not create account. Please try again.");
+      setLoading(false);
+      return;
+    }
+
+    // Supabase returns a user with no identities if email already exists (when confirm is off)
+    if (signUpData.user.identities?.length === 0) {
+      toast.error(es ? "No se pudo crear la cuenta. Inténtalo de nuevo." : "Could not create account. Please try again.");
       setLoading(false);
       return;
     }

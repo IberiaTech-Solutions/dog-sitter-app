@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/navigation";
@@ -9,7 +9,9 @@ import { Eye, EyeOff } from "lucide-react";
 
 export function LoginForm() {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
+  const es = locale === "es";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -26,12 +28,12 @@ export function LoginForm() {
     });
 
     if (authError) {
-      toast.error(authError.message);
+      toast.error(es ? "Correo o contraseña incorrectos" : "Incorrect email or password");
       setLoading(false);
       return;
     }
 
-    toast.success(t("common.appName"), { description: "Welcome back!" });
+    toast.success(t("common.appName"), { description: es ? "Bienvenido de nuevo" : "Welcome back" });
 
     // Check if user is admin and redirect accordingly
     const { data: { user } } = await supabase.auth.getUser();

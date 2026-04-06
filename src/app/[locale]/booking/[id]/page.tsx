@@ -1,8 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
-import { notFound } from "next/navigation";
-import { Link } from "@/i18n/navigation";
-import { Header, PageShell } from "@/components/ui";
+import { notFound, redirect } from "next/navigation";
+import { Shield, Star } from "lucide-react";
+import { DashboardShell, Avatar } from "@/components/ui";
 import { BookingForm } from "@/components/booking-form";
 
 type Props = {
@@ -14,7 +14,18 @@ export default async function BookingPage({ params }: Props) {
   const t = await getTranslations({ locale });
   const supabase = await createClient();
 
-  // Get sitter info
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect(`/${locale}/login`);
+
+  const { data: myProfile } = await supabase
+    .from("profiles")
+    .select("full_name, role, avatar_url")
+    .eq("id", user.id)
+    .single();
+
   const { data: profile } = await supabase
     .from("profiles")
     .select("*")
@@ -31,65 +42,85 @@ export default async function BookingPage({ params }: Props) {
 
   if (!sitterProfile) notFound();
 
-  // Get current user's pets
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: pets } = await supabase
+    .from("pets")
+    .select("*")
+    .eq("owner_id", user.id);
 
-  const { data: pets } = user
-    ? await supabase.from("pets").select("*").eq("owner_id", user.id)
-    : { data: [] };
+  const { data: reviews } = await supabase
+    .from("reviews")
+    .select("rating")
+    .eq("reviewee_id", id);
+
+  const reviewCount = reviews?.length ?? 0;
+  const avgRating = reviewCount > 0
+    ? reviews!.reduce((sum, r) => sum + r.rating, 0) / reviewCount
+    : null;
+
+  const es = locale === "es";
+
+  const policyLabels: Record<string, { es: string; en: string }> = {
+    flexible: { es: "Flexible — Reembolso completo hasta 24h antes", en: "Flexible — Full refund up to 24h before" },
+    moderate: { es: "Moderada — Reembolso completo hasta 5 días antes", en: "Moderate — Full refund up to 5 days before" },
+    strict: { es: "Estricta — 50% reembolso hasta 7 días antes", en: "Strict — 50% refund up to 7 days before" },
+  };
 
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
-      <Header appName={t("common.appName")} isLoggedIn={!!user} />
+    <DashboardShell
+      appName={t("common.appName")}
+      locale={locale}
+      userName={myProfile?.full_name ?? ""}
+      userRole={myProfile?.role ?? "owner"}
+      avatarUrl={myProfile?.avatar_url}
+    >
+      <h1 className="text-2xl font-bold text-stone-900">
+        {t("booking.title")}
+      </h1>
 
-      <PageShell>
-        <h1 className="text-2xl font-bold text-stone-900">
-          {t("booking.title")}
-        </h1>
-
-        {/* Sitter summary */}
-        <div className="mt-6 rounded-2xl bg-white border border-stone-100 p-6 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-full bg-green-100 flex items-center justify-center font-semibold text-green-700">
-              {profile.full_name.charAt(0)}
+      <div className="mt-6 rounded-2xl bg-white border border-stone-100 p-6 shadow-sm">
+        <div className="flex items-start gap-4">
+          <Avatar name={profile.full_name} src={profile.avatar_url} size="lg" />
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <p className="font-semibold text-stone-900">{profile.full_name}</p>
+              {sitterProfile.is_verified && <Shield className="w-4 h-4 text-green-500" />}
+              {sitterProfile.has_insurance && <Shield className="w-4 h-4 text-blue-500" />}
             </div>
-            <div>
-              <p className="font-semibold text-stone-900">
-                {profile.full_name}
-              </p>
-              <p className="text-sm text-stone-500">
-                {Number(sitterProfile.hourly_rate).toFixed(2).replace(".", ",")}{" "}
-                € {t("sitter.perVisit")}
-              </p>
-            </div>
+            <p className="text-sm text-stone-500">
+              {Number(sitterProfile.hourly_rate).toFixed(0)}€ {t("sitter.perVisit")}
+            </p>
+            {avgRating !== null && (
+              <div className="flex items-center gap-1.5 mt-1">
+                <div className="flex text-amber-400">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`w-3.5 h-3.5 ${i < Math.round(avgRating) ? "fill-current" : "text-stone-200"}`} />
+                  ))}
+                </div>
+                <span className="text-xs text-stone-500">{avgRating.toFixed(1)} ({reviewCount})</span>
+              </div>
+            )}
           </div>
         </div>
-
-        {!user ? (
-          <div className="mt-6 rounded-2xl bg-yellow-50 border border-yellow-100 p-6 text-center">
-            <p className="text-sm text-yellow-800">
-              {locale === "es"
-                ? "Inicia sesión para hacer una reserva."
-                : "Please log in to make a booking."}
+        {sitterProfile.cancellation_policy && (
+          <div className="mt-4 pt-4 border-t border-stone-100">
+            <p className="text-xs text-stone-400">
+              {es ? "Política de cancelación" : "Cancellation policy"}
             </p>
-            <Link
-              href="/login"
-              className="mt-3 inline-block rounded-xl bg-green-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-green-700 transition-all"
-            >
-              {t("common.login")}
-            </Link>
+            <p className="text-sm text-stone-600 mt-0.5">
+              {es
+                ? policyLabels[sitterProfile.cancellation_policy as string]?.es
+                : policyLabels[sitterProfile.cancellation_policy as string]?.en}
+            </p>
           </div>
-        ) : (
-          <BookingForm
-            sitterId={id}
-            sitterRate={Number(sitterProfile.hourly_rate)}
-            services={sitterProfile.services as string[]}
-            pets={pets ?? []}
-          />
         )}
-      </PageShell>
-    </div>
+      </div>
+
+      <BookingForm
+        sitterId={id}
+        sitterRate={Number(sitterProfile.hourly_rate)}
+        services={sitterProfile.services as string[]}
+        pets={pets ?? []}
+      />
+    </DashboardShell>
   );
 }

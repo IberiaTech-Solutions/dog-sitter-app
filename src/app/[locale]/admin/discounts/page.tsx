@@ -13,7 +13,7 @@ type Props = {
 export default async function AdminDiscountsPage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale });
-  const { supabase, profile } = await requireAdmin(locale);
+  const { supabase, profile, pendingVerifications } = await requireAdmin(locale);
   const es = locale === "es";
 
   const { data: discounts } = await supabase
@@ -39,7 +39,7 @@ export default async function AdminDiscountsPage({ params }: Props) {
           </h1>
         </div>
 
-        <AdminNav locale={locale} active="discounts" />
+        <AdminNav locale={locale} active="discounts" pendingVerifications={pendingVerifications} />
 
         {/* Add new discount form */}
         <div className="mt-8">

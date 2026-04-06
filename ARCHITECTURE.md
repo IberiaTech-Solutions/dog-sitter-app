@@ -46,16 +46,16 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 | Security headers | ✅ Done | HSTS, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy |
 | RLS policies | ✅ Done | All tables secured, admin override policies, no role self-escalation |
 | Audit logging | ✅ Done | GDPR-compliant data access/modification tracking |
-| Dashboard navigation | ✅ Done | Desktop top nav + mobile bottom tab bar, back buttons on sub-pages |
+| Dashboard navigation | ✅ Done | Desktop top nav + mobile bottom tab bar, consistent logo on all pages |
 | Shared UI library | ✅ Done | Button, Input, Textarea, Select, Card, Badge, Avatar, Header, DashboardShell, PageShell |
 | Meet & greet flow | ✅ Done | Free intro meeting before booking, request/accept/complete flow |
 | PWA (Progressive Web App) | ✅ Done | Manifest, service worker, offline page, installable on mobile home screen |
-| Search filters | ✅ Done | Service type, pet type, price range, verified only — client-side filtering |
+| Search filters | ✅ Done | Service type, pet type, price range, date availability, verified only — client-side filtering |
 | Booking overlap prevention | ✅ Done | Server-side check in checkout + client-side check on sitter accept |
 | Repeat bookings | ✅ Done | "Book again" button on completed bookings for owners |
 | Reviews-for-discounts | ✅ Done | After submitting a review, owner receives partner discount code via toast |
 | Push notifications | ✅ Done | VAPID web push, service worker handles push/click, sends on booking/decline/meet-greet |
-| Sitter verification (DNI) | ✅ Done | Upload DNI/NIE, status tracking (pending→submitted→approved/rejected), admin approve/reject |
+| Sitter verification (DNI) | ✅ Done | Upload DNI/NIE/passport, status tracking (pending→submitted→approved/rejected), admin approve/reject with document viewer |
 | Avatar dropdown menu | ✅ Done | Profile avatar in navbar with dropdown (role badge, profile link, logout) |
 | Branded icons | ✅ Done | Two-paw logo from source image — favicon, PWA icons, navbar, no emojis anywhere |
 | Landing → search flow | ✅ Done | City input on landing page passes to search page and auto-searches |
@@ -70,6 +70,17 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 | Daycare service type | ✅ Done | Added to services enum, all forms, search filters, checkout API |
 | Two-way reviews | ✅ Done | Both owner and sitter can review each other after completed booking |
 | Referral program | ✅ Done | Unique referral code per user, €5 credit for both, code input on signup, credit shown in profile |
+| Availability-aware booking | ✅ Done | Calendar date picker on booking form, shows sitter's available days, blocks unavailable dates, range validation |
+| Search date filter | ✅ Done | Date range filter on search page, only shows sitters available for all requested days |
+| Enriched search cards | ✅ Done | Bio excerpt, city, star rating, review count, experience, verified + insured badges |
+| Profile completion card | ✅ Done | Dashboard progress tracker with pending/in-review/done states, role-aware steps |
+| Admin invite users | ✅ Done | Invite form on admin/users, creates user via Supabase inviteUserByEmail |
+| Admin verification badges | ✅ Done | Pending verification count badge on admin nav Sitters tab |
+| Passport verification | ✅ Done | Accepts DNI, NIE, or passport for non-Spanish sitters |
+| Secure document storage | ✅ Done | Identity documents stored as private paths, admin views via signed URLs (5-min expiry) |
+| Input validation | ✅ Done | Phone format, file size limits, maxLength on all fields, password strength checks |
+| Consistent navigation | ✅ Done | DashboardShell on all logged-in pages (search, sitter profile, booking, pets), public Header for visitors only |
+| Signup security | ✅ Done | Generic error messages prevent email enumeration, identity check for existing users |
 
 ### Not Yet Started
 
@@ -77,10 +88,16 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 |---------|--------|----------|-------|
 | Bizum payments | ❌ | High | Schema ready, needs Redsys merchant account — key Spanish differentiator |
 | WhatsApp integration | ❌ | High | Booking notifications via WhatsApp — high engagement in Spain |
+| Sitter badges | ❌ | High | "Top Sitter", "X repeat clients", "Quick responder" — builds trust on search cards |
+| Sitter safety quiz | ❌ | High | Questionnaire before receiving bookings — Rover and Wag both require this |
 | Instant booking option | ❌ | Medium | Let sitters opt into instant-accept — Rover offers this |
+| Last-minute / available today | ❌ | Medium | Sitters flag "available today" for urgent walks — Wag's core feature |
+| Booking confirmation emails | ❌ | Medium | Email confirmations for bookings, cancellations, reminders |
 | Background checks API | ❌ | Medium | External verification provider (DNI upload works, external not wired) |
 | Blog / content marketing | ❌ | Medium | SEO content for "cuidador de mascotas" — Snau has active blog |
+| Phone verification (SMS OTP) | ❌ | Medium | Verify phone via Twilio/Vonage SMS — Supabase Auth built-in support |
 | In-app customer support chat | ❌ | Low | Live chat or chatbot for user issues |
+| In-app video chat | ❌ | Low | Video calls between owner and sitter — no competitor has this yet |
 | Mobile app (React Native) | ❌ | Phase 2 | PWA covers mobile for now |
 
 ---
@@ -89,44 +106,55 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 
 ### Competitors in Spain
 
-| | **Us** | **Rover** | **Snau** | **PetBacker** |
-|---|---|---|---|---|
-| **Commission** | 18% | ~20% | ~15-18% | ~15% |
-| **Insurance** | Sitter must carry RC | Platform guarantee €25K | Partner insurer | Basic coverage |
-| **DNI verification** | ✅ | ❌ | ✅ | ❌ |
-| **GPS live map** | ✅ Real-time map | Walking only | Walking only | Walking only |
-| **Meet & greet** | ✅ First-class flow | Encouraged | Promoted | Basic |
-| **Bizum** | ❌ Planned | ❌ | Exploring | ❌ |
-| **WhatsApp** | ❌ Planned | ❌ | ❌ | ❌ |
-| **Native apps** | PWA | iOS + Android | iOS + Android | iOS + Android |
-| **Sitter pool** | Launching (Gijón) | Largest in Spain | Medium | Small |
-| **Referral program** | ✅ €5 both | ✅ | ✅ | ✅ |
-| **Instant booking** | ❌ | Optional | ❌ | ❌ |
-| **Two-way reviews** | ✅ | ✅ | ❌ | ❌ |
-| **Daycare** | ✅ | ✅ | ✅ | ✅ |
-| **Cancellation tiers** | ✅ | ✅ | Platform-defined | Platform-defined |
-| **Multi-language** | es + en | 10+ | es only | 20+ |
+| | **Us** | **Rover** | **Wag** | **Snau** | **PetBacker** |
+|---|---|---|---|---|---|
+| **Commission** | 18% sitter | 20% sitter + 11% owner | ~40% sitter | ~15-18% | ~15% |
+| **Insurance** | Sitter must carry RC | Platform €25K | Platform $1M | Partner insurer | Basic |
+| **DNI verification** | ✅ + passport | ❌ | ❌ | ✅ | ❌ |
+| **GPS live map** | ✅ Real-time + trail | Walking only | Walking only | Walking only | Walking only |
+| **Meet & greet** | ✅ First-class flow | Encouraged | ❌ | Promoted | Basic |
+| **Bizum** | ❌ Planned | ❌ | ❌ | Exploring | ❌ |
+| **WhatsApp** | ❌ Planned | ❌ | ❌ | ❌ | ❌ |
+| **Native apps** | PWA | iOS + Android | iOS + Android | iOS + Android | iOS + Android |
+| **Sitter pool** | Launching (Gijón) | Largest globally | US-focused | Medium (Spain) | Small |
+| **Referral program** | ✅ €5 both | ✅ ~$20 | ✅ ~$20 | ✅ | ✅ |
+| **Instant booking** | ❌ | Optional | AI matching | ❌ | ❌ |
+| **Two-way reviews** | ✅ | ✅ | Limited | ❌ | ❌ |
+| **Daycare** | ✅ | ✅ | ✅ | ✅ | ✅ |
+| **Cancellation tiers** | ✅ Sitter chooses | ✅ | Platform-defined | Platform-defined | Platform-defined |
+| **Background checks** | DNI upload | Required | Required + training | Interview | Basic |
+| **Sitter badges** | ❌ | ✅ | ✅ | ❌ | ❌ |
+| **Safety quiz** | ❌ | ✅ | ✅ | ❌ | ❌ |
+| **24/7 support** | ❌ | Phone + chat | Phone + chat | Email | Email |
+| **Owner fee** | 0% | 11% | Bundled | 0% | 0% |
+| **Availability calendar** | ✅ On booking | Basic date picker | Basic | ✅ | Basic |
+| **Date filter search** | ✅ | ✅ | ✅ | ❌ | ❌ |
+| **Multi-language** | es + en | 10+ | en only | es only | 20+ |
+| **Video chat** | ❌ | ❌ | ❌ | ❌ | ❌ |
+| **Snau status** | — | Active | Active | Appears offline | Active |
 
 ### What We Do Better
 
-1. **Lower commission (18%)** — undercuts Rover (20%), competitive with Snau/PetBacker
-2. **Real-time GPS live map** — competitors only track walking; we show live sitter location on a map with trail
-3. **DNI/NIE + insurance verification** — strongest trust pipeline; only Snau does DNI, nobody requires sitter insurance
+1. **Lower total cost** — 18% sitter commission, 0% owner fee vs Rover's 31% total (20% + 11%)
+2. **Real-time GPS live map** — full map with trail polyline, not just walking pings
+3. **DNI/NIE/passport + insurance verification** — strongest trust pipeline in Spain
 4. **Meet & greet as first-class feature** — built into booking flow, not just "encouraged"
-5. **Spanish-first localization** — Gijón focus, designed for Spanish market from day one (not adapted from US)
-6. **No platform guarantee liability** — sitters carry their own RC insurance, zero financial exposure for us
-7. **Notification badges** — real-time unread counts in navbar, better UX than competitors
+5. **Availability calendar on booking** — shows available days visually, blocks unavailable dates
+6. **Spanish-first localization** — designed for Spain from day one, not adapted from US
+7. **No platform guarantee liability** — sitters carry their own RC insurance, zero financial exposure
+8. **Profile completion tracking** — guided onboarding with progress bar and status tracking
 
 ### What Competitors Have That We Don't (Priority Gaps)
 
-1. **Referral program** — all competitors offer this; critical for growth in Gijón
-2. **Bizum payments** — uniquely Spanish, nobody has it yet — first-mover advantage
-3. **WhatsApp notifications** — Spain's #1 messaging app, huge engagement potential
-4. **Native mobile apps** — PWA works but app store presence builds trust
-5. **Instant booking** — Rover sitters can opt in, reduces friction
-6. **Daycare service** — all competitors offer it, we should add it
-7. **Two-way reviews** — builds sitter trust, Rover does this
-8. **Blog/SEO content** — Snau has active blog, helps organic acquisition
+1. **Bizum payments** — uniquely Spanish, nobody has it yet — first-mover advantage
+2. **WhatsApp notifications** — Spain's #1 messaging app, huge engagement potential
+3. **Sitter badges** — "Top Sitter", repeat clients, quick responder — builds trust
+4. **Sitter safety quiz** — basic questionnaire before receiving bookings
+5. **Instant/same-day booking** — Rover offers opt-in, Wag uses AI matching
+6. **Native mobile apps** — PWA works but app store presence builds trust
+7. **24/7 customer support** — both Rover and Wag offer phone + chat
+8. **Background check API** — external verification beyond DNI upload
+9. **Blog/SEO content** — organic acquisition, Snau had active blog
 
 ---
 

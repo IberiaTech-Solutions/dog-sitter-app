@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { DashboardShell, Card, Avatar, Badge, LinkButton } from "@/components/ui";
 import { BookingActions } from "@/components/booking-actions";
 import { PaymentToast } from "@/components/payment-toast";
+import { ProfileCompletion } from "@/components/profile-completion";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -29,6 +30,37 @@ export default async function DashboardPage({ params }: Props) {
     .single();
 
   if (profile?.role === "admin") redirect(`/${locale}/admin`);
+
+  const isSitter = profile?.role === "sitter" || profile?.role === "both";
+  const isOwnerRole = profile?.role === "owner" || profile?.role === "both";
+
+  // Profile completion data
+  const { count: petCount } = await supabase
+    .from("pets")
+    .select("*", { count: "exact", head: true })
+    .eq("owner_id", user.id);
+
+  const { data: sitterProfile } = isSitter
+    ? await supabase.from("sitter_profiles").select("is_verified, has_insurance").eq("id", user.id).single()
+    : { data: null };
+
+  // Check if verifications are submitted (under review) — counts as "done" for completion
+  const { data: verifications } = isSitter
+    ? await supabase.from("verifications").select("type, status").eq("user_id", user.id).in("type", ["dni_nie", "sitter_insurance"])
+    : { data: null };
+
+  const dniStatus = verifications?.find((v) => v.type === "dni_nie")?.status;
+  const insuranceStatus = verifications?.find((v) => v.type === "sitter_insurance")?.status;
+  const dniDone: boolean | "in_review" = sitterProfile?.is_verified || dniStatus === "approved"
+    ? true
+    : dniStatus === "submitted"
+      ? "in_review"
+      : false;
+  const insuranceDone: boolean | "in_review" = sitterProfile?.has_insurance || insuranceStatus === "approved"
+    ? true
+    : insuranceStatus === "submitted"
+      ? "in_review"
+      : false;
 
   const { data: bookings } = await supabase
     .from("bookings")
@@ -63,6 +95,20 @@ export default async function DashboardPage({ params }: Props) {
       avatarUrl={profile?.avatar_url}
     >
       <PaymentToast />
+
+      <ProfileCompletion
+        profile={{
+          avatar_url: profile?.avatar_url ?? null,
+          city: profile?.city ?? null,
+          phone: profile?.phone ?? null,
+          bio: profile?.bio ?? null,
+          role: profile?.role ?? "owner",
+        }}
+        hasPets={(petCount ?? 0) > 0}
+        hasSitterProfile={!!sitterProfile}
+        isVerified={dniDone ?? false}
+        hasInsurance={insuranceDone ?? false}
+      />
 
       <h1 className="text-2xl font-bold text-stone-900">
         {locale === "es" ? "Mis reservas" : "My bookings"}

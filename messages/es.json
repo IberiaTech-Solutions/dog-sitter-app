@@ -74,7 +74,11 @@
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "noAccount": "¿No tienes cuenta?",
     "hasAccount": "¿Ya tienes cuenta?",
-    "orContinueWith": "O continúa con"
+    "orContinueWith": "O continúa con",
+    "loginHeroTitle": "Te eché de menos, pero estuve en buenas manos",
+    "loginHeroDesc": "Cuidadores verificados que cuidan como familia",
+    "signupHeroTitle": "Merezco a alguien que me cuide como tú",
+    "signupHeroDesc": "Encuentra cuidadores verificados cerca de ti, o conviértete en uno"
   },
   "sitter": {
     "nearYou": "Cuidadores cerca de ti",

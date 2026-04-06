@@ -63,11 +63,11 @@ export function VerificationForm({ userId, existing, type = "dni_nie" }: { userI
         ? "Sube tu póliza de seguro de responsabilidad civil (RC profesional). Es obligatorio para recibir reservas."
         : "Upload your liability insurance policy (professional RC). Required to receive bookings.")
     : (es
-        ? "Sube una foto de tu DNI o NIE para verificar tu identidad. Esto aumenta la confianza de los dueños."
-        : "Upload a photo of your DNI or NIE to verify your identity. This builds trust with pet owners.");
+        ? "Sube una foto de tu DNI, NIE o pasaporte para verificar tu identidad. Esto aumenta la confianza de los dueños."
+        : "Upload a photo of your DNI, NIE, or passport to verify your identity. This builds trust with pet owners.");
   const uploadLabel = isInsurance
     ? (es ? "Subir póliza de seguro" : "Upload insurance policy")
-    : (es ? "Subir DNI / NIE" : "Upload DNI / NIE");
+    : (es ? "Subir DNI / NIE / Pasaporte" : "Upload DNI / NIE / Passport");
   const approvedMsg = isInsurance
     ? (es
         ? "Tu seguro ha sido verificado. Los dueños verán el badge de asegurado en tu perfil."
@@ -103,16 +103,15 @@ export function VerificationForm({ userId, existing, type = "dni_nie" }: { userI
       return;
     }
 
-    const { data: { publicUrl } } = supabase.storage
-      .from("verification-docs")
-      .getPublicUrl(upload.path);
+    // Store the path, not a public URL — documents should be private
+    const documentPath = upload.path;
 
     // Upsert verification record
     if (existing?.id) {
       await supabase
         .from("verifications")
         .update({
-          document_url: publicUrl,
+          document_url: documentPath,
           status: "submitted",
           submitted_at: new Date().toISOString(),
           notes: null,
@@ -122,7 +121,7 @@ export function VerificationForm({ userId, existing, type = "dni_nie" }: { userI
       await supabase.from("verifications").insert({
         user_id: userId,
         type,
-        document_url: publicUrl,
+        document_url: documentPath,
         status: "submitted",
         submitted_at: new Date().toISOString(),
       });
@@ -168,16 +167,14 @@ export function VerificationForm({ userId, existing, type = "dni_nie" }: { userI
             {description}
           </p>
 
-          <label className="inline-flex items-center gap-2 cursor-pointer">
-            <Button variant="outline" size="md" disabled={uploading} className="pointer-events-none">
-              <Upload className="w-4 h-4" />
-              {uploading
-                ? (es ? "Subiendo..." : "Uploading...")
-                : uploadLabel}
-            </Button>
+          <label className="inline-flex items-center gap-2 cursor-pointer rounded-xl border-2 border-green-600 text-green-600 hover:bg-green-50 px-5 py-2.5 text-sm font-semibold transition-all active:scale-[0.98]">
+            <Upload className="w-4 h-4" />
+            {uploading
+              ? (es ? "Subiendo..." : "Uploading...")
+              : uploadLabel}
             <input
               type="file"
-              accept="image/*,.pdf"
+              accept="image/jpeg,image/png,image/webp,.pdf"
               onChange={handleUpload}
               className="hidden"
               disabled={uploading}

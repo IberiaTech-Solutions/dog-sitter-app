@@ -74,7 +74,11 @@
     "forgotPassword": "Forgot your password?",
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?",
-    "orContinueWith": "Or continue with"
+    "orContinueWith": "Or continue with",
+    "loginHeroTitle": "I missed you, but I was in good hands",
+    "loginHeroDesc": "Verified sitters who care like family",
+    "signupHeroTitle": "They deserve someone who cares as much as you do",
+    "signupHeroDesc": "Find verified sitters near you, or become one"
   },
   "sitter": {
     "nearYou": "Sitters near you",

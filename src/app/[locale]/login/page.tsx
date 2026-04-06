@@ -24,14 +24,10 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent" />
         <div className="absolute bottom-12 left-12 right-12">
           <h2 className="text-3xl font-bold text-white leading-snug">
-            {t("home.ctaOwner") === "Find sitters"
-              ? "I missed you, but I was in good hands"
-              : "Te eché de menos, pero estuve en buenas manos"}
+            {t("auth.loginHeroTitle")}
           </h2>
           <p className="mt-2 text-white/70">
-            {t("home.ctaOwner") === "Find sitters"
-              ? "Verified sitters who care like family"
-              : "Cuidadores verificados que cuidan como familia"}
+            {t("auth.loginHeroDesc")}
           </p>
         </div>
       </div>

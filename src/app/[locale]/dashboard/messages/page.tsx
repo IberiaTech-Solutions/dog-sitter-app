@@ -81,8 +81,6 @@ export default async function MessagesPage({ params }: Props) {
       userName={profile?.full_name ?? ""}
       userRole={profile?.role ?? "owner"}
       avatarUrl={profile?.avatar_url}
-      backHref="/dashboard"
-      title={locale === "es" ? "Mensajes" : "Messages"}
     >
       <h1 className="text-2xl font-bold text-stone-900">
         {locale === "es" ? "Mensajes" : "Messages"}

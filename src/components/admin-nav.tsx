@@ -4,9 +4,10 @@ import { BarChart3, Dog, CalendarDays, Users, Tag } from "lucide-react";
 type Props = {
   locale: string;
   active: "overview" | "sitters" | "bookings" | "users" | "discounts";
+  pendingVerifications?: number;
 };
 
-export function AdminNav({ locale, active }: Props) {
+export function AdminNav({ locale, active, pendingVerifications }: Props) {
   const es = locale === "es";
   const items = [
     { key: "overview" as const, href: "/admin", icon: BarChart3, label: es ? "Resumen" : "Overview" },
@@ -30,6 +31,11 @@ export function AdminNav({ locale, active }: Props) {
         >
           <item.icon className="w-4 h-4" />
           {item.label}
+          {item.key === "sitters" && (pendingVerifications ?? 0) > 0 && (
+            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white">
+              {pendingVerifications}
+            </span>
+          )}
         </Link>
       ))}
     </nav>
