@@ -56,6 +56,17 @@ export default async function SitterProfilePage({ params }: Props) {
     sitter_uuid: id,
   });
 
+  // Count repeat clients (owners who booked more than once)
+  const { data: repeatData } = await supabase
+    .from("bookings")
+    .select("owner_id")
+    .eq("sitter_id", id)
+    .eq("status", "completed");
+
+  const ownerCounts: Record<string, number> = {};
+  repeatData?.forEach((b) => { ownerCounts[b.owner_id] = (ownerCounts[b.owner_id] || 0) + 1; });
+  const repeatClients = Object.values(ownerCounts).filter((c) => c > 1).length;
+
   // Fetch logged-in user's profile for DashboardShell
   const { data: myProfile } = user
     ? await supabase.from("profiles").select("full_name, role, avatar_url").eq("id", user.id).single()
@@ -150,18 +161,20 @@ export default async function SitterProfilePage({ params }: Props) {
                 </div>
               )}
 
-              {/* Response stats */}
-              {responseStats && (responseStats as { total_requests: number }).total_requests > 0 && (
+              {/* Response stats + repeat clients */}
+              {(responseStats && (responseStats as { total_requests: number }).total_requests > 0) || repeatClients > 0 ? (
                 <div className="flex items-center gap-4 mt-4 pt-4 border-t border-stone-100">
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-green-600">
-                      {(responseStats as { response_rate: number }).response_rate}%
-                    </p>
-                    <p className="text-xs text-stone-400">
-                      {es ? "Tasa de respuesta" : "Response rate"}
-                    </p>
-                  </div>
-                  {(responseStats as { avg_response_minutes: number }).avg_response_minutes > 0 && (
+                  {responseStats && (responseStats as { total_requests: number }).total_requests > 0 && (
+                    <div className="text-center">
+                      <p className="text-lg font-bold text-green-600">
+                        {(responseStats as { response_rate: number }).response_rate}%
+                      </p>
+                      <p className="text-xs text-stone-400">
+                        {es ? "Tasa de respuesta" : "Response rate"}
+                      </p>
+                    </div>
+                  )}
+                  {responseStats && (responseStats as { avg_response_minutes: number }).avg_response_minutes > 0 && (
                     <div className="text-center">
                       <p className="text-lg font-bold text-stone-900">
                         {(responseStats as { avg_response_minutes: number }).avg_response_minutes < 60
@@ -172,6 +185,40 @@ export default async function SitterProfilePage({ params }: Props) {
                         {es ? "Tiempo de respuesta" : "Response time"}
                       </p>
                     </div>
+                  )}
+                  {repeatClients > 0 && (
+                    <div className="text-center">
+                      <p className="text-lg font-bold text-stone-900">{repeatClients}</p>
+                      <p className="text-xs text-stone-400">
+                        {es ? "Clientes que repiten" : "Repeat clients"}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ) : null}
+
+              {/* Home details */}
+              {(sitterProfile.home_type || sitterProfile.has_own_pets) && (
+                <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t border-stone-100">
+                  {sitterProfile.home_type && (
+                    <span className="text-xs bg-stone-50 text-stone-600 px-3 py-1.5 rounded-full">
+                      {sitterProfile.home_type === "house" ? (es ? "Casa" : "House") : (es ? "Piso" : "Apartment")}
+                    </span>
+                  )}
+                  {sitterProfile.has_yard && (
+                    <span className="text-xs bg-green-50 text-green-600 px-3 py-1.5 rounded-full">
+                      {es ? "Con jardín" : "Has yard"}
+                    </span>
+                  )}
+                  {sitterProfile.has_children && (
+                    <span className="text-xs bg-amber-50 text-amber-600 px-3 py-1.5 rounded-full">
+                      {es ? "Niños en casa" : "Children at home"}
+                    </span>
+                  )}
+                  {sitterProfile.has_own_pets && (
+                    <span className="text-xs bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full">
+                      {sitterProfile.has_own_pets}
+                    </span>
                   )}
                 </div>
               )}

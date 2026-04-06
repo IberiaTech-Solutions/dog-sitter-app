@@ -97,6 +97,7 @@ export function SitterSearch() {
   const [priceMax, setPriceMax] = useState("");
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [dateFrom, setDateFrom] = useState("");
+  const [sitterExtras, setSitterExtras] = useState<Record<string, { topReview: string | null; repeatClients: number }>>({});
   const [dateTo, setDateTo] = useState("");
   const [availableSitterIds, setAvailableSitterIds] = useState<Set<string> | null>(null);
 
@@ -142,6 +143,36 @@ export function SitterSearch() {
 
     checkAvailability();
   }, [dateFrom, dateTo, sitters]);
+
+  // Fetch top review + repeat clients for search results
+  useEffect(() => {
+    if (sitters.length === 0) return;
+    const supabase = createClient();
+    const ids = sitters.map((s) => s.id);
+
+    async function fetchExtras() {
+      const [{ data: reviews }, { data: bookings }] = await Promise.all([
+        supabase.from("reviews").select("reviewee_id, comment").in("reviewee_id", ids).order("created_at", { ascending: false }),
+        supabase.from("bookings").select("sitter_id, owner_id").in("sitter_id", ids).eq("status", "completed"),
+      ]);
+
+      const extras: Record<string, { topReview: string | null; repeatClients: number }> = {};
+
+      ids.forEach((id) => {
+        const topReview = reviews?.find((r) => r.reviewee_id === id && r.comment)?.comment ?? null;
+        const ownerCounts: Record<string, number> = {};
+        bookings?.filter((b) => b.sitter_id === id).forEach((b) => {
+          ownerCounts[b.owner_id] = (ownerCounts[b.owner_id] || 0) + 1;
+        });
+        const repeatClients = Object.values(ownerCounts).filter((c) => c > 1).length;
+        extras[id] = { topReview, repeatClients };
+      });
+
+      setSitterExtras(extras);
+    }
+
+    fetchExtras();
+  }, [sitters]);
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
@@ -357,14 +388,13 @@ export function SitterSearch() {
 
       {/* Results with filters + map */}
       {!loading && searched && sitters.length > 0 && (
-        <div className="mt-6 grid md:grid-cols-[240px_1fr] gap-4">
-          {/* Filters sidebar — always visible on desktop, toggle on mobile */}
-          <div>
-            {/* Mobile toggle */}
+        <>
+          {/* Collapsible filter bar */}
+          <div className="mt-6">
             <button
               type="button"
               onClick={() => setFiltersOpen((v) => !v)}
-              className="md:hidden w-full flex items-center justify-between rounded-2xl bg-white border border-stone-100 px-5 py-3 shadow-sm mb-3"
+              className="w-full flex items-center justify-between rounded-2xl bg-white border border-stone-100 px-5 py-3 shadow-sm"
             >
               <div className="flex items-center gap-2">
                 <span className="text-sm font-semibold text-stone-900">
@@ -377,7 +407,9 @@ export function SitterSearch() {
               {filtersOpen ? <ChevronUp className="w-4 h-4 text-stone-400" /> : <ChevronDown className="w-4 h-4 text-stone-400" />}
             </button>
 
-            <div className={`rounded-2xl bg-white border border-stone-100 p-5 shadow-sm space-y-5 ${filtersOpen ? "block" : "hidden md:block"}`}>
+            {filtersOpen && (
+            <div className="mt-2 rounded-2xl bg-white border border-stone-100 p-5 shadow-sm">
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
                 {/* Dates */}
                 <div>
                   <p className="text-xs font-medium text-stone-500 mb-2">
@@ -516,54 +548,23 @@ export function SitterSearch() {
                     {es ? "Limpiar filtros" : "Clear filters"}
                   </Button>
                 )}
+              </div>
             </div>
+            )}
           </div>
 
-          {/* Results column */}
-          <div>
-          {/* Results header with view toggle */}
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-stone-400">
-              {filteredSitters.length !== sitters.length
-                ? `${filteredSitters.length} / ${sitters.length} ${es ? "cuidadores" : "sitters"}`
-                : `${sitters.length} ${es ? "cuidadores encontrados" : "sitters found"}`}
-            </p>
-            <div className="flex rounded-xl border border-stone-200 overflow-hidden">
-              <button
-                onClick={() => setViewMode("split")}
-                className={`px-3 py-1.5 text-xs font-medium transition-colors ${
-                  viewMode === "split" ? "bg-green-50 text-green-700" : "text-stone-500 hover:bg-stone-50"
-                }`}
-              >
-                <span className="hidden sm:inline">{es ? "Ambos" : "Both"}</span>
-                <span className="sm:hidden">⊞</span>
-              </button>
-              <button
-                onClick={() => setViewMode("list")}
-                className={`px-3 py-1.5 text-xs font-medium border-l border-stone-200 transition-colors ${
-                  viewMode === "list" ? "bg-green-50 text-green-700" : "text-stone-500 hover:bg-stone-50"
-                }`}
-              >
-                <List className="w-3.5 h-3.5 inline" />
-              </button>
-              <button
-                onClick={() => setViewMode("map")}
-                className={`px-3 py-1.5 text-xs font-medium border-l border-stone-200 transition-colors ${
-                  viewMode === "map" ? "bg-green-50 text-green-700" : "text-stone-500 hover:bg-stone-50"
-                }`}
-              >
-                <Map className="w-3.5 h-3.5 inline" />
-              </button>
-            </div>
-          </div>
+          {/* Results count */}
+          <p className="mt-4 text-sm text-stone-400">
+            {filteredSitters.length !== sitters.length
+              ? `${filteredSitters.length} / ${sitters.length} ${es ? "cuidadores" : "sitters"}`
+              : `${sitters.length} ${es ? "cuidadores encontrados" : "sitters found"}`}
+          </p>
 
-          {/* Split view: list + map */}
-          <div className={`mt-3 gap-4 ${
-            viewMode === "split" ? "grid lg:grid-cols-2" : ""
-          }`}>
+          {/* Side by side: cards + map */}
+          <div className="mt-3 grid lg:grid-cols-2 gap-4">
             {/* Sitter list */}
-            {showList && (
-              <div className={`space-y-3 ${viewMode === "split" ? "max-h-[600px] overflow-y-auto pr-1" : ""}`}>
+            {(
+              <div className="space-y-3 lg:max-h-[600px] lg:overflow-y-auto lg:pr-1">
                 {filteredSitters.length === 0 ? (
                   <Card className="text-center py-10">
                     <PawPrint className="w-8 h-8 text-stone-300 mx-auto mb-3" />
@@ -619,10 +620,16 @@ export function SitterSearch() {
                               </span>
                             </div>
                           )}
-                          {/* Bio excerpt */}
-                          {sitter.bio && (
-                            <p className="mt-1.5 text-xs text-stone-400 line-clamp-2">
-                              {sitter.bio}
+                          {/* Repeat clients */}
+                          {sitterExtras[sitter.id]?.repeatClients > 0 && (
+                            <span className="mt-1 inline-block text-xs text-green-600">
+                              {sitterExtras[sitter.id].repeatClients} {es ? "clientes repiten" : "repeat clients"}
+                            </span>
+                          )}
+                          {/* Top review */}
+                          {sitterExtras[sitter.id]?.topReview && (
+                            <p className="mt-1.5 text-xs text-stone-400 italic line-clamp-1">
+                              &ldquo;{sitterExtras[sitter.id].topReview}&rdquo;
                             </p>
                           )}
                         </div>
@@ -649,9 +656,9 @@ export function SitterSearch() {
               </div>
             )}
 
-            {/* Map — always shows ALL sitters, unfiltered */}
-            {showMap && (
-              <div className={viewMode === "map" ? "h-[600px]" : "h-[600px] hidden md:block"}>
+            {/* Map */}
+            {(
+              <div className="h-[400px] lg:h-[600px] lg:sticky lg:top-20">
                 <Suspense fallback={
                   <div className="h-full rounded-2xl bg-stone-100 border border-stone-200 flex items-center justify-center">
                     <div className="w-8 h-8 border-[3px] border-green-200 border-t-green-600 rounded-full animate-spin" />
@@ -662,8 +669,7 @@ export function SitterSearch() {
               </div>
             )}
           </div>
-          </div>
-        </div>
+        </>
       )}
     </div>
   );

@@ -43,6 +43,10 @@ type SitterProfile = {
   radius_km: number;
   is_available: boolean;
   cancellation_policy: string;
+  home_type: string | null;
+  has_yard: boolean;
+  has_children: boolean;
+  has_own_pets: string | null;
 } | null;
 
 const ALL_SERVICES = ["dog_walking", "pet_sitting", "drop_in", "overnight", "daycare"];
@@ -88,6 +92,10 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
   const [address, setAddress] = useState(existing?.address ?? "");
   const [radius, setRadius] = useState(existing?.radius_km?.toString() ?? "10");
   const [cancellationPolicy, setCancellationPolicy] = useState(existing?.cancellation_policy ?? "flexible");
+  const [homeType, setHomeType] = useState(existing?.home_type ?? "");
+  const [hasYard, setHasYard] = useState(existing?.has_yard ?? false);
+  const [hasChildren, setHasChildren] = useState(existing?.has_children ?? false);
+  const [hasOwnPets, setHasOwnPets] = useState(existing?.has_own_pets ?? "");
   const [loading, setLoading] = useState(false);
   const [geoLoading, setGeoLoading] = useState(false);
   const [location, setLocation] = useState<{
@@ -161,6 +169,10 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
       is_available: true,
       cancellation_policy: cancellationPolicy,
       location: `SRID=4326;POINT(${finalLocation.lng} ${finalLocation.lat})`,
+      home_type: homeType || null,
+      has_yard: hasYard,
+      has_children: hasChildren,
+      has_own_pets: hasOwnPets || null,
     };
 
     const { error: dbError } = existing
@@ -348,6 +360,54 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
               </p>
             </button>
           ))}
+        </div>
+      </Card>
+
+      {/* Home details */}
+      <Card>
+        <label className="block text-sm font-medium text-stone-700 mb-3">
+          {locale === "es" ? "Tu hogar" : "Your home"}
+        </label>
+        <div className="space-y-3">
+          <div className="flex gap-2">
+            {[
+              { value: "apartment", labelEs: "Piso", labelEn: "Apartment" },
+              { value: "house", labelEs: "Casa", labelEn: "House" },
+            ].map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setHomeType(opt.value)}
+                className={`flex-1 rounded-xl border-2 px-4 py-2.5 text-sm font-medium transition-all ${
+                  homeType === opt.value
+                    ? "border-green-500 bg-green-50 text-green-700"
+                    : "border-stone-200 text-stone-600 hover:border-stone-300"
+                }`}
+              >
+                {locale === "es" ? opt.labelEs : opt.labelEn}
+              </button>
+            ))}
+          </div>
+
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" checked={hasYard} onChange={(e) => setHasYard(e.target.checked)}
+              className="w-4 h-4 rounded border-stone-300 text-green-600 focus:ring-green-500" />
+            <span className="text-sm text-stone-700">{locale === "es" ? "Tengo jardín o patio" : "I have a yard/garden"}</span>
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" checked={hasChildren} onChange={(e) => setHasChildren(e.target.checked)}
+              className="w-4 h-4 rounded border-stone-300 text-green-600 focus:ring-green-500" />
+            <span className="text-sm text-stone-700">{locale === "es" ? "Hay niños en casa" : "Children in the home"}</span>
+          </label>
+
+          <Input
+            label={locale === "es" ? "Tus mascotas (opcional)" : "Your own pets (optional)"}
+            value={hasOwnPets}
+            onChange={(e) => setHasOwnPets(e.target.value)}
+            placeholder={locale === "es" ? "Ej: 1 perro, 2 gatos" : "E.g. 1 dog, 2 cats"}
+            maxLength={50}
+          />
         </div>
       </Card>
 
