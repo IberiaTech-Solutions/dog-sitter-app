@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { redirect, notFound } from "next/navigation";
-import { Link } from "@/i18n/navigation";
+import { Header, PageShell, Badge } from "@/components/ui";
 import { ActiveBookingView } from "@/components/active-booking-view";
 
 type Props = {
@@ -39,30 +39,21 @@ export default async function ActiveBookingPage({ params }: Props) {
   const isSitter = booking.sitter_id === user.id;
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <header className="border-b border-zinc-200 bg-white">
-        <div className="mx-auto max-w-4xl flex items-center justify-between px-6 py-4">
-          <Link href="/" className="text-xl font-bold text-emerald-600">
-            {t("common.appName")}
-          </Link>
-          <Link href="/dashboard" className="text-sm text-zinc-600 hover:text-zinc-900">
-            {locale === "es" ? "Mi panel" : "Dashboard"}
-          </Link>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#faf9f7]">
+      <Header appName={t("common.appName")} isLoggedIn />
 
-      <main className="mx-auto max-w-4xl px-6 py-8">
+      <PageShell>
         {/* Booking summary */}
-        <div className="rounded-xl bg-white p-6 shadow-sm">
+        <div className="rounded-2xl bg-white border border-stone-100 p-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-xl font-bold text-zinc-900">
+              <h1 className="text-xl font-bold text-stone-900">
                 {(booking.pet as { name: string })?.name} —{" "}
                 {isSitter
                   ? (booking.owner as { full_name: string })?.full_name
                   : (booking.sitter as { full_name: string })?.full_name}
               </h1>
-              <p className="mt-1 text-sm text-zinc-500">
+              <p className="mt-1 text-sm text-stone-500">
                 {new Date(booking.start_date).toLocaleDateString(
                   locale === "es" ? "es-ES" : "en-GB"
                 )}{" "}
@@ -72,9 +63,7 @@ export default async function ActiveBookingPage({ params }: Props) {
                 )}
               </p>
             </div>
-            <span className="rounded-full bg-emerald-100 px-3 py-1 text-sm font-medium text-emerald-700">
-              {booking.status}
-            </span>
+            <Badge variant="green">{booking.status}</Badge>
           </div>
         </div>
 
@@ -84,7 +73,7 @@ export default async function ActiveBookingPage({ params }: Props) {
           initialLogs={visitLogs ?? []}
           bookingStatus={booking.status}
         />
-      </main>
+      </PageShell>
     </div>
   );
 }

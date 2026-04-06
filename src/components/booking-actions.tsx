@@ -4,7 +4,7 @@ import { useLocale } from "next-intl";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/navigation";
-import { Check, X, Play, MessageCircle, Ban } from "lucide-react";
+import { Check, X, Play, Ban } from "lucide-react";
 import { Button } from "@/components/ui";
 import { toast } from "sonner";
 
@@ -49,7 +49,7 @@ export function BookingActions({ bookingId, status, isSitter, isOwner, otherPers
     setCancelling(false);
   }
 
-  // Sitter: accept or decline a requested booking
+  // Sitter: accept or decline a requested booking (already paid by owner)
   if (isSitter && status === "requested") {
     return (
       <div className="flex items-center gap-2">
@@ -57,7 +57,7 @@ export function BookingActions({ bookingId, status, isSitter, isOwner, otherPers
           variant="primary"
           size="sm"
           disabled={loading}
-          onClick={() => updateStatus("accepted")}
+          onClick={() => updateStatus("confirmed")}
         >
           <Check className="w-3.5 h-3.5" />
           {es ? "Aceptar" : "Accept"}
@@ -66,7 +66,26 @@ export function BookingActions({ bookingId, status, isSitter, isOwner, otherPers
           variant="ghost"
           size="sm"
           disabled={loading}
-          onClick={() => updateStatus("cancelled")}
+          onClick={async () => {
+            setLoading(true);
+            try {
+              const res = await fetch("/api/bookings/decline", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ booking_id: bookingId }),
+              });
+              const data = await res.json();
+              if (data.success) {
+                toast.success(es ? "Reserva rechazada y reembolsada" : "Booking declined and refunded");
+              } else {
+                toast.error(data.error ?? (es ? "Error al rechazar" : "Could not decline"));
+              }
+            } catch {
+              toast.error(es ? "Error al rechazar" : "Could not decline");
+            }
+            router.refresh();
+            setLoading(false);
+          }}
         >
           <X className="w-3.5 h-3.5" />
           {es ? "Rechazar" : "Decline"}
@@ -75,8 +94,7 @@ export function BookingActions({ bookingId, status, isSitter, isOwner, otherPers
     );
   }
 
-  // Sitter: confirm after payment (accepted → confirmed happens via Stripe webhook,
-  // but sitter can also start a visit from confirmed)
+  // Sitter: start visit (confirmed → in_progress) + auto check-in
   if (isSitter && status === "confirmed") {
     return (
       <div className="flex items-center gap-2">
@@ -84,7 +102,27 @@ export function BookingActions({ bookingId, status, isSitter, isOwner, otherPers
           variant="primary"
           size="sm"
           disabled={loading}
-          onClick={() => updateStatus("in_progress")}
+          onClick={async () => {
+            setLoading(true);
+            const supabase = createClient();
+
+            // Auto check-in with GPS
+            const position = await new Promise<GeolocationPosition>((resolve, reject) =>
+              navigator.geolocation.getCurrentPosition(resolve, reject)
+            ).catch(() => null);
+
+            const { data: { user } } = await supabase.auth.getUser();
+            await supabase.from("visit_logs").insert({
+              booking_id: bookingId,
+              sitter_id: user?.id,
+              event_type: "check_in",
+              ...(position && {
+                location: `SRID=4326;POINT(${position.coords.longitude} ${position.coords.latitude})`,
+              }),
+            });
+
+            await updateStatus("in_progress");
+          }}
         >
           <Play className="w-3.5 h-3.5" />
           {es ? "Iniciar visita" : "Start visit"}
@@ -108,8 +146,8 @@ export function BookingActions({ bookingId, status, isSitter, isOwner, otherPers
     );
   }
 
-  // Owner: cancel a requested or accepted booking (before it's confirmed/paid)
-  if (isOwner && (status === "requested" || status === "accepted")) {
+  // Owner: cancel a requested booking (before sitter accepts)
+  if (isOwner && status === "requested") {
     if (cancelling) {
       return (
         <div className="flex items-center gap-2">
@@ -125,11 +163,7 @@ export function BookingActions({ bookingId, status, isSitter, isOwner, otherPers
           >
             {es ? "Sí, cancelar" : "Yes, cancel"}
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setCancelling(false)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => setCancelling(false)}>
             {es ? "No" : "No"}
           </Button>
         </div>
@@ -137,23 +171,10 @@ export function BookingActions({ bookingId, status, isSitter, isOwner, otherPers
     }
 
     return (
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setCancelling(true)}
-      >
+      <Button variant="ghost" size="sm" onClick={() => setCancelling(true)}>
         <Ban className="w-3.5 h-3.5" />
         {es ? "Cancelar" : "Cancel"}
       </Button>
-    );
-  }
-
-  // Sitter: accepted booking, waiting for owner payment
-  if (isSitter && status === "accepted") {
-    return (
-      <span className="text-xs text-stone-400 italic">
-        {es ? "Esperando pago del dueño" : "Waiting for owner payment"}
-      </span>
     );
   }
 

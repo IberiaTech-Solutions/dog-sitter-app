@@ -1,13 +1,17 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
-import { useState, useEffect } from "react";
+import { useState, lazy, Suspense } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
-import { MapPin, Shield, Star, Dog, Cat, Bird, Rabbit, PawPrint, Search, Navigation } from "lucide-react";
+import { MapPin, Shield, Star, Dog, Cat, Bird, Rabbit, PawPrint, Search, Navigation, Map, List } from "lucide-react";
 import { Avatar, Badge, Card, Button } from "@/components/ui";
 import { toast } from "sonner";
+
+const SitterMap = lazy(() =>
+  import("@/components/sitter-map").then((m) => ({ default: m.SitterMap }))
+);
 
 type Sitter = {
   id: string;
@@ -18,6 +22,8 @@ type Sitter = {
   pet_types: string[];
   is_verified: boolean;
   distance_meters: number;
+  sitter_lat: number;
+  sitter_lng: number;
 };
 
 const serviceLabels: Record<string, Record<string, string>> = {
@@ -62,11 +68,13 @@ export function SitterSearch() {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [cityQuery, setCityQuery] = useState("");
-  const [useGps, setUseGps] = useState(false);
   const [gpsLoading, setGpsLoading] = useState(false);
+  const [searchCenter, setSearchCenter] = useState<{ lat: number; lng: number } | null>(null);
+  const [viewMode, setViewMode] = useState<"split" | "list" | "map">("split");
 
   async function searchByCoords(lat: number, lng: number) {
     setLoading(true);
+    setSearchCenter({ lat, lng });
     const supabase = createClient();
     const { data, error } = await supabase.rpc("find_nearby_sitters", {
       lat, lng, radius_meters: 25000,
@@ -124,6 +132,21 @@ export function SitterSearch() {
       }
     );
   }
+
+  const mapSitters = sitters
+    .filter((s) => s.sitter_lat && s.sitter_lng)
+    .map((s) => ({
+      id: s.id,
+      full_name: s.full_name,
+      hourly_rate: s.hourly_rate,
+      is_verified: s.is_verified,
+      distance_meters: s.distance_meters,
+      lat: s.sitter_lat,
+      lng: s.sitter_lng,
+    }));
+
+  const showMap = viewMode === "split" || viewMode === "map";
+  const showList = viewMode === "split" || viewMode === "list";
 
   return (
     <div>
@@ -198,65 +221,117 @@ export function SitterSearch() {
         </Card>
       )}
 
-      {/* Results */}
+      {/* Results with map */}
       {!loading && searched && sitters.length > 0 && (
         <>
-          <p className="mt-6 text-sm text-stone-400">
-            {sitters.length} {es ? "cuidadores encontrados" : "sitters found"}
-          </p>
-          <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {sitters.map((sitter) => (
-              <Link
-                key={sitter.id}
-                href={`/sitter/${sitter.id}`}
-                className="group rounded-2xl bg-white p-5 border border-stone-100 hover:border-stone-200 hover:shadow-lg hover:shadow-stone-100/50 transition-all"
+          {/* Results header with view toggle */}
+          <div className="mt-6 flex items-center justify-between">
+            <p className="text-sm text-stone-400">
+              {sitters.length} {es ? "cuidadores encontrados" : "sitters found"}
+            </p>
+            <div className="flex rounded-xl border border-stone-200 overflow-hidden">
+              <button
+                onClick={() => setViewMode("split")}
+                className={`px-3 py-1.5 text-xs font-medium transition-colors ${
+                  viewMode === "split" ? "bg-green-50 text-green-700" : "text-stone-500 hover:bg-stone-50"
+                }`}
               >
-                <div className="flex items-start gap-3.5">
-                  <Avatar name={sitter.full_name} src={sitter.avatar_url} size="md" />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-stone-900 truncate group-hover:text-green-700 transition-colors">
-                        {sitter.full_name}
-                      </h3>
-                      {sitter.is_verified && (
-                        <Shield className="w-4 h-4 text-green-500 shrink-0" />
-                      )}
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-stone-400 mt-0.5">
-                      <MapPin className="w-3 h-3" />
-                      {Math.round(sitter.distance_meters / 1000)} km
-                    </div>
-                  </div>
-                  <div className="text-right shrink-0">
-                    <span className="text-lg font-bold text-stone-900">
-                      {sitter.hourly_rate.toFixed(0)}€
-                    </span>
-                    <span className="block text-xs text-stone-400">
-                      {t("sitter.perVisit")}
-                    </span>
-                  </div>
-                </div>
+                <span className="hidden sm:inline">{es ? "Ambos" : "Both"}</span>
+                <span className="sm:hidden">⊞</span>
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`px-3 py-1.5 text-xs font-medium border-l border-stone-200 transition-colors ${
+                  viewMode === "list" ? "bg-green-50 text-green-700" : "text-stone-500 hover:bg-stone-50"
+                }`}
+              >
+                <List className="w-3.5 h-3.5 inline" />
+              </button>
+              <button
+                onClick={() => setViewMode("map")}
+                className={`px-3 py-1.5 text-xs font-medium border-l border-stone-200 transition-colors ${
+                  viewMode === "map" ? "bg-green-50 text-green-700" : "text-stone-500 hover:bg-stone-50"
+                }`}
+              >
+                <Map className="w-3.5 h-3.5 inline" />
+              </button>
+            </div>
+          </div>
 
-                <div className="mt-3 flex gap-2">
-                  {sitter.pet_types.map((pet) => {
-                    const Icon = petIcons[pet] ?? PawPrint;
-                    return (
-                      <div key={pet} className="w-7 h-7 rounded-lg bg-stone-50 flex items-center justify-center" title={pet}>
-                        <Icon className="w-3.5 h-3.5 text-stone-500" />
+          {/* Split view: list + map */}
+          <div className={`mt-3 gap-4 ${
+            viewMode === "split" ? "grid lg:grid-cols-2" : ""
+          }`}>
+            {/* Sitter list */}
+            {showList && (
+              <div className={`space-y-3 ${viewMode === "split" ? "max-h-[600px] overflow-y-auto pr-1" : ""}`}>
+                {sitters.map((sitter) => (
+                  <Link
+                    key={sitter.id}
+                    href={`/sitter/${sitter.id}`}
+                    className="group block rounded-2xl bg-white p-5 border border-stone-100 hover:border-stone-200 hover:shadow-lg hover:shadow-stone-100/50 transition-all"
+                  >
+                    <div className="flex items-start gap-3.5">
+                      <Avatar name={sitter.full_name} src={sitter.avatar_url} size="md" />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-stone-900 truncate group-hover:text-green-700 transition-colors">
+                            {sitter.full_name}
+                          </h3>
+                          {sitter.is_verified && (
+                            <Shield className="w-4 h-4 text-green-500 shrink-0" />
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-stone-400 mt-0.5">
+                          <MapPin className="w-3 h-3" />
+                          {Math.round(sitter.distance_meters / 1000)} km
+                        </div>
                       </div>
-                    );
-                  })}
-                </div>
+                      <div className="text-right shrink-0">
+                        <span className="text-lg font-bold text-stone-900">
+                          {sitter.hourly_rate.toFixed(0)}€
+                        </span>
+                        <span className="block text-xs text-stone-400">
+                          {t("sitter.perVisit")}
+                        </span>
+                      </div>
+                    </div>
 
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {sitter.services.map((service) => (
-                    <Badge key={service} variant="stone">
-                      {serviceLabels[locale]?.[service] ?? service}
-                    </Badge>
-                  ))}
-                </div>
-              </Link>
-            ))}
+                    <div className="mt-3 flex gap-2">
+                      {sitter.pet_types.map((pet) => {
+                        const Icon = petIcons[pet] ?? PawPrint;
+                        return (
+                          <div key={pet} className="w-7 h-7 rounded-lg bg-stone-50 flex items-center justify-center" title={pet}>
+                            <Icon className="w-3.5 h-3.5 text-stone-500" />
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {sitter.services.map((service) => (
+                        <Badge key={service} variant="stone">
+                          {serviceLabels[locale]?.[service] ?? service}
+                        </Badge>
+                      ))}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* Map */}
+            {showMap && (
+              <div className={viewMode === "map" ? "h-[600px]" : "h-[600px] hidden lg:block"}>
+                <Suspense fallback={
+                  <div className="h-full rounded-2xl bg-stone-100 border border-stone-200 flex items-center justify-center">
+                    <div className="w-8 h-8 border-[3px] border-green-200 border-t-green-600 rounded-full animate-spin" />
+                  </div>
+                }>
+                  <SitterMap sitters={mapSitters} center={searchCenter} />
+                </Suspense>
+              </div>
+            )}
           </div>
         </>
       )}

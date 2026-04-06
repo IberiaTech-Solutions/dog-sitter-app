@@ -1,16 +1,9 @@
 import type { Metadata } from "next";
-import { NextIntlClientProvider, useMessages } from "next-intl";
+import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
-import { Geist } from "next/font/google";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Toaster } from "sonner";
-import "../globals.css";
-
-const geist = Geist({
-  variable: "--font-geist",
-  subsets: ["latin"],
-});
 
 type Props = {
   children: React.ReactNode;
@@ -37,25 +30,21 @@ export default async function LocaleLayout({ children, params }: Props) {
   const messages = (await import(`../../../messages/${locale}.json`)).default;
 
   return (
-    <html lang={locale} className={`${geist.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-sans">
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          {children}
-          <Toaster
-            position="top-right"
-            toastOptions={{
-              style: {
-                background: "white",
-                border: "1px solid #e7e5e4",
-                borderRadius: "16px",
-                padding: "16px",
-                fontSize: "14px",
-                boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)",
-              },
-            }}
-          />
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      {children}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: "white",
+            border: "1px solid #e7e5e4",
+            borderRadius: "16px",
+            padding: "16px",
+            fontSize: "14px",
+            boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)",
+          },
+        }}
+      />
+    </NextIntlClientProvider>
   );
 }

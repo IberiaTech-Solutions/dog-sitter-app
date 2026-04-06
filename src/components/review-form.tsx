@@ -4,6 +4,7 @@ import { useLocale } from "next-intl";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/navigation";
+import { Card, Textarea, Button } from "@/components/ui";
 
 type Props = {
   bookingId: string;
@@ -56,8 +57,8 @@ export function ReviewForm({ bookingId, revieweeId }: Props) {
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-6">
       {/* Star rating */}
-      <div className="rounded-xl bg-white p-6 shadow-sm">
-        <label className="block text-sm font-medium text-zinc-700">
+      <Card>
+        <label className="block text-sm font-medium text-stone-700">
           {locale === "es" ? "Puntuación" : "Rating"}
         </label>
         <div className="mt-3 flex gap-2">
@@ -71,33 +72,30 @@ export function ReviewForm({ bookingId, revieweeId }: Props) {
               {star <= rating ? (
                 <span className="text-yellow-400">★</span>
               ) : (
-                <span className="text-zinc-300">★</span>
+                <span className="text-stone-300">★</span>
               )}
             </button>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Comment */}
-      <div className="rounded-xl bg-white p-6 shadow-sm">
-        <label className="block text-sm font-medium text-zinc-700">
-          {locale === "es" ? "Comentario (opcional)" : "Comment (optional)"}
-        </label>
-        <textarea
+      <Card>
+        <Textarea
+          label={locale === "es" ? "Comentario (opcional)" : "Comment (optional)"}
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           rows={4}
-          className="mt-2 w-full rounded-lg border border-zinc-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
           placeholder={
             locale === "es"
               ? "Cuéntanos tu experiencia..."
               : "Tell us about your experience..."
           }
         />
-      </div>
+      </Card>
 
       {/* Discount reminder */}
-      <div className="rounded-lg bg-emerald-50 p-4 text-sm text-emerald-800">
+      <div className="rounded-lg bg-green-50 p-4 text-sm text-green-800">
         {locale === "es"
           ? "¡Gracias por dejar una opinión! Recibirás un código de descuento de nuestros partners locales."
           : "Thanks for leaving a review! You'll receive a discount code from our local partners."}
@@ -105,10 +103,11 @@ export function ReviewForm({ bookingId, revieweeId }: Props) {
 
       {error && <p className="text-sm text-red-600 text-center">{error}</p>}
 
-      <button
+      <Button
         type="submit"
         disabled={loading}
-        className="w-full rounded-full bg-emerald-600 py-3 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+        size="lg"
+        className="w-full rounded-full"
       >
         {loading
           ? locale === "es"
@@ -117,7 +116,7 @@ export function ReviewForm({ bookingId, revieweeId }: Props) {
           : locale === "es"
             ? "Enviar opinión"
             : "Submit review"}
-      </button>
+      </Button>
     </form>
   );
 }

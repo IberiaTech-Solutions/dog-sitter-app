@@ -3,6 +3,8 @@
 import { useLocale } from "next-intl";
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { Card, Button } from "@/components/ui";
+import { toast } from "sonner";
 
 type VisitLog = {
   id: string;
@@ -65,7 +67,10 @@ export function ActiveBookingView({
           filter: `booking_id=eq.${bookingId}`,
         },
         (payload) => {
-          setLogs((prev) => [payload.new as VisitLog, ...prev]);
+          const newLog = payload.new as VisitLog;
+          setLogs((prev) =>
+            prev.some((l) => l.id === newLog.id) ? prev : [newLog, ...prev]
+          );
         }
       )
       .subscribe();
@@ -102,68 +107,46 @@ export function ActiveBookingView({
     setGpsActive(false);
   }
 
-  async function handleCheckIn() {
+  async function insertLog(eventType: string, extra?: { note?: string; location?: string }) {
     setSending(true);
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const position = await new Promise<GeolocationPosition>((resolve, reject) =>
-      navigator.geolocation.getCurrentPosition(resolve, reject)
-    ).catch(() => null);
+    const { data } = await supabase
+      .from("visit_logs")
+      .insert({
+        booking_id: bookingId,
+        sitter_id: user?.id,
+        event_type: eventType,
+        ...extra,
+      })
+      .select()
+      .single();
 
-    await supabase.from("visit_logs").insert({
-      booking_id: bookingId,
-      sitter_id: user?.id,
-      event_type: "check_in",
-      ...(position && {
-        location: `SRID=4326;POINT(${position.coords.longitude} ${position.coords.latitude})`,
-      }),
-    });
-
-    startGpsTracking();
+    if (data) {
+      setLogs((prev) => [data as VisitLog, ...prev]);
+    }
     setSending(false);
+    return data;
   }
 
   async function handleCheckOut() {
-    setSending(true);
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
     const position = await new Promise<GeolocationPosition>((resolve, reject) =>
       navigator.geolocation.getCurrentPosition(resolve, reject)
     ).catch(() => null);
 
-    await supabase.from("visit_logs").insert({
-      booking_id: bookingId,
-      sitter_id: user?.id,
-      event_type: "check_out",
-      ...(position && {
-        location: `SRID=4326;POINT(${position.coords.longitude} ${position.coords.latitude})`,
-      }),
-    });
+    await insertLog("check_out", position ? {
+      location: `SRID=4326;POINT(${position.coords.longitude} ${position.coords.latitude})`,
+    } : undefined);
 
     stopGpsTracking();
-    setSending(false);
   }
 
   async function handleSendNote() {
     if (!note.trim()) return;
-    setSending(true);
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    await supabase.from("visit_logs").insert({
-      booking_id: bookingId,
-      sitter_id: user?.id,
-      event_type: "health_note",
-      note: note.trim(),
-    });
-
+    await insertLog("health_note", { note: note.trim() });
     setNote("");
-    setSending(false);
   }
 
   async function handlePhotoUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -171,26 +154,43 @@ export function ActiveBookingView({
     if (!file) return;
     setSending(true);
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    const fileName = `${bookingId}/${Date.now()}-${file.name}`;
-    const { data: upload } = await supabase.storage
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const fileName = `${bookingId}/${Date.now()}-${safeName}`;
+    const { data: upload, error: uploadError } = await supabase.storage
       .from("visit-photos")
-      .upload(fileName, file);
+      .upload(fileName, file, { contentType: file.type });
+
+    if (uploadError) {
+      console.error("Upload error:", uploadError);
+      toast.error(locale === "es" ? "Error al subir la foto" : "Photo upload failed");
+      setSending(false);
+      e.target.value = "";
+      return;
+    }
 
     if (upload) {
       const {
         data: { publicUrl },
       } = supabase.storage.from("visit-photos").getPublicUrl(upload.path);
 
-      await supabase.from("visit_logs").insert({
-        booking_id: bookingId,
-        sitter_id: user?.id,
-        event_type: "photo",
-        media_url: publicUrl,
-      });
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      const { data } = await supabase
+        .from("visit_logs")
+        .insert({
+          booking_id: bookingId,
+          sitter_id: user?.id,
+          event_type: "photo",
+          media_url: publicUrl,
+        })
+        .select()
+        .single();
+
+      if (data) {
+        setLogs((prev) => [data as VisitLog, ...prev]);
+      }
     }
 
     setSending(false);
@@ -204,27 +204,21 @@ export function ActiveBookingView({
     <div className="mt-6 space-y-6">
       {/* Sitter controls */}
       {isSitter && isActive && (
-        <div className="rounded-xl bg-white p-6 shadow-sm">
-          <h2 className="font-semibold text-zinc-900">
+        <Card>
+          <h2 className="font-semibold text-stone-900">
             {locale === "es" ? "Controles de visita" : "Visit controls"}
           </h2>
 
           <div className="mt-4 flex flex-wrap gap-3">
-            <button
-              onClick={handleCheckIn}
+            <Button
+              variant="secondary"
+              size="md"
               disabled={sending}
-              className="rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
-            >
-              {locale === "es" ? "Registrar llegada" : "Check in"}
-            </button>
-            <button
               onClick={handleCheckOut}
-              disabled={sending}
-              className="rounded-lg bg-zinc-800 px-5 py-2.5 text-sm font-medium text-white hover:bg-zinc-900 disabled:opacity-50"
             >
-              {locale === "es" ? "Registrar salida" : "Check out"}
-            </button>
-            <label className="cursor-pointer rounded-lg border border-zinc-300 px-5 py-2.5 text-sm font-medium text-zinc-700 hover:bg-zinc-50">
+              {locale === "es" ? "Finalizar visita" : "End visit"}
+            </Button>
+            <label className="cursor-pointer inline-flex items-center justify-center gap-2 font-semibold rounded-xl px-5 py-2.5 text-sm border-2 border-green-600 text-green-600 hover:bg-green-50 active:scale-[0.98] transition-all">
               {locale === "es" ? "Subir foto" : "Upload photo"}
               <input
                 type="file"
@@ -237,7 +231,7 @@ export function ActiveBookingView({
           </div>
 
           {gpsActive && (
-            <p className="mt-3 text-sm text-emerald-600">
+            <p className="mt-3 text-sm text-green-600">
               {locale === "es"
                 ? "GPS activo — compartiendo ubicación"
                 : "GPS active — sharing location"}
@@ -255,27 +249,28 @@ export function ActiveBookingView({
                   ? "Nota de salud o alimentación..."
                   : "Health or feeding note..."
               }
-              className="flex-1 rounded-lg border border-zinc-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+              className="flex-1 rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
             />
-            <button
-              onClick={handleSendNote}
+            <Button
+              variant="primary"
+              size="md"
               disabled={sending || !note.trim()}
-              className="rounded-lg bg-emerald-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+              onClick={handleSendNote}
             >
               {locale === "es" ? "Enviar" : "Send"}
-            </button>
+            </Button>
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Visit log timeline */}
-      <div className="rounded-xl bg-white p-6 shadow-sm">
-        <h2 className="font-semibold text-zinc-900">
+      <Card>
+        <h2 className="font-semibold text-stone-900">
           {locale === "es" ? "Historial de visita" : "Visit log"}
         </h2>
 
         {logs.length === 0 ? (
-          <p className="mt-4 text-sm text-zinc-500">
+          <p className="mt-4 text-sm text-stone-500">
             {locale === "es"
               ? "No hay actividad registrada todavía."
               : "No activity logged yet."}
@@ -288,21 +283,21 @@ export function ActiveBookingView({
                   <div
                     className={`h-3 w-3 rounded-full ${
                       log.event_type === "check_in"
-                        ? "bg-emerald-500"
+                        ? "bg-green-500"
                         : log.event_type === "check_out"
                           ? "bg-red-500"
                           : log.event_type === "photo"
                             ? "bg-blue-500"
-                            : "bg-zinc-400"
+                            : "bg-stone-400"
                     }`}
                   />
-                  <div className="w-px flex-1 bg-zinc-200" />
+                  <div className="w-px flex-1 bg-stone-200" />
                 </div>
                 <div className="pb-4">
-                  <p className="text-sm font-medium text-zinc-900">
+                  <p className="text-sm font-medium text-stone-900">
                     {eventLabels[locale]?.[log.event_type] ?? log.event_type}
                   </p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-stone-500">
                     {new Date(log.created_at).toLocaleString(
                       locale === "es" ? "es-ES" : "en-GB",
                       {
@@ -314,7 +309,7 @@ export function ActiveBookingView({
                     )}
                   </p>
                   {log.note && (
-                    <p className="mt-1 text-sm text-zinc-700">{log.note}</p>
+                    <p className="mt-1 text-sm text-stone-700">{log.note}</p>
                   )}
                   {log.media_url && (
                     <img
@@ -328,7 +323,7 @@ export function ActiveBookingView({
             ))}
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

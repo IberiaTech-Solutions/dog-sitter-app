@@ -22,7 +22,6 @@ export default async function AdminUsersPage({ params }: Props) {
   const roleConfig: Record<string, { labelEs: string; labelEn: string; variant: "green" | "amber" | "blue" | "red" | "purple" | "stone" }> = {
     owner: { labelEs: "Dueño", labelEn: "Owner", variant: "blue" },
     sitter: { labelEs: "Cuidador", labelEn: "Sitter", variant: "green" },
-    both: { labelEs: "Ambos", labelEn: "Both", variant: "purple" },
     admin: { labelEs: "Admin", labelEn: "Admin", variant: "red" },
   };
 

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/navigation";
 import { toast } from "sonner";
+import { Card, Input, Button } from "@/components/ui";
 
 // Spanish city coordinates for auto-geocoding
 const CITY_COORDS: Record<string, { lat: number; lng: number }> = {
@@ -117,12 +118,6 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
       return;
     }
 
-    // Update profile role to include sitter
-    await supabase
-      .from("profiles")
-      .update({ role: "both" })
-      .eq("id", user.id);
-
     // Auto-geocode from address if no GPS location
     let finalLocation = location;
     if (!finalLocation && address) {
@@ -180,8 +175,8 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
   return (
     <form onSubmit={handleSubmit} className="mt-6 space-y-6">
       {/* Services */}
-      <div className="rounded-xl bg-white p-6 shadow-sm">
-        <label className="block text-sm font-medium text-zinc-700">
+      <Card>
+        <label className="block text-sm font-medium text-stone-700">
           {locale === "es" ? "Servicios que ofreces" : "Services you offer"}
         </label>
         <div className="mt-3 grid grid-cols-2 gap-3">
@@ -192,19 +187,19 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
               onClick={() => toggleItem(services, s, setServices)}
               className={`rounded-lg border px-4 py-3 text-sm font-medium transition-colors ${
                 services.includes(s)
-                  ? "border-emerald-600 bg-emerald-50 text-emerald-700"
-                  : "border-zinc-300 text-zinc-600 hover:border-zinc-400"
+                  ? "border-green-600 bg-green-50 text-green-700"
+                  : "border-stone-300 text-stone-600 hover:border-stone-400"
               }`}
             >
               {serviceLabels[locale]?.[s] ?? s}
             </button>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Pet types */}
-      <div className="rounded-xl bg-white p-6 shadow-sm">
-        <label className="block text-sm font-medium text-zinc-700">
+      <Card>
+        <label className="block text-sm font-medium text-stone-700">
           {locale === "es" ? "Tipos de mascotas" : "Pet types"}
         </label>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -215,83 +210,71 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
               onClick={() => toggleItem(petTypes, p, setPetTypes)}
               className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                 petTypes.includes(p)
-                  ? "border-emerald-600 bg-emerald-50 text-emerald-700"
-                  : "border-zinc-300 text-zinc-600 hover:border-zinc-400"
+                  ? "border-green-600 bg-green-50 text-green-700"
+                  : "border-stone-300 text-stone-600 hover:border-stone-400"
               }`}
             >
               {petTypeLabels[locale]?.[p] ?? p}
             </button>
           ))}
         </div>
-      </div>
+      </Card>
 
       {/* Rate & experience */}
-      <div className="rounded-xl bg-white p-6 shadow-sm">
+      <Card>
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-zinc-700">
-              {locale === "es" ? "Tarifa por visita (€)" : "Rate per visit (€)"}
-            </label>
-            <input
-              type="number"
-              required
-              min="5"
-              max="200"
-              step="0.50"
-              value={rate}
-              onChange={(e) => setRate(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-zinc-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-zinc-700">
-              {locale === "es" ? "Años de experiencia" : "Years of experience"}
-            </label>
-            <input
-              type="number"
-              min="0"
-              max="50"
-              value={experience}
-              onChange={(e) => setExperience(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-zinc-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-            />
-          </div>
+          <Input
+            type="number"
+            label={locale === "es" ? "Tarifa por visita (€)" : "Rate per visit (€)"}
+            required
+            min={5}
+            max={200}
+            step={0.5}
+            value={rate}
+            onChange={(e) => setRate(e.target.value)}
+          />
+          <Input
+            type="number"
+            label={locale === "es" ? "Años de experiencia" : "Years of experience"}
+            min={0}
+            max={50}
+            value={experience}
+            onChange={(e) => setExperience(e.target.value)}
+          />
         </div>
-      </div>
+      </Card>
 
       {/* Location */}
-      <div className="rounded-xl bg-white p-6 shadow-sm">
-        <label className="block text-sm font-medium text-zinc-700">
-          {locale === "es" ? "Ubicación" : "Location"}
-        </label>
-        <input
+      <Card>
+        <Input
           type="text"
+          label={locale === "es" ? "Ubicación" : "Location"}
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           placeholder={locale === "es" ? "Tu dirección o zona" : "Your address or area"}
-          className="mt-2 w-full rounded-lg border border-zinc-300 px-4 py-2.5 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
         />
         <div className="mt-3 flex items-center gap-4">
-          <button
+          <Button
             type="button"
-            onClick={handleGetLocation}
+            variant="outline"
+            size="sm"
             disabled={geoLoading}
-            className="rounded-lg border border-zinc-300 px-4 py-2 text-sm text-zinc-600 hover:bg-zinc-50"
+            onClick={handleGetLocation}
           >
             {geoLoading
               ? t("common.loading")
               : locale === "es"
                 ? "Usar mi ubicación actual"
                 : "Use my current location"}
-          </button>
+          </Button>
           {location && (
-            <span className="text-sm text-emerald-600">
+            <span className="text-sm text-green-600">
               {locale === "es" ? "Ubicación guardada" : "Location saved"}
             </span>
           )}
         </div>
         <div className="mt-4">
-          <label className="block text-sm font-medium text-zinc-700">
+          <label className="block text-sm font-medium text-stone-700">
             {locale === "es" ? "Radio de servicio (km)" : "Service radius (km)"}
           </label>
           <input
@@ -300,16 +283,17 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
             max="50"
             value={radius}
             onChange={(e) => setRadius(e.target.value)}
-            className="mt-2 w-full accent-emerald-600"
+            className="mt-2 w-full accent-green-600"
           />
-          <p className="mt-1 text-sm text-zinc-500">{radius} km</p>
+          <p className="mt-1 text-sm text-stone-500">{radius} km</p>
         </div>
-      </div>
+      </Card>
 
-      <button
+      <Button
         type="submit"
         disabled={loading || services.length === 0 || petTypes.length === 0}
-        className="w-full rounded-full bg-emerald-600 py-3 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+        size="lg"
+        className="w-full rounded-full"
       >
         {loading
           ? t("common.loading")
@@ -320,7 +304,7 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
             : locale === "es"
               ? "Crear perfil de cuidador"
               : "Create sitter profile"}
-      </button>
+      </Button>
     </form>
   );
 }

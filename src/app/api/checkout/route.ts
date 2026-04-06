@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { getStripe } from "@/lib/stripe";
 
 const COMMISSION_RATE = 0.18;
 const VALID_SERVICES = ["dog_walking", "pet_sitting", "drop_in", "overnight"];
@@ -54,6 +55,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Sitter not found" }, { status: 404 });
   }
 
+  // Fetch sitter name for Stripe description
+  const { data: sitterInfo } = await supabase
+    .from("profiles")
+    .select("full_name")
+    .eq("id", sitter_id)
+    .single();
+
+  const { data: petInfo } = await supabase
+    .from("pets")
+    .select("name")
+    .eq("id", pet_id)
+    .single();
+
   const days = Math.max(1, Math.ceil((endDt.getTime() - startDt.getTime()) / (1000 * 60 * 60 * 24)));
   const dailyRate = Number(sitterProfile.hourly_rate);
   const subtotal = days * dailyRate;
@@ -75,7 +89,7 @@ export async function POST(request: Request) {
       commission_amount: commissionAmount,
       commission_rate: COMMISSION_RATE,
       owner_notes: owner_notes ?? null,
-      status: "requested",
+      status: "pending_payment",
     })
     .select()
     .single();
@@ -84,18 +98,43 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not create booking" }, { status: 400 });
   }
 
-  // TODO: Stripe payment integration
-  // When Stripe is configured, uncomment the checkout session creation below
-  // and change the response to return { url: session.url }
-  //
-  // For now, bookings are created as "requested" and the sitter
-  // accepts/declines from their dashboard. Payment will be collected
-  // when Stripe keys are added.
+  // Create Stripe Checkout session — owner pays upfront
+  const sitterName = sitterInfo?.full_name ?? "Sitter";
+  const petName = petInfo?.name ?? "";
+  const es = locale === "es";
 
+  const description = es
+    ? `Cuidado de ${petName} por ${sitterName} — ${days} día(s)`
+    : `Care for ${petName} by ${sitterName} — ${days} day(s)`;
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const redirectLocale = locale === "es" ? "es" : "en";
-  return NextResponse.json({
-    success: true,
-    booking_id: booking.id,
-    redirect: `/${redirectLocale}/dashboard?booking=success`,
+
+  const stripe = getStripe();
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    payment_method_types: ["card"],
+    locale: es ? "es" : "en",
+    line_items: [
+      {
+        price_data: {
+          currency: "eur",
+          unit_amount: Math.round(totalAmount * 100),
+          product_data: {
+            name: es ? `Reserva — ${sitterName}` : `Booking — ${sitterName}`,
+            description,
+          },
+        },
+        quantity: 1,
+      },
+    ],
+    metadata: {
+      booking_id: booking.id,
+      owner_id: user.id,
+    },
+    success_url: `${appUrl}/${redirectLocale}/dashboard?payment=success&booking=${booking.id}`,
+    cancel_url: `${appUrl}/${redirectLocale}/dashboard?payment=cancelled&booking=${booking.id}`,
   });
+
+  return NextResponse.json({ url: session.url });
 }

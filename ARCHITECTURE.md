@@ -1,4 +1,4 @@
-# Pet Sitter App — Spain Marketplace Architecture
+# CuidaMascotas — Spain Pet Sitting Marketplace Architecture
 
 ## Overview
 
@@ -6,155 +6,177 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 
 **Initial market:** Gijón, Asturias (Spain-only)  
 **Target MVP launch:** June 2026  
-**Stack:** Next.js App Router (web-first) → Expo/React Native (mobile) + Supabase  
+**Stack:** Next.js 16 App Router + React 19 + TypeScript + Supabase + Tailwind CSS 4  
 **Languages:** Spanish (primary) + English (secondary — for expats/tourists in Spain)  
 **Development base:** Charleston, SC, USA  
 **Jurisdiction:** Spain / EU — all users, data, and operations are Spanish-market only  
-**Business entity:** TBD — will need a Spanish legal entity (S.L. or autónomo) to operate
+**Business entity:** TBD — will need a Spanish legal entity (S.L. or autónomo) to operate  
+**Deployment:** Vercel (EU edge region)
 
 ---
 
 ## Business Model
 
 - **Owners:** Free to use. Pay sitter rate + platform commission.
-- **Sitters:** 15–20% commission per booking (undercuts Rover's 20%).
+- **Sitters:** 18% commission per booking (undercuts Rover's 20%).
 - **Affiliate revenue:** Discount partnerships with local pet shops, vets, and grooming salons.
 - **Estimated rates:** €10–20 per visit (validate with Gijón market research).
 
 ---
 
-## Core Features (MVP)
+## MVP Feature Status
 
-### 1. User Onboarding & Verification
-- Sitter registration with identity verification (DNI/NIE)
-- Background checks via API (Checkr, Persona, or Spanish-compliant provider)
-- Owner registration (lighter verification)
-- Verified badge system for trusted sitters
+### Implemented
 
-### 2. Pet Sitters Near You (Map View)
-- Geolocation-based sitter discovery
-- Map view with distance, availability, ratings
-- Filter by service type, pet type, price range
+| Feature | Status | Notes |
+|---------|--------|-------|
+| User onboarding & auth | ✅ Done | Email/password via Supabase Auth, auto-profile creation |
+| User roles | ✅ Done | `owner`, `sitter`, `both`, `admin` — stored in `profiles.role` |
+| Sitter search (GPS + city) | ✅ Done | PostGIS nearby search + hardcoded Spanish city fallback |
+| Pet management (CRUD) | ✅ Done | Species, breed, age, weight, medical notes, photos |
+| Booking flow | ✅ Done | Search → select → book → sitter accept/decline, server-side pricing |
+| In-app messaging | ✅ Done | Direct messages with read/unread tracking |
+| Reviews & ratings | ✅ Done | 1–5 stars, post-booking, one per booking |
+| Admin portal | ✅ Done | Stats dashboard, sitter verification, booking/user/discount management |
+| i18n (es/en) | ✅ Done | `next-intl` with route-level locale prefix |
+| Toast notifications | ✅ Done | Sonner — success/error feedback on all key actions |
+| Security headers | ✅ Done | HSTS, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy |
+| RLS policies | ✅ Done | All tables secured, admin override policies, no role self-escalation |
+| Audit logging | ✅ Done | GDPR-compliant data access/modification tracking |
 
-### 3. Booking & Payments
-- Booking flow: search → select sitter → meet-and-greet → confirm
-- **Bizum** integration (primary — how Spaniards pay each other)
-- **Stripe** integration (fallback / international)
-- Commission deducted automatically from sitter payout
+### Partially Implemented
 
-### 4. Messaging & Communication
-- **WhatsApp integration** for direct owner-sitter communication
-- In-app messaging as fallback
-- Pre-booking meet-and-greet scheduling
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Stripe payments | 🔶 Infra ready | Webhook handler + SDK configured; checkout flow commented out awaiting keys |
+| Visit tracking | 🔶 Schema ready | `visit_logs` table + partial UI; GPS check-in/out, photos, health notes |
+| Sitter verification (DNI) | 🔶 Schema ready | `verifications` table exists; no external provider integrated yet |
 
-### 5. GPS Tracking
-- Real-time sitter location during visits
-- Arrival/departure timestamps visible to owner
-- Builds trust around home access — key differentiator
+### Not Yet Started
 
-### 6. Photo & Video Updates
-- Sitters send photo/video updates during visits
-- Push notifications to owners
-- Visit gallery stored per booking
-
-### 7. Pet Health Tracker
-- Sitters log feeding times, walks, medications
-- Notes and observations per visit
-- Accessible to owners in real time
-
-### 8. Ratings & Reviews
-- Post-booking reviews for both owners and sitters
-- Reviews-for-discounts program (leave a review → unlock partner discount code)
-- Gamification: 5 reviews → bigger discount tier
-
-### 9. Loyalty & Partner Discounts
-- Partner with local vets, pet shops, grooming salons in Gijón
-- Discount codes distributed through app (affiliate model)
-- Early adopter incentives: first booking free or 10% off
-- Sitter incentive: commission waived on first few bookings
-
-### 10. Internationalization (i18n) — Spanish & English
-- **Spanish (es-ES)** as default locale — all UI, emails, notifications, legal text
-- **English (en)** as secondary locale — for expats, tourists, and international users
-- Language auto-detected from browser/device settings, user can override in profile
-- **Default locale is es-ES** — the app is designed for Spain, English is a convenience for expats/tourists
-- Implementation: `next-intl` (web) / `i18next` (React Native)
-- All content stored in translation JSON files (`/messages/es.json`, `/messages/en.json`)
-- Reviews displayed in original language with optional translation toggle
-- Legal documents (Terms of Service, Privacy Policy) must exist in both languages
-- Date/time formatting: Spanish format (DD/MM/YYYY, 24h) as default
-- Currency: EUR with Spanish locale formatting (1.234,56 €)
-
-### 11. Admin Portal (`/admin`)
-- **Role-based access** — admin role stored in Supabase `profiles.role` column (not env vars)
-- **Overview dashboard** — total users, sitters, bookings, revenue, ratings, pending verifications
-- **Sitter management** — approve/reject ID verifications, view all sitters, toggle verified status
-- **Booking management** — view all bookings across all users, commission tracking
-- **User management** — view all profiles, roles, registration dates, locations
-- **Partner discounts** — create/edit/deactivate discount codes for local businesses
-- Admin RLS policies allow full read access to all tables
-- `admin_dashboard_stats()` PostgreSQL function for aggregated metrics
-
-### 12. Pet Management (`/dashboard/pets`)
-- **List pets** — owner's pet profiles with species icons, photos, breed, age, weight, microchip
-- **Add pet** — species picker (dog/cat/bird/rabbit/other), photo upload, health info, sitter instructions
-- **Edit pet** — update any field, change photo
-- **Delete pet** — with confirmation dialog
-- Required before booking (no pets = can't book)
-
-### 13. Brand Voice — Pet Perspective
-- All marketing copy written from the pet's point of view
-- Hero: "Encuentra a alguien que me cuide mientras no estás"
-- Features: "Siempre saben dónde estoy", "Mira lo bien que estoy"
-- Testimonials: reviews "translated by their humans"
-- Functional UI (forms, dashboards) stays human-readable
-- Unique differentiator vs competitors (Rover, Wag, etc.)
-
-### 14. Notifications — Toast System
-- **Sonner** toast library for non-blocking notifications
-- Top-right positioned, auto-dismiss
-- Success toasts on login, signup, pet CRUD
-- Error toasts replace inline error messages
-- Styled to match app design (rounded, stone borders, shadow)
-
-### 15. UI Component Library (`/components/ui`)
-- **Button** — primary/secondary/outline/ghost, sm/md/lg
-- **Input / Textarea** — with labels, errors, icons
-- **Card** — hover and padding variants
-- **Badge** — green/amber/red/blue/purple/stone
-- **Avatar** — initials fallback with gradient, or image
-- **Header** — sticky glassmorphic, auth-aware (logo links to dashboard when logged in)
-- **PageShell** — consistent max-width and padding
-- **AdminHeader** — admin badge, dashboard link, sign out
-- All exported from `components/ui/index.ts`
-
-### 16. Security Hardening
-- RLS policy prevents role self-escalation (users can't change own role)
-- Server-side price recalculation in checkout API
-- Input validation on all API endpoints
-- Security headers (HSTS, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy)
-- Generic error messages (no database schema leaks)
-- Lazy Stripe initialization (no build-time env var requirement)
+| Feature | Status | Notes |
+|---------|--------|-------|
+| Bizum payments | ❌ | Schema supports `method: 'bizum'`, no implementation |
+| Interactive map view | ❌ | Search returns list only; no Mapbox/Google Maps UI |
+| WhatsApp integration | ❌ | Not implemented |
+| GPS live tracking | ❌ | No real-time sitter location during visits |
+| Photo/video visit updates | ❌ | No media upload during visits |
+| Push notifications | ❌ | No FCM/APNs integration |
+| Pet health tracker | ❌ | Schema supports via `visit_logs`, no dedicated UI |
+| Reviews-for-discounts | ❌ | Discount system exists but not linked to reviews |
+| Background checks API | ❌ | No external provider connected |
+| Mobile app (React Native) | ❌ | Web-only for now |
 
 ---
 
-## Architecture
+## Project Structure
+
+```
+dog_sitter_app/
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx                 # Root layout (HTML shell, fonts, globals.css)
+│   │   ├── globals.css                # Tailwind v4 + CSS custom properties
+│   │   ├── [locale]/
+│   │   │   ├── layout.tsx             # Locale layout (NextIntlClientProvider, Toaster)
+│   │   │   ├── page.tsx               # Landing page (auth-aware redirect)
+│   │   │   ├── login/page.tsx
+│   │   │   ├── signup/page.tsx
+│   │   │   ├── search/page.tsx        # Sitter search
+│   │   │   ├── sitter/[id]/page.tsx   # Sitter profile
+│   │   │   ├── booking/[id]/page.tsx  # Booking confirmation
+│   │   │   ├── dashboard/
+│   │   │   │   ├── page.tsx           # Main dashboard (bookings list)
+│   │   │   │   ├── pets/             # Pet CRUD pages
+│   │   │   │   ├── messages/         # Messaging inbox
+│   │   │   │   ├── booking/[id]/     # Active booking view
+│   │   │   │   ├── sitter-setup/     # Sitter onboarding form
+│   │   │   │   └── review/[bookingId]/ # Post-booking review
+│   │   │   └── admin/
+│   │   │       ├── page.tsx           # Stats dashboard (RPC)
+│   │   │       ├── sitters/          # Sitter management
+│   │   │       ├── bookings/         # Booking administration
+│   │   │       ├── users/            # User management
+│   │   │       └── discounts/        # Partner discount CRUD
+│   │   └── api/
+│   │       ├── auth/callback/        # OAuth callback
+│   │       ├── auth/logout/          # Sign out
+│   │       ├── checkout/             # Booking creation + pricing
+│   │       └── webhooks/stripe/      # Stripe event handler
+│   │
+│   ├── components/
+│   │   ├── ui/                       # Reusable UI library (custom, not shadcn)
+│   │   │   ├── button.tsx            # Button + LinkButton variants
+│   │   │   ├── input.tsx             # Input + Textarea
+│   │   │   ├── card.tsx              # Card container
+│   │   │   ├── badge.tsx             # Status badges (6 color variants)
+│   │   │   ├── avatar.tsx            # Initials-based avatar with gradient
+│   │   │   ├── header.tsx            # Sticky glassmorphic nav bar
+│   │   │   ├── page-shell.tsx        # Centered content wrapper
+│   │   │   └── index.ts             # Barrel export
+│   │   ├── landing-page.tsx
+│   │   ├── login-form.tsx
+│   │   ├── signup-form.tsx
+│   │   ├── sitter-search.tsx         # GPS + city-based search
+│   │   ├── booking-form.tsx
+│   │   ├── booking-actions.tsx       # Accept/decline buttons
+│   │   ├── pet-form.tsx
+│   │   ├── delete-pet-button.tsx
+│   │   ├── sitter-setup-form.tsx
+│   │   ├── review-form.tsx
+│   │   ├── message-list.tsx
+│   │   ├── active-booking-view.tsx
+│   │   ├── admin-nav.tsx
+│   │   ├── admin-header.tsx
+│   │   ├── admin-sitter-actions.tsx
+│   │   └── discount-form.tsx
+│   │
+│   ├── lib/
+│   │   ├── supabase/client.ts        # Browser Supabase client
+│   │   ├── supabase/server.ts        # Server Supabase client (cookies)
+│   │   ├── stripe.ts                 # Stripe singleton (lazy init)
+│   │   └── admin.ts                  # requireAdmin() auth guard
+│   │
+│   ├── i18n/
+│   │   ├── routing.ts                # Locale routing config (es default, en)
+│   │   ├── navigation.ts             # Link/redirect helpers
+│   │   └── request.ts               # Server-side i18n loader
+│   │
+│   └── middleware.ts                 # next-intl locale routing
+│
+├── supabase/migrations/
+│   ├── 001_initial_schema.sql        # Full schema (13 tables, PostGIS, RLS)
+│   ├── 002_admin_role.sql            # Admin role + policies
+│   └── 003_security_fixes.sql        # RLS hardening
+│
+├── messages/
+│   ├── es.json                       # Spanish translations (~82 keys)
+│   └── en.json                       # English translations
+│
+├── next.config.ts                    # next-intl plugin + security headers
+├── package.json
+└── tsconfig.json                     # Strict mode, @/* path alias
+```
+
+---
+
+## Architecture Diagram
 
 ```
 ┌─────────────────────────────────────────────────┐
 │                   CLIENTS                        │
 │                                                  │
-│   Phase 1: Next.js App Router (SSR/SSG, PWA)     │
+│   Phase 1: Next.js 16 App Router (SSR, PWA)     │
 │   Phase 2: Expo / React Native (iOS + Android)   │
 │                                                  │
-│   UI: Tailwind CSS + shadcn/ui                   │
-│   i18n: next-intl (es-ES default, en secondary)  │
+│   UI: Tailwind CSS 4 + custom component library  │
+│   i18n: next-intl (es default, en secondary)     │
 │   Hosting: Vercel (EU edge region)               │
 └──────────────────────┬──────────────────────────┘
                        │
             Next.js API Routes
-            (webhooks, callbacks,
-             server actions)
+            (/api/checkout, /api/auth/*,
+             /api/webhooks/stripe)
                        │
                        ▼
 ┌─────────────────────────────────────────────────┐
@@ -162,23 +184,21 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 │                                                  │
 │  ┌─────────────┐  ┌──────────────┐              │
 │  │  Auth        │  │  Realtime     │              │
-│  │  (email,     │  │  (messaging,  │              │
-│  │   Google,    │  │   GPS feed,   │              │
-│  │   phone)     │  │   updates)    │              │
+│  │  (email/     │  │  (messaging   │              │
+│  │   password)  │  │   — planned)  │              │
 │  └─────────────┘  └──────────────┘              │
 │                                                  │
 │  ┌─────────────┐  ┌──────────────┐              │
 │  │  PostgreSQL  │  │  Storage      │              │
-│  │  (users,     │  │  (photos,     │              │
-│  │   bookings,  │  │   videos,     │              │
-│  │   reviews,   │  │   documents)  │              │
-│  │   pets)      │  │              │              │
+│  │  + PostGIS   │  │  (photos —   │              │
+│  │  (13 tables, │  │   planned)   │              │
+│  │   full RLS)  │  │              │              │
 │  └─────────────┘  └──────────────┘              │
 │                                                  │
 │  ┌─────────────────────────────────┐            │
-│  │  Edge Functions                  │            │
-│  │  (commission calc, scheduled     │            │
-│  │   jobs, background tasks)        │            │
+│  │  RPC Functions                   │            │
+│  │  find_nearby_sitters()           │            │
+│  │  admin_dashboard_stats()         │            │
 │  └─────────────────────────────────┘            │
 └──────────────────────┬──────────────────────────┘
                        │
@@ -187,114 +207,171 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 │            THIRD-PARTY INTEGRATIONS              │
 │                                                  │
 │  ┌────────────┐  ┌────────────┐  ┌────────────┐│
-│  │ Stripe API │  │ Bizum API  │  │ WhatsApp   ││
-│  │ (payments, │  │ (Spanish   │  │ Business   ││
-│  │  PSD2/SCA) │  │  payments) │  │ API        ││
+│  │ Stripe     │  │ Bizum      │  │ WhatsApp   ││
+│  │ 🔶 Ready   │  │ ❌ Planned │  │ ❌ Planned ││
 │  └────────────┘  └────────────┘  └────────────┘│
 │                                                  │
 │  ┌────────────┐  ┌────────────┐  ┌────────────┐│
-│  │ Background │  │ Mapbox /   │  │ Push       ││
-│  │ Check API  │  │ Google Maps│  │ Notifs     ││
-│  │ (Persona/  │  │ (geo, map  │  │ (FCM/APNs) ││
-│  │  Checkr)   │  │  view)     │  │            ││
+│  │ Background │  │ Map UI     │  │ Push       ││
+│  │ Check API  │  │ (Mapbox /  │  │ Notifs     ││
+│  │ ❌ Planned │  │  Google)   │  │ ❌ Planned ││
+│  │            │  │ ❌ Planned │  │            ││
 │  └────────────┘  └────────────┘  └────────────┘│
 └─────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Database Schema (Key Tables)
+## Database Schema
 
-| Table | Purpose |
-|-------|---------|
-| `users` | Owners and sitters (role-based), preferred locale (es/en), GDPR consent timestamps |
-| `pets` | Pet profiles (type, name, health notes, microchip ID) |
-| `sitter_profiles` | Availability, services, rates, GPS coords, verification status |
-| `bookings` | Booking lifecycle (requested → confirmed → completed), cancellation/refund tracking |
-| `payments` | Transaction records, commission tracking, IVA calculations, invoice references |
-| `reviews` | Ratings, text reviews, linked to bookings, original language stored |
-| `messages` | In-app messaging threads |
-| `visit_logs` | GPS check-in/out, photos, health notes per visit |
-| `partner_discounts` | Affiliate codes from local businesses |
-| `verification` | Background check status, DNI/NIE verification, criminal record check status |
-| `consent_records` | GDPR consent log — what was consented to, when, and version of policy |
-| `legal_documents` | Terms, privacy policy, aviso legal — versioned, in es and en |
-| `invoices` | Auto-generated invoices per transaction (Spanish tax compliance) |
-| `audit_log` | Data access and modification log (GDPR accountability) |
+**Extensions:** PostGIS (geospatial), uuid-ossp
+
+| Table | Purpose | RLS |
+|-------|---------|-----|
+| `profiles` | Full name, email, phone, role, bio, locale, avatar | Public read, own write (no role changes) |
+| `sitter_profiles` | Hourly rate, services[], pet_types[], PostGIS location, verification | Public read, own write |
+| `pets` | Species, breed, age, weight, medical notes, photo, microchip | Owner full access |
+| `bookings` | Owner↔sitter, service type, dates, pricing, status workflow | Participants only |
+| `payments` | Amount, method (stripe/bizum), Stripe intent ID, status | Participants only |
+| `invoices` | Spanish compliance — invoice number, NIF, IVA 21%, PDF | Participants only |
+| `reviews` | 1–5 stars, comment, unique per booking/reviewer | Public read, participants write |
+| `messages` | Sender/recipient, content, read_at | Sender + recipient only |
+| `visit_logs` | Check-in/out timestamps, photos, health notes, GPS | Booking participants |
+| `verifications` | DNI/NIE, background check status | Own read, admin write |
+| `partner_discounts` | Code, percent off, city, valid_until | Public read, admin write |
+| `consent_records` | GDPR consent tracking (terms, privacy, marketing) | Own read |
+| `audit_log` | Data access/modification trail (GDPR accountability) | Admin only |
+
+### Key Indexes
+- `idx_sitter_profiles_location` — GiST index on PostGIS location
+- `idx_bookings_owner`, `idx_bookings_sitter`, `idx_bookings_status`
+- `idx_messages_recipient`
+
+### Key Functions
+- `handle_new_user()` — Auto-create profile on auth signup (trigger)
+- `handle_updated_at()` — Auto-update timestamps (trigger)
+- `find_nearby_sitters(lat, lng, radius_meters)` — PostGIS geospatial search
+- `admin_dashboard_stats()` — Aggregated metrics (12 stats) for admin dashboard
+
+---
+
+## Booking Flow
+
+```
+Owner searches → selects sitter → fills booking form
+                                         │
+                              POST /api/checkout
+                         (server-side price calc,
+                          18% commission applied)
+                                         │
+                              Booking created as
+                              status: "requested"
+                                         │
+                         Sitter accepts or declines
+                                         │
+                    ┌────────────────────┴────────────────────┐
+                    │                                         │
+              "accepted"                              "declined"
+           (awaiting payment —                     (booking cancelled)
+            Stripe not yet active)
+                    │
+              "confirmed" → "in_progress" → "completed"
+                                                    │
+                                             Owner can review
+```
+
+---
+
+## Authentication Flow
+
+1. **Signup:** Form → Supabase `auth.signUp()` → `handle_new_user()` trigger creates profile
+2. **Login:** Email + password → Supabase `auth.signInWithPassword()` → redirect to dashboard
+3. **OAuth callback:** `/api/auth/callback?code=...` → exchange code for session → redirect
+4. **Logout:** POST `/api/auth/logout` → `auth.signOut()` → redirect to home
+5. **Admin guard:** `requireAdmin(locale)` checks `profiles.role = 'admin'`, redirects non-admins
+
+---
+
+## Dependencies
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `next` | 16.2.2 | App Router framework |
+| `react` | 19.2.4 | UI library |
+| `@supabase/supabase-js` | 2.101.1 | Database + auth client |
+| `@supabase/ssr` | 0.10.0 | SSR cookie-based sessions |
+| `stripe` | 22.0.0 | Payment server SDK |
+| `@stripe/stripe-js` | 9.0.1 | Payment client SDK |
+| `next-intl` | 4.9.0 | Internationalization |
+| `lucide-react` | 1.7.0 | Icon library |
+| `sonner` | 2.0.7 | Toast notifications |
+| `tailwindcss` | 4 | CSS framework |
+
+---
+
+## Environment Variables
+
+```
+NEXT_PUBLIC_SUPABASE_URL=          # Supabase project URL (EU/Frankfurt)
+NEXT_PUBLIC_SUPABASE_ANON_KEY=     # Public anon key
+SUPABASE_SERVICE_ROLE_KEY=         # Server-only service role key
+
+STRIPE_SECRET_KEY=                 # Stripe secret (server-only)
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=  # Public key for client
+STRIPE_WEBHOOK_SECRET=             # Webhook signing secret
+
+NEXT_PUBLIC_APP_URL=http://localhost:3000  # App origin for redirects
+```
 
 ---
 
 ## Security & Compliance
 
-### Development in US, Operating in Spain
-- Code is developed from Charleston, SC — but the app serves **only Spanish users**
-- All user data must be stored in **EU-based regions** (Supabase allows EU region selection — choose Frankfurt or EU-West)
-- No user data should be transferred to or stored in US servers
-- If any US-based tools process EU personal data (analytics, error tracking), a **Standard Contractual Clauses (SCC)** agreement is required
-- Business entity needed in Spain to operate legally: either a **Sociedad Limitada (S.L.)** or register as **autónomo** (self-employed)
-- Spanish tax obligations: quarterly IVA (VAT) filings, annual tax returns via Agencia Tributaria
-- You'll need a **NIF** (tax ID number) for the business entity to issue invoices
-- Consider a **gestoría** (Spanish tax/legal advisor) to handle ongoing compliance
+### Technical Security
+- **RLS on all tables** — users only access their own data; admin override policies
+- **No role self-escalation** — RLS prevents users from changing their own role
+- **Server-side price calculation** — checkout API recalculates pricing, never trusts client
+- **Security headers** — HSTS (preload), X-Frame-Options: DENY, nosniff, strict Referrer-Policy, Permissions-Policy
+- **Lazy Stripe init** — no build-time env var requirement
+- **Generic error messages** — no database schema leaks to client
+- **Input validation** — on all API endpoints
+- **Audit logging** — GDPR-compliant data access/modification trail
 
 ### GDPR / LOPDGDD (Spanish Data Protection)
-- Spain enforces GDPR through **LOPDGDD** (Ley Orgánica de Protección de Datos y Garantía de los Derechos Digitales, 2018)
-- Supervisory authority: **AEPD** (Agencia Española de Protección de Datos)
-- Requirements:
-  - Cookie consent banner (compliant with AEPD guidelines)
-  - Privacy policy in both Spanish and English
-  - Explicit consent for data collection at registration
-  - Right to access, rectification, deletion, and data portability
-  - Data Processing Agreement (DPA) with Supabase and all third-party providers
-  - Data breach notification to AEPD within 72 hours
-  - Designated data controller and clear legal basis for each data processing activity
-  - Users under 14 require parental consent (Spain's age of consent for data)
+- Supervisory authority: AEPD (Agencia Española de Protección de Datos)
+- Cookie consent banner required (AEPD guidelines)
+- Privacy policy in Spanish and English
+- Explicit consent at registration (tracked in `consent_records` table)
+- Right to access, rectification, deletion, and data portability
+- Data breach notification to AEPD within 72 hours
+- Users under 14 require parental consent
+- All user data stored in EU-based regions (Supabase Frankfurt)
 
 ### LSSI-CE (Spanish E-Commerce Law)
-- **Ley de Servicios de la Sociedad de la Información y de Comercio Electrónico**
-- Requirements:
-  - Legal notice (Aviso Legal) with company name, NIF/CIF, registered address, contact email
-  - Terms of Service (Condiciones de Uso) in Spanish and English
-  - Clear pricing with taxes included (IVA)
-  - Cancellation and refund policy compliant with Spanish consumer protection
-  - Electronic contract confirmation sent to users after booking
+- Legal notice (Aviso Legal) with company name, NIF/CIF, address, contact
+- Terms of Service in Spanish and English
+- Clear pricing with IVA included
+- Cancellation/refund policy compliant with Spanish consumer protection
 
 ### Spain Animal Welfare Law (Ley 7/2023)
-- Ley de Protección de los Derechos y el Bienestar de los Animales
-- Requirements:
-  - Sitters must demonstrate knowledge of animal care responsibilities
-  - Platform must not facilitate services that violate animal welfare standards
-  - Liability coverage for animals in sitter care
-  - Compliance with pet identification requirements (microchip verification)
-
-### Consumer Protection (Ley General para la Defensa de los Consumidores)
-- 14-day withdrawal right for digital services
-- Transparent pricing — all fees and commissions clearly displayed before booking
-- Dispute resolution mechanism required
-- Must provide access to ODR platform (ec.europa.eu/odr) for online dispute resolution
-
-### Background Checks & Identity Verification
-- DNI/NIE verification for all sitters (mandatory)
-- **Certificado de Antecedentes Penales** (criminal background check) — sitters must provide or authorize
-- Spanish law requires explicit consent for background checks
-- Background check data must be stored securely and deleted when no longer needed
-- Consider Spanish providers: TrustYou, Evident ID, or direct integration with Spanish Ministry of Justice API
+- Sitters must demonstrate animal care knowledge
+- Microchip verification support in pet profiles
+- Liability coverage for animals in sitter care (TBD)
 
 ### Payment Compliance
-- **PSD2 (SCA)** — Strong Customer Authentication required for European payments
-- PCI DSS compliance via Stripe (Stripe handles this)
-- Bizum operates under Spanish banking regulations
-- Invoice generation required for all transactions (Spanish tax law)
-- IVA (21%) applied to platform commission fees
-- Must register as payment intermediary or use licensed payment processor
-- Anti-money laundering (AML) compliance for transaction monitoring
+- PSD2 (SCA) — Strong Customer Authentication for European payments (via Stripe)
+- Invoice generation with Spanish IVA (21%) — sequential numbering
+- Anti-money laundering (AML) compliance via licensed payment processor
 
-### Technical Security
-- **Row Level Security (RLS)** — Supabase RLS policies to ensure users only access their own data
-- HTTPS everywhere, TLS 1.3 minimum
-- GPS data encrypted at rest and in transit
-- Photo/video storage with access controls (only booking participants)
-- Rate limiting and abuse prevention on all API endpoints
-- Audit logging for all data access and modifications
+---
+
+## Brand Voice — Pet Perspective
+
+All marketing copy written from the pet's point of view:
+- Hero: "Encuentra a alguien que me cuide mientras no estás"
+- Features: "Siempre saben dónde estoy", "Mira lo bien que estoy"
+- Testimonials: reviews "translated by their humans"
+- Functional UI (forms, dashboards) stays human-readable
 
 ---
 
@@ -337,7 +414,7 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 | Item | Cost |
 |------|------|
 | Supabase (free tier to start) | €0 |
-| Domain + hosting | ~€50/yr |
+| Domain + hosting (Vercel) | ~€50/yr |
 | Background check API | ~€2–5/check |
 | Stripe fees | 1.4% + €0.25/transaction |
 | Bizum integration | TBD (research required) |

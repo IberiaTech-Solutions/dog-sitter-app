@@ -1,7 +1,18 @@
 import type { ReactNode } from "react";
+import { Geist } from "next/font/google";
+import "./globals.css";
 
-// Root layout is minimal — the [locale] layout handles everything.
-// This exists because Next.js requires a root layout.
+const geist = Geist({
+  variable: "--font-geist",
+  subsets: ["latin"],
+});
+
 export default function RootLayout({ children }: { children: ReactNode }) {
-  return children;
+  return (
+    <html className={`${geist.variable} h-full antialiased`} suppressHydrationWarning>
+      <body className="min-h-full flex flex-col font-sans">
+        {children}
+      </body>
+    </html>
+  );
 }

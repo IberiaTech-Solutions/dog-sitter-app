@@ -34,10 +34,10 @@ export async function POST(request: Request) {
     const bookingId = session.metadata?.booking_id;
 
     if (bookingId) {
-      // Update booking status
+      // Payment received — booking is now awaiting sitter acceptance
       await supabase
         .from("bookings")
-        .update({ status: "confirmed" })
+        .update({ status: "requested" })
         .eq("id", bookingId);
 
       // Create payment record

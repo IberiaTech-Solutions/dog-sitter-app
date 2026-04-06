@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { Link } from "@/i18n/navigation";
+import { Header, PageShell } from "@/components/ui";
 import { MessageList } from "@/components/message-list";
 
 type Props = {
@@ -70,25 +70,16 @@ export default async function MessagesPage({ params }: Props) {
   );
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      <header className="border-b border-zinc-200 bg-white">
-        <div className="mx-auto max-w-4xl flex items-center justify-between px-6 py-4">
-          <Link href="/" className="text-xl font-bold text-emerald-600">
-            {t("common.appName")}
-          </Link>
-          <Link href="/dashboard" className="text-sm text-zinc-600 hover:text-zinc-900">
-            {locale === "es" ? "Mi panel" : "Dashboard"}
-          </Link>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#faf9f7]">
+      <Header appName={t("common.appName")} isLoggedIn />
 
-      <main className="mx-auto max-w-4xl px-6 py-8">
-        <h1 className="text-2xl font-bold text-zinc-900">
+      <PageShell>
+        <h1 className="text-2xl font-bold text-stone-900">
           {locale === "es" ? "Mensajes" : "Messages"}
         </h1>
 
         {conversations.length === 0 ? (
-          <p className="mt-6 text-sm text-zinc-500">
+          <p className="mt-6 text-sm text-stone-500">
             {locale === "es"
               ? "No tienes mensajes todavía."
               : "You don't have any messages yet."}
@@ -96,7 +87,7 @@ export default async function MessagesPage({ params }: Props) {
         ) : (
           <MessageList conversations={conversations} currentUserId={user.id} />
         )}
-      </main>
+      </PageShell>
     </div>
   );
 }

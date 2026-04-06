@@ -3,6 +3,7 @@
 import { useLocale } from "next-intl";
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui";
 
 type Conversation = {
   userId: string;
@@ -123,31 +124,31 @@ export function MessageList({ conversations, currentUserId }: Props) {
   }
 
   return (
-    <div className="mt-6 flex h-[600px] rounded-xl bg-white shadow-sm overflow-hidden">
+    <div className="mt-6 flex h-[600px] rounded-2xl bg-white border border-stone-100 shadow-sm overflow-hidden">
       {/* Conversation list */}
-      <div className="w-80 border-r border-zinc-200 overflow-y-auto">
+      <div className="w-80 border-r border-stone-200 overflow-y-auto">
         {conversations.map((conv) => (
           <button
             key={conv.userId}
             onClick={() => setSelectedUser(conv)}
-            className={`w-full px-4 py-4 text-left border-b border-zinc-100 hover:bg-zinc-50 transition-colors ${
-              selectedUser?.userId === conv.userId ? "bg-emerald-50" : ""
+            className={`w-full px-4 py-4 text-left border-b border-stone-100 hover:bg-stone-50 transition-colors ${
+              selectedUser?.userId === conv.userId ? "bg-green-50" : ""
             }`}
           >
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 shrink-0 rounded-full bg-emerald-100 flex items-center justify-center text-sm font-semibold text-emerald-700">
+              <div className="h-10 w-10 shrink-0 rounded-full bg-green-100 flex items-center justify-center text-sm font-semibold text-green-700">
                 {conv.name.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-zinc-900 truncate">
+                  <p className="text-sm font-medium text-stone-900 truncate">
                     {conv.name}
                   </p>
                   {conv.unread && (
-                    <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                    <span className="h-2 w-2 rounded-full bg-green-500" />
                   )}
                 </div>
-                <p className="text-xs text-zinc-500 truncate">
+                <p className="text-xs text-stone-500 truncate">
                   {conv.lastMessage}
                 </p>
               </div>
@@ -159,7 +160,7 @@ export function MessageList({ conversations, currentUserId }: Props) {
       {/* Chat area */}
       <div className="flex-1 flex flex-col">
         {!selectedUser ? (
-          <div className="flex-1 flex items-center justify-center text-zinc-400 text-sm">
+          <div className="flex-1 flex items-center justify-center text-stone-400 text-sm">
             {locale === "es"
               ? "Selecciona una conversación"
               : "Select a conversation"}
@@ -167,8 +168,8 @@ export function MessageList({ conversations, currentUserId }: Props) {
         ) : (
           <>
             {/* Chat header */}
-            <div className="border-b border-zinc-200 px-6 py-3">
-              <p className="font-medium text-zinc-900">
+            <div className="border-b border-stone-200 px-6 py-3">
+              <p className="font-medium text-stone-900">
                 {selectedUser.name}
               </p>
             </div>
@@ -185,14 +186,14 @@ export function MessageList({ conversations, currentUserId }: Props) {
                     <div
                       className={`max-w-[70%] rounded-2xl px-4 py-2 text-sm ${
                         isMine
-                          ? "bg-emerald-600 text-white"
-                          : "bg-zinc-100 text-zinc-900"
+                          ? "bg-green-600 text-white"
+                          : "bg-stone-100 text-stone-900"
                       }`}
                     >
                       <p>{msg.content}</p>
                       <p
                         className={`mt-1 text-xs ${
-                          isMine ? "text-emerald-200" : "text-zinc-400"
+                          isMine ? "text-green-200" : "text-stone-400"
                         }`}
                       >
                         {new Date(msg.created_at).toLocaleTimeString(
@@ -210,7 +211,7 @@ export function MessageList({ conversations, currentUserId }: Props) {
             {/* Input */}
             <form
               onSubmit={handleSend}
-              className="border-t border-zinc-200 px-4 py-3 flex gap-3"
+              className="border-t border-stone-200 px-4 py-3 flex gap-3"
             >
               <input
                 type="text"
@@ -219,15 +220,16 @@ export function MessageList({ conversations, currentUserId }: Props) {
                 placeholder={
                   locale === "es" ? "Escribe un mensaje..." : "Type a message..."
                 }
-                className="flex-1 rounded-full border border-zinc-300 px-4 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                className="flex-1 rounded-full border border-stone-200 bg-stone-50 px-4 py-2 text-sm focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
               />
-              <button
+              <Button
                 type="submit"
                 disabled={sending || !newMessage.trim()}
-                className="rounded-full bg-emerald-600 px-5 py-2 text-sm font-medium text-white hover:bg-emerald-700 disabled:opacity-50"
+                size="sm"
+                className="rounded-full"
               >
                 {locale === "es" ? "Enviar" : "Send"}
-              </button>
+              </Button>
             </form>
           </>
         )}

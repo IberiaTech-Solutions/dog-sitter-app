@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { Header, PageShell, Card, Avatar, Badge, LinkButton } from "@/components/ui";
 import { BookingActions } from "@/components/booking-actions";
+import { PaymentToast } from "@/components/payment-toast";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -37,12 +38,12 @@ export default async function DashboardPage({ params }: Props) {
     .order("created_at", { ascending: false })
     .limit(20);
 
-  const isOwner = profile?.role === "owner" || profile?.role === "both";
-  const isSitter = profile?.role === "sitter" || profile?.role === "both";
+  const isOwner = profile?.role === "owner";
+  const isSitter = profile?.role === "sitter";
 
   const statusConfig: Record<string, { labelEs: string; labelEn: string; variant: "green" | "amber" | "red" | "blue" | "purple" | "stone" }> = {
-    requested: { labelEs: "Solicitada", labelEn: "Requested", variant: "amber" },
-    accepted: { labelEs: "Aceptada", labelEn: "Accepted", variant: "blue" },
+    pending_payment: { labelEs: "Procesando pago", labelEn: "Processing payment", variant: "stone" },
+    requested: { labelEs: "Pendiente", labelEn: "Pending", variant: "amber" },
     confirmed: { labelEs: "Confirmada", labelEn: "Confirmed", variant: "green" },
     in_progress: { labelEs: "En curso", labelEn: "In progress", variant: "purple" },
     completed: { labelEs: "Completada", labelEn: "Completed", variant: "stone" },
@@ -52,6 +53,7 @@ export default async function DashboardPage({ params }: Props) {
 
   return (
     <div className="min-h-screen bg-[#faf9f7]">
+      <PaymentToast />
       <Header appName={t("common.appName")} isLoggedIn>
         <span className="text-sm text-stone-500">{profile?.full_name}</span>
         <form action="/api/auth/logout" method="POST">
@@ -71,6 +73,9 @@ export default async function DashboardPage({ params }: Props) {
             </h1>
           </div>
           <div className="flex flex-wrap gap-2">
+            <LinkButton href="/dashboard/profile" variant="ghost" size="sm">
+              {locale === "es" ? "Mi perfil" : "My profile"}
+            </LinkButton>
             {isOwner && (
               <LinkButton href="/dashboard/pets" variant="ghost" size="sm">
                 {locale === "es" ? "Mis mascotas" : "My pets"}
@@ -84,15 +89,11 @@ export default async function DashboardPage({ params }: Props) {
                 {t("home.ctaOwner")}
               </LinkButton>
             )}
-            <LinkButton
-              href="/dashboard/sitter-setup"
-              variant={isSitter ? "outline" : "ghost"}
-              size="sm"
-            >
-              {isSitter
-                ? locale === "es" ? "Mi perfil cuidador" : "Sitter profile"
-                : locale === "es" ? "Hazte cuidador" : "Become a sitter"}
-            </LinkButton>
+            {isSitter && (
+              <LinkButton href="/dashboard/sitter-setup" variant="outline" size="sm">
+                {locale === "es" ? "Mi perfil cuidador" : "Sitter profile"}
+              </LinkButton>
+            )}
           </div>
         </div>
 
