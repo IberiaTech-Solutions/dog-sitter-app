@@ -44,6 +44,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "End date must be after start date" }, { status: 400 });
   }
 
+  // Check for overlapping bookings (exclude meet & greets)
+  const { data: overlapping } = await supabase
+    .from("bookings")
+    .select("id")
+    .eq("sitter_id", sitter_id)
+    .eq("is_meet_greet", false)
+    .in("status", ["requested", "confirmed", "in_progress"])
+    .lt("start_date", end_date)
+    .gt("end_date", start_date);
+
+  if (overlapping && overlapping.length > 0) {
+    const msg = locale === "es"
+      ? "Este cuidador ya tiene una reserva durante estas fechas"
+      : "This sitter already has a booking during these dates";
+    return NextResponse.json({ error: msg }, { status: 409 });
+  }
+
   // SERVER-SIDE PRICE CALCULATION
   const { data: sitterProfile, error: sitterError } = await supabase
     .from("sitter_profiles")

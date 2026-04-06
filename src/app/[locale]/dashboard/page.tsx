@@ -135,6 +135,10 @@ export default async function DashboardPage({ params }: Props) {
                       isSitter={booking.sitter_id === user.id}
                       isOwner={booking.owner_id === user.id}
                       otherPersonId={booking.owner_id === user.id ? booking.sitter_id : booking.owner_id}
+                      sitterId={booking.sitter_id}
+                      startDate={booking.start_date}
+                      endDate={booking.end_date}
+                      isMeetGreet={booking.is_meet_greet}
                     />
                     {(booking.status === "confirmed" ||
                       booking.status === "in_progress") && (
@@ -142,7 +146,17 @@ export default async function DashboardPage({ params }: Props) {
                         {locale === "es" ? "Ver visita" : "View visit"}
                       </LinkButton>
                     )}
-                    {booking.status === "completed" && (
+                    {booking.status === "completed" && booking.owner_id === user.id && !booking.is_meet_greet && (
+                      <>
+                        <LinkButton href={`/booking/${booking.sitter_id}`} variant="primary" size="sm">
+                          {locale === "es" ? "Repetir" : "Book again"}
+                        </LinkButton>
+                        <LinkButton href={`/dashboard/review/${booking.id}`} variant="outline" size="sm">
+                          {locale === "es" ? "Opinar" : "Review"}
+                        </LinkButton>
+                      </>
+                    )}
+                    {booking.status === "completed" && booking.sitter_id === user.id && (
                       <LinkButton href={`/dashboard/review/${booking.id}`} variant="outline" size="sm">
                         {locale === "es" ? "Opinar" : "Review"}
                       </LinkButton>

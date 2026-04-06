@@ -14,9 +14,13 @@ type Props = {
   isSitter: boolean;
   isOwner: boolean;
   otherPersonId: string;
+  sitterId?: string;
+  startDate?: string;
+  endDate?: string;
+  isMeetGreet?: boolean;
 };
 
-export function BookingActions({ bookingId, status, isSitter, isOwner, otherPersonId }: Props) {
+export function BookingActions({ bookingId, status, isSitter, isOwner, otherPersonId, sitterId, startDate, endDate, isMeetGreet }: Props) {
   const locale = useLocale();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -57,7 +61,33 @@ export function BookingActions({ bookingId, status, isSitter, isOwner, otherPers
           variant="primary"
           size="sm"
           disabled={loading}
-          onClick={() => updateStatus("confirmed")}
+          onClick={async () => {
+            if (sitterId && startDate && endDate && !isMeetGreet) {
+              setLoading(true);
+              const supabase = createClient();
+              const { data: overlapping } = await supabase
+                .from("bookings")
+                .select("id")
+                .eq("sitter_id", sitterId)
+                .eq("is_meet_greet", false)
+                .in("status", ["requested", "confirmed", "in_progress"])
+                .lt("start_date", endDate)
+                .gt("end_date", startDate)
+                .neq("id", bookingId);
+
+              if (overlapping && overlapping.length > 0) {
+                toast.error(
+                  es
+                    ? "Ya tienes una reserva durante estas fechas"
+                    : "You already have a booking during these dates"
+                );
+                setLoading(false);
+                return;
+              }
+              setLoading(false);
+            }
+            updateStatus("confirmed");
+          }}
         >
           <Check className="w-3.5 h-3.5" />
           {es ? "Aceptar" : "Accept"}

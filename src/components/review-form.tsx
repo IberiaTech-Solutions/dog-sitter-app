@@ -5,6 +5,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/navigation";
 import { Card, Textarea, Button } from "@/components/ui";
+import { toast } from "sonner";
 
 type Props = {
   bookingId: string;
@@ -48,6 +49,29 @@ export function ReviewForm({ bookingId, revieweeId }: Props) {
       setError(dbError.message);
       setLoading(false);
       return;
+    }
+
+    // Check for available discount codes to reward the reviewer
+    const { data: discount } = await supabase
+      .from("partner_discounts")
+      .select("code, partner_name, discount_percent")
+      .eq("is_active", true)
+      .gte("valid_until", new Date().toISOString())
+      .limit(1)
+      .single();
+
+    if (discount) {
+      toast.success(
+        locale === "es" ? "¡Gracias por tu opinión!" : "Thanks for your review!",
+        {
+          description: locale === "es"
+            ? `Usa el código ${discount.code} para ${discount.discount_percent}% de descuento en ${discount.partner_name}`
+            : `Use code ${discount.code} for ${discount.discount_percent}% off at ${discount.partner_name}`,
+          duration: 10000,
+        }
+      );
+    } else {
+      toast.success(locale === "es" ? "¡Opinión enviada!" : "Review submitted!");
     }
 
     router.push("/dashboard");

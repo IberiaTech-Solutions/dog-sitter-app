@@ -50,6 +50,10 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 | Shared UI library | ✅ Done | Button, Input, Textarea, Select, Card, Badge, Avatar, Header, DashboardShell, PageShell |
 | Meet & greet flow | ✅ Done | Free intro meeting before booking, request/accept/complete flow |
 | PWA (Progressive Web App) | ✅ Done | Manifest, service worker, offline page, installable on mobile home screen |
+| Search filters | ✅ Done | Service type, pet type, price range, verified only — client-side filtering |
+| Booking overlap prevention | ✅ Done | Server-side check in checkout + client-side check on sitter accept |
+| Repeat bookings | ✅ Done | "Book again" button on completed bookings for owners |
+| Reviews-for-discounts | ✅ Done | After submitting a review, owner receives partner discount code via toast |
 
 ### Partially Implemented
 
@@ -65,11 +69,7 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 | Push notifications | ❌ | Web push via service worker — SW is ready, needs push subscription + backend |
 | Bizum payments | ❌ | Schema supports `method: 'bizum'`, no implementation |
 | WhatsApp integration | ❌ | Not implemented |
-| Reviews-for-discounts | ❌ | Discount system exists but not linked to reviews |
 | Background checks API | ❌ | No external provider connected |
-| Repeat bookings | ❌ | "Book again" shortcut for same sitter |
-| Search filters | ❌ | Filter by service type, dates, price range, verified only |
-| Booking overlap prevention | ❌ | Check sitter availability before accepting |
 | GPS live map for owners | ❌ | Real-time sitter location on map during visit |
 | Cancellation policy tiers | ❌ | Flexible/moderate/strict per sitter |
 | Sitter response metrics | ❌ | Response rate/time shown on profile |
