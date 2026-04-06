@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { Header, PageShell, Card, Avatar, Badge, LinkButton } from "@/components/ui";
+import { BookingActions } from "@/components/booking-actions";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -103,7 +104,6 @@ export default async function DashboardPage({ params }: Props) {
 
           {!bookings || bookings.length === 0 ? (
             <Card className="mt-4 text-center py-12">
-              <span className="text-4xl block mb-3">🐾</span>
               <p className="text-stone-400">
                 {locale === "es"
                   ? "No tienes reservas todavia."
@@ -158,15 +158,22 @@ export default async function DashboardPage({ params }: Props) {
                             ? config?.labelEs ?? booking.status
                             : config?.labelEn ?? booking.status}
                         </Badge>
+                        <BookingActions
+                          bookingId={booking.id}
+                          status={booking.status}
+                          isSitter={booking.sitter_id === user.id}
+                          isOwner={booking.owner_id === user.id}
+                          otherPersonId={booking.owner_id === user.id ? booking.sitter_id : booking.owner_id}
+                        />
                         {(booking.status === "confirmed" ||
                           booking.status === "in_progress") && (
                           <LinkButton href={`/dashboard/booking/${booking.id}`} variant="primary" size="sm">
-                            📍 {locale === "es" ? "Ver" : "View"}
+                            {locale === "es" ? "Ver visita" : "View visit"}
                           </LinkButton>
                         )}
                         {booking.status === "completed" && (
                           <LinkButton href={`/dashboard/review/${booking.id}`} variant="outline" size="sm">
-                            ⭐ {locale === "es" ? "Opinar" : "Review"}
+                            {locale === "es" ? "Opinar" : "Review"}
                           </LinkButton>
                         )}
                       </div>
