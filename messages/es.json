@@ -11,21 +11,32 @@
     "logout": "Cerrar sesión"
   },
   "home": {
-    "title": "Encuentra cuidadores de mascotas de confianza cerca de ti",
-    "subtitle": "Cuidadores verificados con control de antecedentes, seguimiento GPS y actualizaciones en tiempo real.",
-    "searchPlaceholder": "¿Dónde necesitas un cuidador?",
+    "title": "Encuentra a alguien que me cuide mientras no estás",
+    "subtitle": "Cuidadores verificados que me tratan como en casa. Con seguimiento GPS, fotos y notas de salud en cada visita.",
+    "searchPlaceholder": "¿Dónde vivo?",
     "ctaOwner": "Buscar cuidadores",
-    "ctaSitter": "Hazte cuidador",
-    "trustBadge": "Todos los cuidadores verificados con control de antecedentes",
+    "ctaSitter": "Quiero cuidar mascotas",
+    "trustBadge": "Todos los cuidadores verificados con antecedentes",
+    "heroQuote": "\"Mi humano se fue tranquilo porque sabe que estoy en buenas patas\"",
+    "statsUsers": "Dueños confían en nosotros",
+    "statsSitters": "Cuidadores verificados",
+    "statsRating": "Valoración media",
     "features": {
-      "gps": "Seguimiento GPS en tiempo real",
-      "gpsDesc": "Sabe cuándo llega y se va tu cuidador",
-      "verified": "Cuidadores verificados",
-      "verifiedDesc": "Control de antecedentes y verificación de identidad",
-      "photos": "Actualizaciones con fotos",
-      "photosDesc": "Recibe fotos y vídeos de tu mascota durante la visita",
-      "payments": "Pagos seguros",
-      "paymentsDesc": "Paga con Bizum o tarjeta de forma segura"
+      "gps": "Siempre saben dónde estoy",
+      "gpsDesc": "Seguimiento GPS en tiempo real para que tu humano esté tranquilo",
+      "verified": "Solo los mejores me cuidan",
+      "verifiedDesc": "Control de antecedentes y verificación de identidad de cada cuidador",
+      "photos": "Mira lo bien que estoy",
+      "photosDesc": "Fotos y vídeos durante cada visita para que veas que soy feliz",
+      "payments": "Sin líos con el dinero",
+      "paymentsDesc": "Pagos seguros con tarjeta o Bizum. Tú a lo tuyo, humano"
+    },
+    "guarantee": "Garantía CuidaMascotas",
+    "guaranteeDesc": "Si algo no sale bien, te ayudamos a resolverlo. Todos los cuidadores están verificados y cada visita está protegida.",
+    "guaranteePoints": {
+      "verified": "Cuidadores con DNI y antecedentes verificados",
+      "tracking": "Seguimiento GPS de cada visita",
+      "support": "Soporte prioritario si algo va mal"
     }
   },
   "auth": {

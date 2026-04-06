@@ -11,21 +11,32 @@
     "logout": "Log out"
   },
   "home": {
-    "title": "Find trusted pet sitters near you",
-    "subtitle": "Verified sitters with background checks, GPS tracking, and real-time updates.",
-    "searchPlaceholder": "Where do you need a sitter?",
+    "title": "Find someone to look after me while you're away",
+    "subtitle": "Verified sitters who treat me like family. With GPS tracking, photos, and health notes every visit.",
+    "searchPlaceholder": "Where do I live?",
     "ctaOwner": "Find sitters",
-    "ctaSitter": "Become a sitter",
+    "ctaSitter": "I want to care for pets",
     "trustBadge": "All sitters verified with background checks",
+    "heroQuote": "\"My human left worry-free because they know I'm in good paws\"",
+    "statsUsers": "Owners trust us",
+    "statsSitters": "Verified sitters",
+    "statsRating": "Average rating",
     "features": {
-      "gps": "Real-time GPS tracking",
-      "gpsDesc": "Know when your sitter arrives and leaves",
-      "verified": "Verified sitters",
-      "verifiedDesc": "Background checks and identity verification",
-      "photos": "Photo updates",
-      "photosDesc": "Receive photos and videos of your pet during the visit",
-      "payments": "Secure payments",
-      "paymentsDesc": "Pay securely with Bizum or card"
+      "gps": "They always know where I am",
+      "gpsDesc": "Real-time GPS tracking so your human can relax",
+      "verified": "Only the best look after me",
+      "verifiedDesc": "Background checks and identity verification for every sitter",
+      "photos": "Look how happy I am",
+      "photosDesc": "Photos and videos during every visit so you can see I'm doing great",
+      "payments": "No fuss with money",
+      "paymentsDesc": "Secure payments by card or Bizum. You do your thing, human"
+    },
+    "guarantee": "CuidaMascotas Guarantee",
+    "guaranteeDesc": "If something doesn't go right, we help you sort it out. All sitters are verified and every visit is protected.",
+    "guaranteePoints": {
+      "verified": "Sitters with verified ID and background checks",
+      "tracking": "GPS tracking for every visit",
+      "support": "Priority support if anything goes wrong"
     }
   },
   "auth": {

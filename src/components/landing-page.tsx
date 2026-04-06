@@ -85,26 +85,23 @@ export function LandingPage() {
                   </Link>
                 </div>
 
-                <div className="mt-8 flex items-center gap-4">
-                  <div className="flex -space-x-2">
-                    {["/images/happy-dog.jpg", "/images/cat-cute.jpg", "/images/dogs-playing.jpg"].map((src, i) => (
-                      <div key={i} className="w-9 h-9 rounded-full border-2 border-white overflow-hidden">
-                        <Image src={src} alt="" width={36} height={36} className="object-cover w-full h-full" />
-                      </div>
-                    ))}
-                  </div>
-                  <div className="text-sm">
-                    <div className="flex items-center gap-1 text-amber-500">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-3.5 h-3.5 fill-current" />
-                      ))}
+                {/* Pet quote */}
+                <p className="mt-6 text-sm italic text-stone-400">
+                  {t("home.heroQuote")}
+                </p>
+
+                {/* Stats counters */}
+                <div className="mt-8 flex flex-wrap gap-6">
+                  {[
+                    { value: "150+", label: t("home.statsSitters") },
+                    { value: "4.9", label: t("home.statsRating") },
+                    { value: "500+", label: t("home.statsUsers") },
+                  ].map((stat) => (
+                    <div key={stat.label}>
+                      <p className="text-2xl font-bold text-stone-900">{stat.value}</p>
+                      <p className="text-xs text-stone-400">{stat.label}</p>
                     </div>
-                    <p className="text-stone-400 mt-0.5">
-                      {t("home.ctaOwner") === "Find sitters"
-                        ? "Trusted by pet owners across Spain"
-                        : "La confianza de dueños de mascotas en España"}
-                    </p>
-                  </div>
+                  ))}
                 </div>
               </div>
 
@@ -211,6 +208,77 @@ export function LandingPage() {
           </div>
         </section>
 
+        {/* Testimonials */}
+        <section className="py-20 sm:py-28">
+          <div className="mx-auto max-w-6xl px-5 sm:px-8">
+            <div className="text-center max-w-xl mx-auto mb-12">
+              <h2 className="text-3xl sm:text-4xl font-bold text-stone-900 tracking-tight">
+                {t("home.ctaOwner") === "Find sitters"
+                  ? "What pets are saying"
+                  : "Lo que dicen las mascotas"}
+              </h2>
+              <p className="mt-3 text-stone-500">
+                {t("home.ctaOwner") === "Find sitters"
+                  ? "Well, their humans translated for them"
+                  : "Bueno, sus humanos tradujeron por ellas"}
+              </p>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-3">
+              {[
+                { nameEs: "Luna (a través de María)", nameEn: "Luna (via María)", quoteEs: "Mi humana viajó por trabajo y yo me quedé con Sara. Me llevó al parque tres veces al día y me mandó fotos. ¡Repetimos seguro!", quoteEn: "My human traveled for work and I stayed with Sara. She took me to the park three times a day and sent photos. We're definitely doing this again!", rating: 5, pet: "Golden Retriever" },
+                { nameEs: "Michi (a través de Carlos)", nameEn: "Michi (via Carlos)", quoteEs: "Soy un gato muy exigente, pero Ana entendió mis horarios de comida y me dejó dormir en mi sitio favorito. Aprobado.", quoteEn: "I'm a very demanding cat, but Ana understood my feeding schedule and let me sleep in my favorite spot. Approved.", rating: 5, pet: "Gato persa" },
+                { nameEs: "Rocky (a través de Lucía)", nameEn: "Rocky (via Lucía)", quoteEs: "El GPS me dio tranquilidad total. Vi que Pablo llegó a la hora exacta y sacó a Rocky a pasear por nuestra ruta habitual.", quoteEn: "The GPS gave me total peace of mind. I saw Pablo arrived on time and walked Rocky on our usual route.", rating: 5, pet: "Border Collie" },
+              ].map((review, i) => (
+                <div key={i} className="rounded-2xl bg-white border border-stone-100 p-6 shadow-sm">
+                  <div className="flex text-amber-400 mb-3">
+                    {[...Array(review.rating)].map((_, j) => (
+                      <Star key={j} className="w-4 h-4 fill-current" />
+                    ))}
+                  </div>
+                  <p className="text-sm text-stone-600 leading-relaxed italic">
+                    &ldquo;{t("home.ctaOwner") === "Find sitters" ? review.quoteEn : review.quoteEs}&rdquo;
+                  </p>
+                  <div className="mt-4 pt-4 border-t border-stone-100">
+                    <p className="text-sm font-medium text-stone-900">
+                      {t("home.ctaOwner") === "Find sitters" ? review.nameEn : review.nameEs}
+                    </p>
+                    <p className="text-xs text-stone-400">{review.pet}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Guarantee banner */}
+        <section className="py-12">
+          <div className="mx-auto max-w-6xl px-5 sm:px-8">
+            <div className="rounded-3xl bg-green-50 border border-green-100 p-8 sm:p-12">
+              <div className="flex flex-col sm:flex-row items-start gap-6">
+                <div className="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center shrink-0">
+                  <Shield className="w-7 h-7 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-green-900">{t("home.guarantee")}</h3>
+                  <p className="mt-2 text-green-800 leading-relaxed">{t("home.guaranteeDesc")}</p>
+                  <div className="mt-4 grid gap-2 sm:grid-cols-3">
+                    {(["verified", "tracking", "support"] as const).map((key) => (
+                      <div key={key} className="flex items-center gap-2">
+                        <div className="w-5 h-5 rounded-full bg-green-200 flex items-center justify-center shrink-0">
+                          <svg className="w-3 h-3 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                        <span className="text-sm text-green-800">{t(`home.guaranteePoints.${key}`)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Trust section */}
         <section className="py-20 sm:py-28">
           <div className="mx-auto max-w-6xl px-5 sm:px-8">
@@ -225,12 +293,12 @@ export function LandingPage() {
               </div>
               <div>
                 <h2 className="text-3xl sm:text-4xl font-bold text-stone-900 tracking-tight">
-                  {t("home.ctaOwner") === "Find sitters" ? "Your pets deserve the best care" : "Tus mascotas merecen el mejor cuidado"}
+                  {t("home.ctaOwner") === "Find sitters" ? "I deserve the best. And I know it." : "Me merezco lo mejor. Y lo sé."}
                 </h2>
                 <p className="mt-5 text-stone-500 leading-relaxed">
                   {t("home.ctaOwner") === "Find sitters"
-                    ? "Every sitter on CuidaMascotas goes through identity verification and background checks. You'll always know your pet is in safe hands — with GPS tracking, real-time photos, and health updates throughout every visit."
-                    : "Cada cuidador en CuidaMascotas pasa por verificación de identidad y control de antecedentes. Siempre sabrás que tu mascota está en buenas manos — con seguimiento GPS, fotos en tiempo real y notas de salud durante cada visita."}
+                    ? "Every sitter on CuidaMascotas goes through identity verification and background checks. My human always knows I'm in safe paws — with GPS tracking, real-time photos, and health updates throughout every visit."
+                    : "Cada cuidador en CuidaMascotas pasa por verificación de identidad y control de antecedentes. Mi humano siempre sabe que estoy en buenas patas — con seguimiento GPS, fotos en tiempo real y notas de salud en cada visita."}
                 </p>
                 <div className="mt-8 space-y-4">
                   {[
@@ -270,8 +338,8 @@ export function LandingPage() {
                 </h2>
                 <p className="mt-3 text-green-100 leading-relaxed">
                   {t("home.ctaOwner") === "Find sitters"
-                    ? "Set your own schedule and rates. Build your reputation with verified reviews and start earning doing what you love."
-                    : "Establece tu propio horario y tarifas. Construye tu reputación con opiniones verificadas y empieza a ganar haciendo lo que te gusta."}
+                    ? "Set your own schedule and rates. Earn up to €500/month caring for pets in your area. Get verified, build reviews, and do what you love."
+                    : "Establece tu propio horario y tarifas. Gana hasta 500€/mes cuidando mascotas en tu zona. Verifica tu perfil, acumula opiniones y haz lo que te gusta."}
                 </p>
                 <Link href="/signup" className="mt-6 inline-flex items-center gap-2 px-8 py-3.5 bg-white text-green-700 text-sm font-semibold rounded-2xl hover:bg-green-50 active:scale-[0.98] transition-all">
                   {t("home.ctaSitter")}
