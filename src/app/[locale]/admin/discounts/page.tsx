@@ -33,7 +33,6 @@ export default async function AdminDiscountsPage({ params }: Props) {
 
       <PageShell>
         <div className="flex items-center gap-3 mb-6">
-          <span className="text-2xl">🏷️</span>
           <h1 className="text-2xl font-bold text-stone-900">
             {es ? "Descuentos de partners" : "Partner discounts"}
           </h1>
@@ -79,7 +78,7 @@ export default async function AdminDiscountsPage({ params }: Props) {
                       )}
                     </div>
                     <div className="flex items-center gap-4 text-sm shrink-0">
-                      <span className="text-stone-400">📍 {d.city}</span>
+                      <span className="text-stone-400">{d.city}</span>
                       <span className="font-mono bg-stone-100 px-3 py-1 rounded-lg text-stone-700">{d.discount_code}</span>
                       <span className="text-lg font-bold text-green-600">-{d.discount_percent}%</span>
                     </div>

@@ -32,7 +32,6 @@ export default async function AdminSittersPage({ params }: Props) {
 
       <PageShell>
         <div className="flex items-center gap-3 mb-6">
-          <span className="text-2xl">🐾</span>
           <h1 className="text-2xl font-bold text-stone-900">
             {es ? "Gestión de cuidadores" : "Sitter management"}
           </h1>
@@ -44,7 +43,6 @@ export default async function AdminSittersPage({ params }: Props) {
         {pendingVerifications && pendingVerifications.length > 0 && (
           <div className="mt-8">
             <h2 className="text-lg font-semibold text-stone-900 flex items-center gap-2">
-              <span>⏳</span>
               {es ? "Verificaciones pendientes" : "Pending verifications"}
               <Badge variant="amber">{pendingVerifications.length}</Badge>
             </h2>
@@ -105,14 +103,14 @@ export default async function AdminSittersPage({ params }: Props) {
                           <div className="flex items-center gap-2">
                             <p className="font-semibold text-stone-900">{profile?.full_name}</p>
                             {sitter.is_verified ? (
-                              <Badge variant="green">🛡️ {es ? "Verificado" : "Verified"}</Badge>
+                              <Badge variant="green">{es ? "Verificado" : "Verified"}</Badge>
                             ) : (
                               <Badge variant="amber">{es ? "Sin verificar" : "Unverified"}</Badge>
                             )}
                           </div>
                           <p className="text-sm text-stone-400">{profile?.email}</p>
                           {profile?.city && (
-                            <p className="text-xs text-stone-400">📍 {profile.city}</p>
+                            <p className="text-xs text-stone-400">{profile.city}</p>
                           )}
                         </div>
                       </div>

@@ -57,7 +57,8 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 | Push notifications | ✅ Done | VAPID web push, service worker handles push/click, sends on booking/decline/meet-greet |
 | Sitter verification (DNI) | ✅ Done | Upload DNI/NIE, status tracking (pending→submitted→approved/rejected), admin approve/reject |
 | Avatar dropdown menu | ✅ Done | Profile avatar in navbar with dropdown (profile link, logout), replaces text "Salir" |
-| Branded icons | ✅ Done | White paws on green — favicon, PWA icons, navbar logo, all consistent |
+| Branded icons | ✅ Done | Two-paw logo from source image — favicon, PWA icons, navbar, no emojis anywhere |
+| Landing → search flow | ✅ Done | City input on landing page passes to search page and auto-searches |
 
 ### Partially Implemented
 

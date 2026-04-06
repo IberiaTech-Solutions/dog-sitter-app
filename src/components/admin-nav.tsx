@@ -1,4 +1,5 @@
 import { Link } from "@/i18n/navigation";
+import { BarChart3, Dog, CalendarDays, Users, Tag } from "lucide-react";
 
 type Props = {
   locale: string;
@@ -8,11 +9,11 @@ type Props = {
 export function AdminNav({ locale, active }: Props) {
   const es = locale === "es";
   const items = [
-    { key: "overview" as const, href: "/admin", icon: "📊", label: es ? "Resumen" : "Overview" },
-    { key: "sitters" as const, href: "/admin/sitters", icon: "🐾", label: es ? "Cuidadores" : "Sitters" },
-    { key: "bookings" as const, href: "/admin/bookings", icon: "📅", label: es ? "Reservas" : "Bookings" },
-    { key: "users" as const, href: "/admin/users", icon: "👥", label: es ? "Usuarios" : "Users" },
-    { key: "discounts" as const, href: "/admin/discounts", icon: "🏷️", label: es ? "Descuentos" : "Discounts" },
+    { key: "overview" as const, href: "/admin", icon: BarChart3, label: es ? "Resumen" : "Overview" },
+    { key: "sitters" as const, href: "/admin/sitters", icon: Dog, label: es ? "Cuidadores" : "Sitters" },
+    { key: "bookings" as const, href: "/admin/bookings", icon: CalendarDays, label: es ? "Reservas" : "Bookings" },
+    { key: "users" as const, href: "/admin/users", icon: Users, label: es ? "Usuarios" : "Users" },
+    { key: "discounts" as const, href: "/admin/discounts", icon: Tag, label: es ? "Descuentos" : "Discounts" },
   ];
 
   return (
@@ -27,7 +28,7 @@ export function AdminNav({ locale, active }: Props) {
               : "text-stone-500 hover:bg-stone-100 hover:text-stone-900"
           }`}
         >
-          <span>{item.icon}</span>
+          <item.icon className="w-4 h-4" />
           {item.label}
         </Link>
       ))}

@@ -1,6 +1,5 @@
 import { Link } from "@/i18n/navigation";
 import { ChevronLeft, User, MessageCircle, Search, CalendarDays, Settings, Dog } from "lucide-react";
-import Image from "next/image";
 import { Avatar } from "./avatar";
 import { UserMenu } from "../user-menu";
 
@@ -60,7 +59,7 @@ export function DashboardShell({
             </div>
           ) : (
             <Link href="/dashboard" className="flex items-center gap-2.5">
-              <Image src="/icons/icon.svg" alt="" width={32} height={32} className="rounded-lg" />
+              <img src="/icons/icon-192.png" alt="" width={32} height={32} className="rounded-lg" />
               <span className="text-lg font-bold text-stone-900 tracking-tight hidden sm:inline">
                 {appName}
               </span>

@@ -56,7 +56,7 @@ export function AdminSitterActions({ verificationId, userId }: Props) {
         disabled={loading}
         onClick={() => handleAction(true)}
       >
-        ✅ {es ? "Aprobar" : "Approve"}
+        {es ? "Aprobar" : "Approve"}
       </Button>
       <Button
         variant="ghost"
@@ -64,7 +64,7 @@ export function AdminSitterActions({ verificationId, userId }: Props) {
         disabled={loading}
         onClick={() => handleAction(false)}
       >
-        ❌ {es ? "Rechazar" : "Reject"}
+        {es ? "Rechazar" : "Reject"}
       </Button>
     </div>
   );

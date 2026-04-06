@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
-import { useState, useMemo, lazy, Suspense } from "react";
+import { useState, useMemo, useEffect, useRef, lazy, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
@@ -71,12 +72,15 @@ const CITY_COORDS: Record<string, { lat: number; lng: number }> = {
 export function SitterSearch() {
   const t = useTranslations();
   const locale = useLocale();
+  const searchParams = useSearchParams();
   const es = locale === "es";
+  const initialCity = searchParams.get("city") ?? "";
   const [sitters, setSitters] = useState<Sitter[]>([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
-  const [cityQuery, setCityQuery] = useState("");
+  const [cityQuery, setCityQuery] = useState(initialCity);
   const [gpsLoading, setGpsLoading] = useState(false);
+  const autoSearched = useRef(false);
   const [searchCenter, setSearchCenter] = useState<{ lat: number; lng: number } | null>(null);
   const [viewMode, setViewMode] = useState<"split" | "list" | "map">("split");
 
@@ -147,6 +151,21 @@ export function SitterSearch() {
     setSearched(true);
     setLoading(false);
   }
+
+  // Auto-search if city was passed from landing page
+  useEffect(() => {
+    if (initialCity && !autoSearched.current) {
+      autoSearched.current = true;
+      const query = initialCity.trim().toLowerCase();
+      const coords = CITY_COORDS[query];
+      if (coords) {
+        searchByCoords(coords.lat, coords.lng);
+      } else {
+        const match = Object.keys(CITY_COORDS).find((c) => c.includes(query) || query.includes(c));
+        if (match) searchByCoords(CITY_COORDS[match].lat, CITY_COORDS[match].lng);
+      }
+    }
+  }, [initialCity]);
 
   function handleCitySearch(e: React.FormEvent) {
     e.preventDefault();

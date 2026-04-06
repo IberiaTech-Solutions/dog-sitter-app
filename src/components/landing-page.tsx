@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import {
@@ -18,6 +18,7 @@ import {
 
 export function LandingPage() {
   const t = useTranslations();
+  const locale = useLocale();
 
   return (
     <div className="flex flex-col min-h-screen bg-[#faf9f7]">
@@ -67,23 +68,27 @@ export function LandingPage() {
                   {t("home.subtitle")}
                 </p>
 
-                <div className="mt-8 flex flex-col sm:flex-row gap-3 max-w-md">
+                <form
+                  action={`/${locale}/search`}
+                  className="mt-8 flex flex-col sm:flex-row gap-3 max-w-md"
+                >
                   <div className="relative flex-1">
                     <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
                     <input
                       type="text"
+                      name="city"
                       placeholder={t("home.searchPlaceholder")}
                       className="w-full pl-11 pr-4 py-3.5 bg-white border border-stone-200 rounded-2xl text-sm placeholder:text-stone-400 focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all shadow-sm"
                     />
                   </div>
-                  <Link
-                    href="/search"
+                  <button
+                    type="submit"
                     className="flex items-center justify-center gap-2 px-7 py-3.5 bg-green-600 text-white text-sm font-semibold rounded-2xl hover:bg-green-700 active:scale-[0.98] transition-all shadow-md shadow-green-600/25"
                   >
                     <Search className="w-4 h-4" />
                     {t("common.search")}
-                  </Link>
-                </div>
+                  </button>
+                </form>
 
                 {/* Pet quote */}
                 <p className="mt-6 text-sm italic text-stone-400">

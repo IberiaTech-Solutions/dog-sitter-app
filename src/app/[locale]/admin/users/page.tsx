@@ -31,7 +31,6 @@ export default async function AdminUsersPage({ params }: Props) {
 
       <PageShell>
         <div className="flex items-center gap-3 mb-6">
-          <span className="text-2xl">👥</span>
           <h1 className="text-2xl font-bold text-stone-900">
             {es ? "Todos los usuarios" : "All users"} ({users?.length ?? 0})
           </h1>
@@ -63,8 +62,8 @@ export default async function AdminUsersPage({ params }: Props) {
                       </div>
                     </div>
                     <div className="flex items-center gap-4 text-sm text-stone-400">
-                      {user.city && <span>📍 {user.city}</span>}
-                      <span>🌐 {user.locale.toUpperCase()}</span>
+                      {user.city && <span>{user.city}</span>}
+                      <span>{user.locale.toUpperCase()}</span>
                       <span>
                         {new Date(user.created_at).toLocaleDateString(
                           es ? "es-ES" : "en-GB",

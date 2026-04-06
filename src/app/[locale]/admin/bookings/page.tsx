@@ -38,7 +38,6 @@ export default async function AdminBookingsPage({ params }: Props) {
 
       <PageShell>
         <div className="flex items-center gap-3 mb-6">
-          <span className="text-2xl">📅</span>
           <h1 className="text-2xl font-bold text-stone-900">
             {es ? "Todas las reservas" : "All bookings"}
           </h1>
@@ -84,7 +83,7 @@ export default async function AdminBookingsPage({ params }: Props) {
                     <div className="flex items-center gap-4 text-sm">
                       {pet && (
                         <span className="text-stone-500">
-                          🐾 {pet.name}
+                          {pet.name}
                         </span>
                       )}
                       <span className="text-stone-400">
