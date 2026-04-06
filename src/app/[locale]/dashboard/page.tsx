@@ -28,6 +28,8 @@ export default async function DashboardPage({ params }: Props) {
     .eq("id", user.id)
     .single();
 
+  if (profile?.role === "admin") redirect(`/${locale}/admin`);
+
   const { data: bookings } = await supabase
     .from("bookings")
     .select(

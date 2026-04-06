@@ -28,15 +28,17 @@ export function DashboardShell({
   title,
 }: Props) {
   const es = locale === "es";
-  const isOwner = userRole === "owner";
-  const isSitter = userRole === "sitter";
+  const isOwner = userRole === "owner" || userRole === "both";
+  const isSitter = userRole === "sitter" || userRole === "both";
+  const isAdmin = userRole === "admin";
 
   const navItemsDef = [
-    { href: "/dashboard", Icon: CalendarDays, label: es ? "Reservas" : "Bookings", show: true, badge: "bookings" as const },
-    { href: "/search", Icon: Search, label: es ? "Buscar" : "Search", show: isOwner, badge: undefined },
-    { href: "/dashboard/pets", Icon: Dog, label: es ? "Mascotas" : "Pets", show: isOwner, badge: undefined },
-    { href: "/dashboard/sitter-setup", Icon: Settings, label: es ? "Servicio" : "Service", show: isSitter, badge: undefined },
-    { href: "/dashboard/messages", Icon: MessageCircle, label: es ? "Mensajes" : "Messages", show: true, badge: "messages" as const },
+    { href: "/admin", Icon: Settings, label: es ? "Panel" : "Dashboard", show: isAdmin, badge: undefined },
+    { href: "/dashboard", Icon: CalendarDays, label: es ? "Reservas" : "Bookings", show: !isAdmin, badge: "bookings" as const },
+    { href: "/search", Icon: Search, label: es ? "Buscar" : "Search", show: isOwner && !isAdmin, badge: undefined },
+    { href: "/dashboard/pets", Icon: Dog, label: es ? "Mascotas" : "Pets", show: isOwner && !isAdmin, badge: undefined },
+    { href: "/dashboard/sitter-setup", Icon: Settings, label: es ? "Servicio" : "Service", show: isSitter && !isAdmin, badge: undefined },
+    { href: "/dashboard/messages", Icon: MessageCircle, label: es ? "Mensajes" : "Messages", show: !isAdmin, badge: "messages" as const },
   ].filter((item) => item.show);
 
   const navItems = navItemsDef.map((item) => ({

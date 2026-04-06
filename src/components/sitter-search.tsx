@@ -28,8 +28,8 @@ type Sitter = {
 };
 
 const serviceLabels: Record<string, Record<string, string>> = {
-  es: { dog_walking: "Paseo", pet_sitting: "Cuidado", drop_in: "Visita", overnight: "Noche" },
-  en: { dog_walking: "Walking", pet_sitting: "Sitting", drop_in: "Drop-in", overnight: "Overnight" },
+  es: { dog_walking: "Paseo", pet_sitting: "Cuidado", drop_in: "Visita", overnight: "Noche", daycare: "Guardería" },
+  en: { dog_walking: "Walking", pet_sitting: "Sitting", drop_in: "Drop-in", overnight: "Overnight", daycare: "Daycare" },
 };
 
 const petIcons: Record<string, typeof Dog> = {
@@ -41,7 +41,7 @@ const petLabels: Record<string, Record<string, string>> = {
   en: { dog: "Dog", cat: "Cat", bird: "Bird", rabbit: "Rabbit", other: "Other" },
 };
 
-const SERVICE_KEYS = ["dog_walking", "pet_sitting", "drop_in", "overnight"] as const;
+const SERVICE_KEYS = ["dog_walking", "pet_sitting", "drop_in", "overnight", "daycare"] as const;
 const PET_KEYS = ["dog", "cat", "bird", "rabbit", "other"] as const;
 
 // Spanish city coordinates for manual search

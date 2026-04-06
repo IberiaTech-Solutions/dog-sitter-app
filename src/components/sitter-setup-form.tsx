@@ -39,7 +39,7 @@ type SitterProfile = {
   cancellation_policy: string;
 } | null;
 
-const ALL_SERVICES = ["dog_walking", "pet_sitting", "drop_in", "overnight"];
+const ALL_SERVICES = ["dog_walking", "pet_sitting", "drop_in", "overnight", "daycare"];
 const ALL_PET_TYPES = ["dog", "cat", "bird", "rabbit", "other"];
 
 const serviceLabels: Record<string, Record<string, string>> = {
@@ -48,12 +48,14 @@ const serviceLabels: Record<string, Record<string, string>> = {
     pet_sitting: "Cuidado de mascotas",
     drop_in: "Visita a domicilio",
     overnight: "Estancia nocturna",
+    daycare: "Guardería de día",
   },
   en: {
     dog_walking: "Dog walking",
     pet_sitting: "Pet sitting",
     drop_in: "Drop-in visit",
     overnight: "Overnight stay",
+    daycare: "Daycare",
   },
 };
 

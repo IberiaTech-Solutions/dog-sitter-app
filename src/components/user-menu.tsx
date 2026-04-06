@@ -14,9 +14,9 @@ type Props = {
 };
 
 const roleBadge: Record<string, { label: { es: string; en: string }; color: string }> = {
-  owner: { label: { es: "Dueno", en: "Owner" }, color: "bg-blue-100 text-blue-700" },
+  owner: { label: { es: "Dueño", en: "Owner" }, color: "bg-blue-100 text-blue-700" },
   sitter: { label: { es: "Cuidador", en: "Sitter" }, color: "bg-green-100 text-green-700" },
-  both: { label: { es: "Dueno y cuidador", en: "Owner & Sitter" }, color: "bg-purple-100 text-purple-700" },
+  both: { label: { es: "Dueño y cuidador", en: "Owner & Sitter" }, color: "bg-purple-100 text-purple-700" },
   admin: { label: { es: "Admin", en: "Admin" }, color: "bg-red-100 text-red-700" },
 };
 

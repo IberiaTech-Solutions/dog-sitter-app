@@ -4,6 +4,7 @@ import { PageShell, Card, Avatar, Badge } from "@/components/ui";
 import { AdminHeader } from "@/components/admin-header";
 import { AdminNav } from "@/components/admin-nav";
 import { AdminUserActions } from "@/components/admin-user-actions";
+import { AdminInviteForm } from "@/components/admin-invite-form";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -38,6 +39,10 @@ export default async function AdminUsersPage({ params }: Props) {
         </div>
 
         <AdminNav locale={locale} active="users" />
+
+        <div className="mt-8 max-w-md">
+          <AdminInviteForm />
+        </div>
 
         <div className="mt-8 space-y-3">
           {!users || users.length === 0 ? (

@@ -27,6 +27,15 @@ export default async function ProfilePage({ params }: Props) {
 
   if (!profile) redirect(`/${locale}/login`);
 
+  // Fetch available referral credit
+  const { data: credits } = await supabase
+    .from("referral_credits")
+    .select("amount")
+    .eq("user_id", user.id)
+    .eq("is_used", false);
+
+  const referralCredit = credits?.reduce((sum, c) => sum + Number(c.amount), 0) ?? 0;
+
   return (
     <DashboardShell
       appName={t("common.appName")}
@@ -46,7 +55,7 @@ export default async function ProfilePage({ params }: Props) {
             ? "Actualiza tu información personal."
             : "Update your personal information."}
         </p>
-        <ProfileForm profile={profile} userId={user.id} />
+        <ProfileForm profile={profile} userId={user.id} referralCredit={referralCredit} />
       </div>
     </DashboardShell>
   );

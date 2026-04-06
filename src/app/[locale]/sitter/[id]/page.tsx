@@ -13,8 +13,8 @@ type Props = {
 
 const speciesIcons: Record<string, typeof Dog> = { dog: Dog, cat: Cat, bird: Bird, rabbit: Rabbit };
 const serviceLabels: Record<string, Record<string, string>> = {
-  es: { dog_walking: "Paseo de perros", pet_sitting: "Cuidado de mascotas", drop_in: "Visita a domicilio", overnight: "Estancia nocturna" },
-  en: { dog_walking: "Dog walking", pet_sitting: "Pet sitting", drop_in: "Drop-in visit", overnight: "Overnight stay" },
+  es: { dog_walking: "Paseo de perros", pet_sitting: "Cuidado de mascotas", drop_in: "Visita a domicilio", overnight: "Estancia nocturna", daycare: "Guardería de día" },
+  en: { dog_walking: "Dog walking", pet_sitting: "Pet sitting", drop_in: "Drop-in visit", overnight: "Overnight stay", daycare: "Daycare" },
 };
 
 export default async function SitterProfilePage({ params }: Props) {

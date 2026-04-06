@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { LandingPage } from "@/components/landing-page";
+import { AuthHashHandler } from "@/components/auth-hash-handler";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -16,5 +17,10 @@ export default async function HomePage({ params }: Props) {
     redirect(`/${locale}/dashboard`);
   }
 
-  return <LandingPage />;
+  return (
+    <>
+      <AuthHashHandler />
+      <LandingPage />
+    </>
+  );
 }

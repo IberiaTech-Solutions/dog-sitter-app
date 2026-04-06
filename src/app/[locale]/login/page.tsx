@@ -1,13 +1,15 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
-import { PawPrint } from "lucide-react";
 import { LoginForm } from "@/components/login-form";
+import { AuthHashHandler } from "@/components/auth-hash-handler";
 
 export default function LoginPage() {
   const t = useTranslations();
 
   return (
+    <>
+    <AuthHashHandler />
     <div className="flex min-h-screen bg-[#faf9f7]">
       {/* Left side — pet photo */}
       <div className="hidden lg:block lg:w-1/2 relative">
@@ -15,6 +17,7 @@ export default function LoginPage() {
           src="/images/hero-dog.jpg"
           alt="Golden retriever"
           fill
+          sizes="50vw"
           className="object-cover"
           priority
         />
@@ -22,11 +25,13 @@ export default function LoginPage() {
         <div className="absolute bottom-12 left-12 right-12">
           <h2 className="text-3xl font-bold text-white leading-snug">
             {t("home.ctaOwner") === "Find sitters"
-              ? "Your pet's happiness starts here"
-              : "La felicidad de tu mascota empieza aquí"}
+              ? "I missed you, but I was in good hands"
+              : "Te eché de menos, pero estuve en buenas manos"}
           </h2>
           <p className="mt-2 text-white/70">
-            {t("home.subtitle")}
+            {t("home.ctaOwner") === "Find sitters"
+              ? "Verified sitters who care like family"
+              : "Cuidadores verificados que cuidan como familia"}
           </p>
         </div>
       </div>
@@ -36,9 +41,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
             <Link href="/" className="inline-flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-lg bg-green-600 flex items-center justify-center">
-                <PawPrint className="w-5 h-5 text-white" strokeWidth={2.5} />
-              </div>
+              <img src="/icons/icon-192.png" alt="" width={36} height={36} className="rounded-lg" />
               <span className="text-xl font-bold text-stone-900">
                 {t("common.appName")}
               </span>
@@ -62,5 +65,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

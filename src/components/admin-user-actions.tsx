@@ -22,7 +22,7 @@ export function AdminUserActions({ userId, userName, currentRole }: Props) {
   const es = locale === "es";
 
   const roles = [
-    { value: "owner", label: es ? "Dueno" : "Owner" },
+    { value: "owner", label: es ? "Dueño" : "Owner" },
     { value: "sitter", label: es ? "Cuidador" : "Sitter" },
     { value: "admin", label: "Admin" },
   ];

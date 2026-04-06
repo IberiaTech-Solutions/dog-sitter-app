@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getStripe } from "@/lib/stripe";
 
 const COMMISSION_RATE = 0.18;
-const VALID_SERVICES = ["dog_walking", "pet_sitting", "drop_in", "overnight"];
+const VALID_SERVICES = ["dog_walking", "pet_sitting", "drop_in", "overnight", "daycare"];
 
 export async function POST(request: Request) {
   const supabase = await createClient();

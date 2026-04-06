@@ -15,9 +15,10 @@ type Profile = {
   city: string | null;
   avatar_url: string | null;
   role: string;
+  referral_code: string | null;
 };
 
-export function ProfileForm({ profile, userId }: { profile: Profile; userId: string }) {
+export function ProfileForm({ profile, userId, referralCredit }: { profile: Profile; userId: string; referralCredit?: number }) {
   const locale = useLocale();
   const router = useRouter();
   const es = locale === "es";
@@ -89,6 +90,7 @@ export function ProfileForm({ profile, userId }: { profile: Profile; userId: str
   }[profile.role] ?? profile.role;
 
   return (
+    <>
     <form onSubmit={handleSubmit} className="mt-6 space-y-6">
       {/* Avatar */}
       <Card>
@@ -191,5 +193,45 @@ export function ProfileForm({ profile, userId }: { profile: Profile; userId: str
           : es ? "Guardar perfil" : "Save profile"}
       </Button>
     </form>
+
+    {/* Referral — outside form to avoid hydration issues */}
+    {profile.referral_code ? (
+      <Card className="mt-6">
+        <p className="text-sm font-medium text-stone-700 mb-2">
+          {es ? "Tu código de referido" : "Your referral code"}
+        </p>
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-lg font-bold tracking-widest bg-green-50 text-green-700 px-4 py-2 rounded-xl border border-green-200">
+            {profile.referral_code}
+          </span>
+          <button
+            type="button"
+            onClick={() => {
+              navigator.clipboard.writeText(profile.referral_code!);
+              toast.success(es ? "Copiado" : "Copied");
+            }}
+            className="text-sm text-green-600 hover:text-green-700 font-medium"
+          >
+            {es ? "Copiar" : "Copy"}
+          </button>
+        </div>
+        <p className="text-xs text-stone-400 mt-2">
+          {es
+            ? "Comparte este código con amigos. Ambos recibiréis 5€ de crédito."
+            : "Share this code with friends. You both get €5 credit."}
+        </p>
+        {typeof referralCredit === "number" && referralCredit > 0 && (
+          <div className="mt-3 flex items-center gap-2">
+            <span className="text-sm font-semibold text-green-700">
+              {referralCredit.toFixed(2).replace(".", ",")} €
+            </span>
+            <span className="text-xs text-stone-400">
+              {es ? "crédito disponible" : "credit available"}
+            </span>
+          </div>
+        )}
+      </Card>
+    ) : null}
+    </>
   );
 }
