@@ -18,17 +18,25 @@ type Sitter = {
 
 const serviceLabels: Record<string, Record<string, string>> = {
   es: {
-    dog_walking: "Paseo de perros",
-    pet_sitting: "Cuidado de mascotas",
-    drop_in: "Visita a domicilio",
-    overnight: "Estancia nocturna",
+    dog_walking: "Paseo",
+    pet_sitting: "Cuidado",
+    drop_in: "Visita",
+    overnight: "Noche",
   },
   en: {
-    dog_walking: "Dog walking",
-    pet_sitting: "Pet sitting",
-    drop_in: "Drop-in visit",
-    overnight: "Overnight stay",
+    dog_walking: "Walking",
+    pet_sitting: "Sitting",
+    drop_in: "Drop-in",
+    overnight: "Overnight",
   },
+};
+
+const petEmojis: Record<string, string> = {
+  dog: "🐕",
+  cat: "🐈",
+  bird: "🐦",
+  rabbit: "🐇",
+  other: "🐾",
 };
 
 export function SitterSearch() {
@@ -42,7 +50,7 @@ export function SitterSearch() {
     if (!navigator.geolocation) {
       setLocationError(
         locale === "es"
-          ? "Tu navegador no soporta geolocalización"
+          ? "Tu navegador no soporta geolocalizacion"
           : "Your browser doesn't support geolocation"
       );
       setLoading(false);
@@ -69,7 +77,7 @@ export function SitterSearch() {
       () => {
         setLocationError(
           locale === "es"
-            ? "No se pudo obtener tu ubicación. Permite el acceso a la ubicación."
+            ? "No se pudo obtener tu ubicacion. Permite el acceso a la ubicacion."
             : "Could not get your location. Please allow location access."
         );
         setLoading(false);
@@ -79,26 +87,31 @@ export function SitterSearch() {
 
   if (loading) {
     return (
-      <div className="mt-8 text-center text-zinc-500">
-        {t("common.loading")}
+      <div className="mt-12 flex flex-col items-center gap-4 text-stone-400">
+        <div className="w-10 h-10 border-3 border-green-200 border-t-green-600 rounded-full animate-spin" />
+        <p className="text-sm">{t("common.loading")}</p>
       </div>
     );
   }
 
   if (locationError) {
     return (
-      <div className="mt-8 rounded-lg bg-yellow-50 p-4 text-sm text-yellow-800">
-        {locationError}
+      <div className="mt-8 rounded-2xl bg-amber-50 border border-amber-200 p-6 text-center">
+        <span className="text-3xl block mb-3">📍</span>
+        <p className="text-sm text-amber-800">{locationError}</p>
       </div>
     );
   }
 
   if (sitters.length === 0) {
     return (
-      <div className="mt-8 text-center text-zinc-500">
-        {locale === "es"
-          ? "No hay cuidadores disponibles cerca de ti todavía."
-          : "No sitters available near you yet."}
+      <div className="mt-12 text-center">
+        <span className="text-5xl block mb-4">🐾</span>
+        <p className="text-stone-500">
+          {locale === "es"
+            ? "No hay cuidadores disponibles cerca de ti todavia."
+            : "No sitters available near you yet."}
+        </p>
       </div>
     );
   }
@@ -106,57 +119,61 @@ export function SitterSearch() {
   return (
     <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {sitters.map((sitter) => (
-        <div
+        <Link
           key={sitter.id}
-          className="rounded-xl bg-white p-6 shadow-sm border border-zinc-100"
+          href={`/sitter/${sitter.id}`}
+          className="group rounded-2xl bg-white p-5 border border-stone-100 hover:border-stone-200 hover:shadow-lg hover:shadow-stone-100/50 transition-all"
         >
-          <div className="flex items-start gap-4">
-            <div className="h-12 w-12 shrink-0 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-semibold">
+          <div className="flex items-start gap-3.5">
+            <div className="h-13 w-13 shrink-0 rounded-2xl bg-gradient-to-br from-green-400 to-green-500 flex items-center justify-center text-white text-lg font-bold shadow-sm shadow-green-200">
               {sitter.full_name.charAt(0)}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold text-zinc-900 truncate">
+                <h3 className="font-semibold text-stone-900 truncate group-hover:text-green-700 transition-colors">
                   {sitter.full_name}
                 </h3>
                 {sitter.is_verified && (
-                  <span className="shrink-0 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
-                    {t("sitter.verified")}
+                  <span className="shrink-0 text-green-500 text-sm" title={t("sitter.verified")}>
+                    🛡️
                   </span>
                 )}
               </div>
-              <p className="text-sm text-zinc-500">
-                {Math.round(sitter.distance_meters / 1000)} km
+              <p className="text-xs text-stone-400 mt-0.5">
+                {Math.round(sitter.distance_meters / 1000)} km {locale === "es" ? "de ti" : "away"}
               </p>
+            </div>
+            <div className="text-right shrink-0">
+              <span className="text-lg font-bold text-stone-900">
+                {sitter.hourly_rate.toFixed(0)}€
+              </span>
+              <span className="block text-xs text-stone-400">
+                {t("sitter.perVisit")}
+              </span>
             </div>
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-1.5">
+          {/* Pet types */}
+          <div className="mt-3 flex gap-1.5">
+            {sitter.pet_types.map((pet) => (
+              <span key={pet} className="text-lg" title={pet}>
+                {petEmojis[pet] ?? "🐾"}
+              </span>
+            ))}
+          </div>
+
+          {/* Services */}
+          <div className="mt-3 flex flex-wrap gap-1.5">
             {sitter.services.map((service) => (
               <span
                 key={service}
-                className="rounded-full bg-zinc-100 px-2.5 py-1 text-xs text-zinc-600"
+                className="rounded-lg bg-stone-100 px-2.5 py-1 text-xs font-medium text-stone-600"
               >
                 {serviceLabels[locale]?.[service] ?? service}
               </span>
             ))}
           </div>
-
-          <div className="mt-4 flex items-center justify-between">
-            <span className="text-lg font-semibold text-zinc-900">
-              {sitter.hourly_rate.toFixed(2).replace(".", ",")} €{" "}
-              <span className="text-sm font-normal text-zinc-500">
-                {t("sitter.perVisit")}
-              </span>
-            </span>
-            <Link
-              href={`/sitter/${sitter.id}`}
-              className="rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700"
-            >
-              {t("sitter.viewProfile")}
-            </Link>
-          </div>
-        </div>
+        </Link>
       ))}
     </div>
   );
