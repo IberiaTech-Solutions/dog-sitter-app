@@ -48,27 +48,32 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 | Audit logging | ✅ Done | GDPR-compliant data access/modification tracking |
 | Dashboard navigation | ✅ Done | Desktop top nav + mobile bottom tab bar, back buttons on sub-pages |
 | Shared UI library | ✅ Done | Button, Input, Textarea, Select, Card, Badge, Avatar, Header, DashboardShell, PageShell |
+| Meet & greet flow | ✅ Done | Free intro meeting before booking, request/accept/complete flow |
+| PWA (Progressive Web App) | ✅ Done | Manifest, service worker, offline page, installable on mobile home screen |
 
 ### Partially Implemented
 
 | Feature | Status | Notes |
 |---------|--------|-------|
 | Sitter verification (DNI) | 🔶 Schema ready | `verifications` table exists; no external provider integrated yet |
+| Insurance / guarantee | 🔶 Planning | Need Spanish insurer partner (Caser, Mapfre); MVP: platform guarantee up to €500 |
 
 ### Not Yet Started
 
 | Feature | Status | Notes |
 |---------|--------|-------|
+| Push notifications | ❌ | Web push via service worker — SW is ready, needs push subscription + backend |
 | Bizum payments | ❌ | Schema supports `method: 'bizum'`, no implementation |
 | WhatsApp integration | ❌ | Not implemented |
-| Push notifications | ❌ | No FCM/APNs integration |
-| Meet & greet flow | ❌ | Free intro meeting before first booking |
 | Reviews-for-discounts | ❌ | Discount system exists but not linked to reviews |
 | Background checks API | ❌ | No external provider connected |
 | Repeat bookings | ❌ | "Book again" shortcut for same sitter |
+| Search filters | ❌ | Filter by service type, dates, price range, verified only |
+| Booking overlap prevention | ❌ | Check sitter availability before accepting |
 | GPS live map for owners | ❌ | Real-time sitter location on map during visit |
 | Cancellation policy tiers | ❌ | Flexible/moderate/strict per sitter |
-| Mobile app (React Native) | ❌ | Web-only for now |
+| Sitter response metrics | ❌ | Response rate/time shown on profile |
+| Mobile app (React Native) | ❌ | Phase 2 — PWA covers mobile for now |
 
 ---
 
