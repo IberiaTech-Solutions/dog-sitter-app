@@ -3,6 +3,7 @@
 import { useTranslations, useLocale } from "next-intl";
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
+import { toast } from "sonner";
 
 type Pet = {
   id: string;
@@ -44,7 +45,6 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
   const [endDate, setEndDate] = useState("");
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   // Calculate days and total
   const days =
@@ -63,7 +63,6 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     try {
@@ -87,19 +86,25 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error ?? "Something went wrong");
+        toast.error(data.error ?? (locale === "es" ? "Error al crear la reserva" : "Could not create booking"));
         setLoading(false);
         return;
       }
 
-      // Redirect to Stripe Checkout
+      toast.success(
+        locale === "es" ? "Reserva enviada" : "Booking submitted",
+        { description: locale === "es" ? "El cuidador recibirá tu solicitud" : "The sitter will receive your request" }
+      );
+
+      // Redirect to dashboard or Stripe
       if (data.url) {
         window.location.href = data.url;
+      } else if (data.redirect) {
+        router.push(data.redirect);
+        router.refresh();
       }
     } catch {
-      setError(
-        locale === "es" ? "Error al procesar la reserva" : "Booking failed"
-      );
+      toast.error(locale === "es" ? "Error al procesar la reserva" : "Booking failed");
       setLoading(false);
     }
   }
@@ -226,10 +231,6 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
             </div>
           </div>
         </div>
-      )}
-
-      {error && (
-        <p className="text-sm text-red-600 text-center">{error}</p>
       )}
 
       <button

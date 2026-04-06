@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getStripe } from "@/lib/stripe";
 
 const COMMISSION_RATE = 0.18;
 const VALID_SERVICES = ["dog_walking", "pet_sitting", "drop_in", "overnight"];
@@ -44,7 +43,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "End date must be after start date" }, { status: 400 });
   }
 
-  // SERVER-SIDE PRICE CALCULATION — never trust client-sent amounts
+  // SERVER-SIDE PRICE CALCULATION
   const { data: sitterProfile, error: sitterError } = await supabase
     .from("sitter_profiles")
     .select("hourly_rate")
@@ -60,13 +59,6 @@ export async function POST(request: Request) {
   const subtotal = days * dailyRate;
   const commissionAmount = Math.round(subtotal * COMMISSION_RATE * 100) / 100;
   const totalAmount = Math.round((subtotal + commissionAmount) * 100) / 100;
-
-  // Get sitter name
-  const { data: sitter } = await supabase
-    .from("profiles")
-    .select("full_name")
-    .eq("id", sitter_id)
-    .single();
 
   // Create booking with server-calculated amounts
   const { data: booking, error: bookingError } = await supabase
@@ -92,36 +84,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not create booking" }, { status: 400 });
   }
 
-  // Create Stripe Checkout session
-  const session = await getStripe().checkout.sessions.create({
-    mode: "payment",
-    payment_method_types: ["card"],
-    locale: locale === "es" ? "es" : "en",
-    currency: "eur",
-    line_items: [
-      {
-        price_data: {
-          currency: "eur",
-          unit_amount: Math.round(totalAmount * 100),
-          product_data: {
-            name:
-              locale === "es"
-                ? `Reserva con ${sitter?.full_name ?? "cuidador"}`
-                : `Booking with ${sitter?.full_name ?? "sitter"}`,
-            description: `${days} ${locale === "es" ? "días" : "days"} — ${dailyRate.toFixed(2)}€/${locale === "es" ? "día" : "day"}`,
-          },
-        },
-        quantity: 1,
-      },
-    ],
-    metadata: {
-      booking_id: booking.id,
-      owner_id: user.id,
-      sitter_id,
-    },
-    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/${locale === "es" ? "es" : "en"}/dashboard?booking=success`,
-    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/${locale === "es" ? "es" : "en"}/booking/${sitter_id}?cancelled=true`,
-  });
+  // TODO: Stripe payment integration
+  // When Stripe is configured, uncomment the checkout session creation below
+  // and change the response to return { url: session.url }
+  //
+  // For now, bookings are created as "requested" and the sitter
+  // accepts/declines from their dashboard. Payment will be collected
+  // when Stripe keys are added.
 
-  return NextResponse.json({ url: session.url });
+  const redirectLocale = locale === "es" ? "es" : "en";
+  return NextResponse.json({
+    success: true,
+    booking_id: booking.id,
+    redirect: `/${redirectLocale}/dashboard?booking=success`,
+  });
 }
