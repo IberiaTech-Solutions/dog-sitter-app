@@ -5,4 +5,5 @@ export { Card } from "./card";
 export { Badge } from "./badge";
 export { Avatar } from "./avatar";
 export { Header } from "./header";
+export { DashboardShell } from "./dashboard-shell";
 export { PageShell } from "./page-shell";

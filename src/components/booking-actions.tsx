@@ -4,8 +4,8 @@ import { useLocale } from "next-intl";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/navigation";
-import { Check, X, Play, Ban } from "lucide-react";
-import { Button } from "@/components/ui";
+import { Check, X, Play, Ban, Coffee } from "lucide-react";
+import { Button, LinkButton } from "@/components/ui";
 import { toast } from "sonner";
 
 type Props = {
@@ -131,21 +131,6 @@ export function BookingActions({ bookingId, status, isSitter, isOwner, otherPers
     );
   }
 
-  // Sitter: complete an in-progress visit
-  if (isSitter && status === "in_progress") {
-    return (
-      <Button
-        variant="secondary"
-        size="sm"
-        disabled={loading}
-        onClick={() => updateStatus("completed")}
-      >
-        <Check className="w-3.5 h-3.5" />
-        {es ? "Completar visita" : "Complete visit"}
-      </Button>
-    );
-  }
-
   // Owner: cancel a requested booking (before sitter accepts)
   if (isOwner && status === "requested") {
     if (cancelling) {
@@ -172,6 +157,71 @@ export function BookingActions({ bookingId, status, isSitter, isOwner, otherPers
 
     return (
       <Button variant="ghost" size="sm" onClick={() => setCancelling(true)}>
+        <Ban className="w-3.5 h-3.5" />
+        {es ? "Cancelar" : "Cancel"}
+      </Button>
+    );
+  }
+
+  // Sitter: accept or decline a meet & greet request
+  if (isSitter && status === "meet_greet_requested") {
+    return (
+      <div className="flex items-center gap-2">
+        <Button
+          variant="primary"
+          size="sm"
+          disabled={loading}
+          onClick={() => updateStatus("meet_greet_accepted")}
+        >
+          <Coffee className="w-3.5 h-3.5" />
+          {es ? "Aceptar cita" : "Accept meet"}
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={loading}
+          onClick={() => updateStatus("cancelled")}
+        >
+          <X className="w-3.5 h-3.5" />
+          {es ? "Rechazar" : "Decline"}
+        </Button>
+      </div>
+    );
+  }
+
+  // Sitter: mark meet & greet as completed
+  if (isSitter && status === "meet_greet_accepted") {
+    return (
+      <Button
+        variant="primary"
+        size="sm"
+        disabled={loading}
+        onClick={() => updateStatus("meet_greet_completed")}
+      >
+        <Check className="w-3.5 h-3.5" />
+        {es ? "Cita completada" : "Meet completed"}
+      </Button>
+    );
+  }
+
+  // Owner: after meet & greet completed, show "Book now" link
+  if (isOwner && status === "meet_greet_completed") {
+    return (
+      <LinkButton href={`/booking/${otherPersonId}`} variant="primary" size="sm">
+        {es ? "Reservar ahora" : "Book now"}
+      </LinkButton>
+    );
+  }
+
+  // Owner: cancel a pending meet & greet
+  if (isOwner && status === "meet_greet_requested") {
+    return (
+      <Button
+        variant="ghost"
+        size="sm"
+        disabled={loading}
+        onClick={() => updateStatus("cancelled")}
+      >
         <Ban className="w-3.5 h-3.5" />
         {es ? "Cancelar" : "Cancel"}
       </Button>

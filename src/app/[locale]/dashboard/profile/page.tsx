@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { Header, PageShell } from "@/components/ui";
+import { DashboardShell } from "@/components/ui";
 import { ProfileForm } from "@/components/profile-form";
 
 type Props = {
@@ -28,21 +28,25 @@ export default async function ProfilePage({ params }: Props) {
   if (!profile) redirect(`/${locale}/login`);
 
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
-      <Header appName={t("common.appName")} isLoggedIn />
-
-      <PageShell>
+    <DashboardShell
+      appName={t("common.appName")}
+      locale={locale}
+      userName={profile.full_name}
+      userRole={profile.role}
+      backHref="/dashboard"
+      title={locale === "es" ? "Mi perfil" : "My profile"}
+    >
+      <div className="max-w-2xl">
         <h1 className="text-2xl font-bold text-stone-900">
           {locale === "es" ? "Mi perfil" : "My profile"}
         </h1>
-        <p className="mt-2 text-stone-500">
+        <p className="mt-1 text-stone-500">
           {locale === "es"
             ? "Actualiza tu información personal."
             : "Update your personal information."}
         </p>
-
         <ProfileForm profile={profile} userId={user.id} />
-      </PageShell>
-    </div>
+      </div>
+    </DashboardShell>
   );
 }

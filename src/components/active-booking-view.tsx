@@ -131,6 +131,18 @@ export function ActiveBookingView({
     return data;
   }
 
+  async function handleCheckIn() {
+    const position = await new Promise<GeolocationPosition>((resolve, reject) =>
+      navigator.geolocation.getCurrentPosition(resolve, reject)
+    ).catch(() => null);
+
+    await insertLog("check_in", position ? {
+      location: `SRID=4326;POINT(${position.coords.longitude} ${position.coords.latitude})`,
+    } : undefined);
+
+    startGpsTracking();
+  }
+
   async function handleCheckOut() {
     const position = await new Promise<GeolocationPosition>((resolve, reject) =>
       navigator.geolocation.getCurrentPosition(resolve, reject)
@@ -200,34 +212,74 @@ export function ActiveBookingView({
   const isActive =
     bookingStatus === "confirmed" || bookingStatus === "in_progress";
 
+  // Determine if sitter is currently checked in (from most recent check event)
+  const lastCheckEvent = logs.find(
+    (l) => l.event_type === "check_in" || l.event_type === "check_out"
+  );
+  const isCheckedIn = lastCheckEvent?.event_type === "check_in";
+
+  // Count completed visits (check_out events)
+  const completedVisits = logs.filter((l) => l.event_type === "check_out").length;
+
+  async function handleCompleteBooking() {
+    setSending(true);
+    const supabase = createClient();
+    await supabase
+      .from("bookings")
+      .update({ status: "completed" })
+      .eq("id", bookingId);
+    toast.success(locale === "es" ? "Reserva completada" : "Booking completed");
+    window.location.reload();
+  }
+
   return (
     <div className="mt-6 space-y-6">
       {/* Sitter controls */}
       {isSitter && isActive && (
         <Card>
-          <h2 className="font-semibold text-stone-900">
-            {locale === "es" ? "Controles de visita" : "Visit controls"}
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold text-stone-900">
+              {locale === "es" ? "Visita de hoy" : "Today's visit"}
+            </h2>
+            {completedVisits > 0 && (
+              <span className="text-xs text-stone-400">
+                {completedVisits} {locale === "es" ? "visita(s) completada(s)" : "visit(s) completed"}
+              </span>
+            )}
+          </div>
 
           <div className="mt-4 flex flex-wrap gap-3">
-            <Button
-              variant="secondary"
-              size="md"
-              disabled={sending}
-              onClick={handleCheckOut}
-            >
-              {locale === "es" ? "Finalizar visita" : "End visit"}
-            </Button>
-            <label className="cursor-pointer inline-flex items-center justify-center gap-2 font-semibold rounded-xl px-5 py-2.5 text-sm border-2 border-green-600 text-green-600 hover:bg-green-50 active:scale-[0.98] transition-all">
-              {locale === "es" ? "Subir foto" : "Upload photo"}
-              <input
-                type="file"
-                accept="image/*"
-                capture="environment"
-                onChange={handlePhotoUpload}
-                className="hidden"
-              />
-            </label>
+            {!isCheckedIn ? (
+              <Button
+                variant="primary"
+                size="md"
+                disabled={sending}
+                onClick={handleCheckIn}
+              >
+                {locale === "es" ? "Llegada" : "Check in"}
+              </Button>
+            ) : (
+              <Button
+                variant="secondary"
+                size="md"
+                disabled={sending}
+                onClick={handleCheckOut}
+              >
+                {locale === "es" ? "Salida" : "Check out"}
+              </Button>
+            )}
+            {isCheckedIn && (
+              <label className="cursor-pointer inline-flex items-center justify-center gap-2 font-semibold rounded-xl px-5 py-2.5 text-sm border-2 border-green-600 text-green-600 hover:bg-green-50 active:scale-[0.98] transition-all">
+                {locale === "es" ? "Subir foto" : "Upload photo"}
+                <input
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
+              </label>
+            )}
           </div>
 
           {gpsActive && (
@@ -236,6 +288,25 @@ export function ActiveBookingView({
                 ? "GPS activo — compartiendo ubicación"
                 : "GPS active — sharing location"}
             </p>
+          )}
+
+          {/* Complete booking — only when not currently checked in and at least one visit done */}
+          {!isCheckedIn && completedVisits > 0 && (
+            <div className="mt-5 pt-5 border-t border-stone-100">
+              <p className="text-sm text-stone-500 mb-3">
+                {locale === "es"
+                  ? "¿Es el último día? Marca la reserva como completada."
+                  : "Last day? Mark the booking as complete."}
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                disabled={sending}
+                onClick={handleCompleteBooking}
+              >
+                {locale === "es" ? "Completar reserva" : "Complete booking"}
+              </Button>
+            </div>
           )}
 
           {/* Health note input */}

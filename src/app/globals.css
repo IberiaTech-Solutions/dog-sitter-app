@@ -48,3 +48,8 @@ html[data-scroll-behavior="smooth"] {
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+/* Safe area for mobile bottom nav */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}

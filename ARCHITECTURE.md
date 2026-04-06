@@ -31,25 +31,28 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 | Feature | Status | Notes |
 |---------|--------|-------|
 | User onboarding & auth | ✅ Done | Email/password via Supabase Auth, auto-profile creation |
-| User roles | ✅ Done | `owner`, `sitter`, `both`, `admin` — stored in `profiles.role` |
-| Sitter search (GPS + city) | ✅ Done | PostGIS nearby search + hardcoded Spanish city fallback |
+| User roles | ✅ Done | `owner`, `sitter`, `admin` — strict separation, no dual roles |
+| Sitter search + map | ✅ Done | PostGIS nearby search + Leaflet interactive map with split/list/map views |
 | Pet management (CRUD) | ✅ Done | Species, breed, age, weight, medical notes, photos |
-| Booking flow | ✅ Done | Search → select → book → sitter accept/decline, server-side pricing |
-| In-app messaging | ✅ Done | Direct messages with read/unread tracking |
+| Booking + Stripe payments | ✅ Done | Pay upfront via Stripe Checkout, auto-refund on sitter decline |
+| Multi-day visit tracking | ✅ Done | Per-day check-in/check-out, photo uploads, health notes, GPS |
+| Sitter availability calendar | ✅ Done | Monthly calendar, sitters toggle days, owners view on profile |
+| In-app messaging | ✅ Done | Direct messages with read/unread tracking + realtime |
 | Reviews & ratings | ✅ Done | 1–5 stars, post-booking, one per booking |
+| User profile editing | ✅ Done | Name, bio, city, phone, avatar upload |
 | Admin portal | ✅ Done | Stats dashboard, sitter verification, booking/user/discount management |
 | i18n (es/en) | ✅ Done | `next-intl` with route-level locale prefix |
 | Toast notifications | ✅ Done | Sonner — success/error feedback on all key actions |
 | Security headers | ✅ Done | HSTS, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy |
 | RLS policies | ✅ Done | All tables secured, admin override policies, no role self-escalation |
 | Audit logging | ✅ Done | GDPR-compliant data access/modification tracking |
+| Dashboard navigation | ✅ Done | Desktop top nav + mobile bottom tab bar, back buttons on sub-pages |
+| Shared UI library | ✅ Done | Button, Input, Textarea, Select, Card, Badge, Avatar, Header, DashboardShell, PageShell |
 
 ### Partially Implemented
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Stripe payments | 🔶 Infra ready | Webhook handler + SDK configured; checkout flow commented out awaiting keys |
-| Visit tracking | 🔶 Schema ready | `visit_logs` table + partial UI; GPS check-in/out, photos, health notes |
 | Sitter verification (DNI) | 🔶 Schema ready | `verifications` table exists; no external provider integrated yet |
 
 ### Not Yet Started
@@ -57,14 +60,14 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 | Feature | Status | Notes |
 |---------|--------|-------|
 | Bizum payments | ❌ | Schema supports `method: 'bizum'`, no implementation |
-| Interactive map view | ❌ | Search returns list only; no Mapbox/Google Maps UI |
 | WhatsApp integration | ❌ | Not implemented |
-| GPS live tracking | ❌ | No real-time sitter location during visits |
-| Photo/video visit updates | ❌ | No media upload during visits |
 | Push notifications | ❌ | No FCM/APNs integration |
-| Pet health tracker | ❌ | Schema supports via `visit_logs`, no dedicated UI |
+| Meet & greet flow | ❌ | Free intro meeting before first booking |
 | Reviews-for-discounts | ❌ | Discount system exists but not linked to reviews |
 | Background checks API | ❌ | No external provider connected |
+| Repeat bookings | ❌ | "Book again" shortcut for same sitter |
+| GPS live map for owners | ❌ | Real-time sitter location on map during visit |
+| Cancellation policy tiers | ❌ | Flexible/moderate/strict per sitter |
 | Mobile app (React Native) | ❌ | Web-only for now |
 
 ---
@@ -87,10 +90,11 @@ dog_sitter_app/
 │   │   │   ├── booking/[id]/page.tsx  # Booking confirmation
 │   │   │   ├── dashboard/
 │   │   │   │   ├── page.tsx           # Main dashboard (bookings list)
+│   │   │   │   ├── profile/          # User profile editing
 │   │   │   │   ├── pets/             # Pet CRUD pages
 │   │   │   │   ├── messages/         # Messaging inbox
-│   │   │   │   ├── booking/[id]/     # Active booking view
-│   │   │   │   ├── sitter-setup/     # Sitter onboarding form
+│   │   │   │   ├── booking/[id]/     # Active booking + visit tracking
+│   │   │   │   ├── sitter-setup/     # Sitter settings + availability calendar
 │   │   │   │   └── review/[bookingId]/ # Post-booking review
 │   │   │   └── admin/
 │   │   │       ├── page.tsx           # Stats dashboard (RPC)
@@ -101,15 +105,18 @@ dog_sitter_app/
 │   │   └── api/
 │   │       ├── auth/callback/        # OAuth callback
 │   │       ├── auth/logout/          # Sign out
-│   │       ├── checkout/             # Booking creation + pricing
+│   │       ├── checkout/             # Booking creation + Stripe Checkout
+│   │       ├── bookings/decline/     # Sitter decline + auto-refund
 │   │       └── webhooks/stripe/      # Stripe event handler
 │   │
 │   ├── components/
 │   │   ├── ui/                       # Reusable UI library (custom, not shadcn)
 │   │   │   ├── button.tsx            # Button + LinkButton variants
 │   │   │   ├── input.tsx             # Input + Textarea
+│   │   │   ├── select.tsx            # Select dropdown
 │   │   │   ├── card.tsx              # Card container
 │   │   │   ├── badge.tsx             # Status badges (6 color variants)
+│   │   │   ├── dashboard-shell.tsx   # Dashboard layout (top nav + mobile bottom tabs)
 │   │   │   ├── avatar.tsx            # Initials-based avatar with gradient
 │   │   │   ├── header.tsx            # Sticky glassmorphic nav bar
 │   │   │   ├── page-shell.tsx        # Centered content wrapper
@@ -117,15 +124,19 @@ dog_sitter_app/
 │   │   ├── landing-page.tsx
 │   │   ├── login-form.tsx
 │   │   ├── signup-form.tsx
-│   │   ├── sitter-search.tsx         # GPS + city-based search
+│   │   ├── sitter-search.tsx         # GPS + city search + map split view
+│   │   ├── sitter-map.tsx            # Leaflet/OpenStreetMap interactive map
+│   │   ├── availability-calendar.tsx # Monthly calendar for sitter availability
 │   │   ├── booking-form.tsx
-│   │   ├── booking-actions.tsx       # Accept/decline buttons
+│   │   ├── booking-actions.tsx       # Accept/decline/start visit buttons
 │   │   ├── pet-form.tsx
 │   │   ├── delete-pet-button.tsx
 │   │   ├── sitter-setup-form.tsx
+│   │   ├── profile-form.tsx          # User profile editing
 │   │   ├── review-form.tsx
+│   │   ├── payment-toast.tsx         # Post-payment feedback
 │   │   ├── message-list.tsx
-│   │   ├── active-booking-view.tsx
+│   │   ├── active-booking-view.tsx   # Multi-day visit tracking
 │   │   ├── admin-nav.tsx
 │   │   ├── admin-header.tsx
 │   │   ├── admin-sitter-actions.tsx
@@ -147,7 +158,10 @@ dog_sitter_app/
 ├── supabase/migrations/
 │   ├── 001_initial_schema.sql        # Full schema (13 tables, PostGIS, RLS)
 │   ├── 002_admin_role.sql            # Admin role + policies
-│   └── 003_security_fixes.sql        # RLS hardening
+│   ├── 003_security_fixes.sql        # RLS hardening
+│   ├── 004_pending_payment_status.sql # Add pending_payment booking status
+│   ├── 005_sitter_coords_in_search.sql # Return lat/lng from nearby search
+│   └── 006_sitter_availability.sql   # Sitter availability calendar table
 │
 ├── messages/
 │   ├── es.json                       # Spanish translations (~82 keys)
@@ -240,6 +254,7 @@ dog_sitter_app/
 | `verifications` | DNI/NIE, background check status | Own read, admin write |
 | `partner_discounts` | Code, percent off, city, valid_until | Public read, admin write |
 | `consent_records` | GDPR consent tracking (terms, privacy, marketing) | Own read |
+| `sitter_availability` | Per-day availability calendar for sitters | Public read, own write |
 | `audit_log` | Data access/modification trail (GDPR accountability) | Admin only |
 
 ### Key Indexes
@@ -258,26 +273,35 @@ dog_sitter_app/
 ## Booking Flow
 
 ```
-Owner searches → selects sitter → fills booking form
+Owner searches → checks sitter availability calendar → fills booking form
                                          │
                               POST /api/checkout
                          (server-side price calc,
                           18% commission applied)
                                          │
-                              Booking created as
-                              status: "requested"
+                              Stripe Checkout →  Owner pays upfront
+                                         │
+                         "pending_payment" → Stripe webhook → "requested"
                                          │
                          Sitter accepts or declines
                                          │
                     ┌────────────────────┴────────────────────┐
                     │                                         │
-              "accepted"                              "declined"
-           (awaiting payment —                     (booking cancelled)
-            Stripe not yet active)
+              "confirmed"                    POST /api/bookings/decline
+           (sitter accepted)                (auto-refund via Stripe)
+                    │                              → "cancelled"
+         Sitter taps "Start visit"
+         (auto check-in + GPS)
                     │
-              "confirmed" → "in_progress" → "completed"
-                                                    │
-                                             Owner can review
+              "in_progress"
+         (daily check-in/check-out,
+          photos, health notes)
+                    │
+         Sitter taps "Complete booking"
+                    │
+              "completed"
+                    │
+             Owner can review
 ```
 
 ---
@@ -305,6 +329,8 @@ Owner searches → selects sitter → fills booking form
 | `next-intl` | 4.9.0 | Internationalization |
 | `lucide-react` | 1.7.0 | Icon library |
 | `sonner` | 2.0.7 | Toast notifications |
+| `leaflet` | latest | Interactive maps (OpenStreetMap) |
+| `react-leaflet` | latest | React wrapper for Leaflet |
 | `tailwindcss` | 4 | CSS framework |
 
 ---

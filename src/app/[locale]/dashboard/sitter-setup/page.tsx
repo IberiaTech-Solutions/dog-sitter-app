@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { Header, PageShell } from "@/components/ui";
+import { DashboardShell } from "@/components/ui";
 import { SitterSetupForm } from "@/components/sitter-setup-form";
+import { AvailabilityCalendar } from "@/components/availability-calendar";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -19,16 +20,14 @@ export default async function SitterSetupPage({ params }: Props) {
 
   if (!user) redirect(`/${locale}/login`);
 
-  // Only sitter accounts can access this page
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("full_name, role")
     .eq("id", user.id)
     .single();
 
   if (profile?.role !== "sitter") redirect(`/${locale}/dashboard`);
 
-  // Check if sitter profile already exists
   const { data: existing } = await supabase
     .from("sitter_profiles")
     .select("*")
@@ -36,23 +35,34 @@ export default async function SitterSetupPage({ params }: Props) {
     .single();
 
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
-      <Header appName={t("common.appName")} isLoggedIn />
-
-      <PageShell>
+    <DashboardShell
+      appName={t("common.appName")}
+      locale={locale}
+      userName={profile.full_name}
+      userRole={profile.role}
+      backHref="/dashboard"
+      title={locale === "es" ? "Perfil cuidador" : "Sitter profile"}
+    >
+      <div className="max-w-2xl">
         <h1 className="text-2xl font-bold text-stone-900">
           {locale === "es"
             ? "Configurar perfil de cuidador"
             : "Set up sitter profile"}
         </h1>
-        <p className="mt-2 text-stone-500">
+        <p className="mt-1 text-stone-500">
           {locale === "es"
             ? "Completa tu perfil para empezar a recibir reservas."
             : "Complete your profile to start receiving bookings."}
         </p>
-
         <SitterSetupForm existing={existing} />
-      </PageShell>
-    </div>
+
+        <div className="mt-8">
+          <h2 className="text-lg font-semibold text-stone-900 mb-4">
+            {locale === "es" ? "Tu disponibilidad" : "Your availability"}
+          </h2>
+          <AvailabilityCalendar sitterId={user.id} isEditable />
+        </div>
+      </div>
+    </DashboardShell>
   );
 }

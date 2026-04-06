@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Toaster } from "sonner";
+import { SwRegister } from "@/components/sw-register";
 
 type Props = {
   children: React.ReactNode;
@@ -32,6 +33,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
       {children}
+      <SwRegister />
       <Toaster
         position="top-right"
         toastOptions={{

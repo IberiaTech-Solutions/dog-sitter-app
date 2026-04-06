@@ -1,8 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { redirect, notFound } from "next/navigation";
-import { Link } from "@/i18n/navigation";
-import { Header, PageShell, LinkButton } from "@/components/ui";
+import { DashboardShell, LinkButton } from "@/components/ui";
 import { ReviewForm } from "@/components/review-form";
 
 type Props = {
@@ -20,6 +19,12 @@ export default async function ReviewPage({ params }: Props) {
 
   if (!user) redirect(`/${locale}/login`);
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("full_name, role")
+    .eq("id", user.id)
+    .single();
+
   const { data: booking } = await supabase
     .from("bookings")
     .select(
@@ -31,7 +36,6 @@ export default async function ReviewPage({ params }: Props) {
   if (!booking || booking.status !== "completed") notFound();
   if (booking.owner_id !== user.id && booking.sitter_id !== user.id) notFound();
 
-  // Check if already reviewed
   const { data: existingReview } = await supabase
     .from("reviews")
     .select("id")
@@ -47,14 +51,19 @@ export default async function ReviewPage({ params }: Props) {
       : (booking.owner as { full_name: string })?.full_name;
 
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
-      <Header appName={t("common.appName")} isLoggedIn />
-
-      <PageShell>
+    <DashboardShell
+      appName={t("common.appName")}
+      locale={locale}
+      userName={profile?.full_name ?? ""}
+      userRole={profile?.role ?? "owner"}
+      backHref="/dashboard"
+      title={locale === "es" ? "Dejar opinión" : "Leave review"}
+    >
+      <div className="max-w-lg">
         <h1 className="text-2xl font-bold text-stone-900">
           {locale === "es" ? "Dejar una opinión" : "Leave a review"}
         </h1>
-        <p className="mt-2 text-stone-500">
+        <p className="mt-1 text-stone-500">
           {locale === "es"
             ? `¿Cómo fue tu experiencia con ${revieweeName}?`
             : `How was your experience with ${revieweeName}?`}
@@ -72,12 +81,9 @@ export default async function ReviewPage({ params }: Props) {
             </LinkButton>
           </div>
         ) : (
-          <ReviewForm
-            bookingId={bookingId}
-            revieweeId={revieweeId}
-          />
+          <ReviewForm bookingId={bookingId} revieweeId={revieweeId} />
         )}
-      </PageShell>
-    </div>
+      </div>
+    </DashboardShell>
   );
 }

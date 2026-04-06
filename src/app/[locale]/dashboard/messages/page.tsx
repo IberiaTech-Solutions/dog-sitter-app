@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
-import { Header, PageShell } from "@/components/ui";
+import { DashboardShell } from "@/components/ui";
 import { MessageList } from "@/components/message-list";
 
 type Props = {
@@ -19,7 +19,13 @@ export default async function MessagesPage({ params }: Props) {
 
   if (!user) redirect(`/${locale}/login`);
 
-  // Get conversations (unique users the current user has messaged with)
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("full_name, role")
+    .eq("id", user.id)
+    .single();
+
+  // Get conversations
   const { data: sentMessages } = await supabase
     .from("messages")
     .select("recipient_id, content, created_at, read_at, recipient:profiles!recipient_id(full_name)")
@@ -32,7 +38,6 @@ export default async function MessagesPage({ params }: Props) {
     .eq("recipient_id", user.id)
     .order("created_at", { ascending: false });
 
-  // Build conversation list from latest messages
   const conversationMap = new Map<
     string,
     { userId: string; name: string; lastMessage: string; lastAt: string; unread: boolean }
@@ -70,24 +75,27 @@ export default async function MessagesPage({ params }: Props) {
   );
 
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
-      <Header appName={t("common.appName")} isLoggedIn />
+    <DashboardShell
+      appName={t("common.appName")}
+      locale={locale}
+      userName={profile?.full_name ?? ""}
+      userRole={profile?.role ?? "owner"}
+      backHref="/dashboard"
+      title={locale === "es" ? "Mensajes" : "Messages"}
+    >
+      <h1 className="text-2xl font-bold text-stone-900">
+        {locale === "es" ? "Mensajes" : "Messages"}
+      </h1>
 
-      <PageShell>
-        <h1 className="text-2xl font-bold text-stone-900">
-          {locale === "es" ? "Mensajes" : "Messages"}
-        </h1>
-
-        {conversations.length === 0 ? (
-          <p className="mt-6 text-sm text-stone-500">
-            {locale === "es"
-              ? "No tienes mensajes todavía."
-              : "You don't have any messages yet."}
-          </p>
-        ) : (
-          <MessageList conversations={conversations} currentUserId={user.id} />
-        )}
-      </PageShell>
-    </div>
+      {conversations.length === 0 ? (
+        <p className="mt-6 text-sm text-stone-500">
+          {locale === "es"
+            ? "No tienes mensajes todavía."
+            : "You don't have any messages yet."}
+        </p>
+      ) : (
+        <MessageList conversations={conversations} currentUserId={user.id} />
+      )}
+    </DashboardShell>
   );
 }

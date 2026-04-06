@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import { Shield, Star, MapPin, Clock, Dog, Cat, Bird, Rabbit, PawPrint } from "lucide-react";
 import { Header, PageShell, Card, Avatar, Badge, LinkButton } from "@/components/ui";
+import { AvailabilityCalendar } from "@/components/availability-calendar";
+import { MeetGreetButton } from "@/components/meet-greet-button";
 
 type Props = {
   params: Promise<{ locale: string; id: string }>;
@@ -146,6 +148,14 @@ export default async function SitterProfilePage({ params }: Props) {
               )}
             </Card>
 
+            {/* Availability */}
+            <div>
+              <h2 className="text-lg font-semibold text-stone-900 mb-4">
+                {es ? "Disponibilidad" : "Availability"}
+              </h2>
+              <AvailabilityCalendar sitterId={id} isEditable={false} />
+            </div>
+
             {/* Reviews */}
             {reviews && reviews.length > 0 && (
               <div>
@@ -216,6 +226,12 @@ export default async function SitterProfilePage({ params }: Props) {
                 <LinkButton href={`/booking/${id}`} variant="primary" size="lg" className="w-full mt-6">
                   {t("sitter.bookNow")}
                 </LinkButton>
+
+                {user && (
+                  <div className="mt-3">
+                    <MeetGreetButton sitterId={id} sitterName={profile.full_name} />
+                  </div>
+                )}
 
                 {sitterProfile.is_verified && (
                   <div className="mt-4 flex items-center gap-2 justify-center text-xs text-green-700">
