@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { User, LogOut, Settings } from "lucide-react";
-import { Avatar } from "@/components/ui";
+import { Avatar } from "@/components/ui/avatar";
 
 type Props = {
   userName: string;
