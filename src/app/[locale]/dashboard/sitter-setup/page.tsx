@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { DashboardShell } from "@/components/ui";
 import { SitterSetupForm } from "@/components/sitter-setup-form";
 import { AvailabilityCalendar } from "@/components/availability-calendar";
+import { VerificationForm } from "@/components/verification-form";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -22,7 +23,7 @@ export default async function SitterSetupPage({ params }: Props) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, role")
+    .select("full_name, role, avatar_url")
     .eq("id", user.id)
     .single();
 
@@ -34,12 +35,20 @@ export default async function SitterSetupPage({ params }: Props) {
     .eq("id", user.id)
     .single();
 
+  const { data: verification } = await supabase
+    .from("verifications")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("type", "dni_nie")
+    .single();
+
   return (
     <DashboardShell
       appName={t("common.appName")}
       locale={locale}
       userName={profile.full_name}
       userRole={profile.role}
+      avatarUrl={profile.avatar_url}
       backHref="/dashboard"
       title={locale === "es" ? "Perfil cuidador" : "Sitter profile"}
     >
@@ -55,6 +64,10 @@ export default async function SitterSetupPage({ params }: Props) {
             : "Complete your profile to start receiving bookings."}
         </p>
         <SitterSetupForm existing={existing} />
+
+        <div className="mt-8">
+          <VerificationForm userId={user.id} existing={verification} />
+        </div>
 
         <div className="mt-8">
           <h2 className="text-lg font-semibold text-stone-900 mb-4">

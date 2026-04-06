@@ -5,6 +5,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui";
+import { toast } from "sonner";
 
 type Props = {
   verificationId: string;
@@ -39,6 +40,10 @@ export function AdminSitterActions({ verificationId, userId }: Props) {
         .eq("id", userId);
     }
 
+    toast.success(approve
+      ? (es ? "Verificación aprobada" : "Verification approved")
+      : (es ? "Verificación rechazada" : "Verification rejected")
+    );
     router.refresh();
     setLoading(false);
   }

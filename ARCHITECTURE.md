@@ -54,25 +54,27 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 | Booking overlap prevention | ✅ Done | Server-side check in checkout + client-side check on sitter accept |
 | Repeat bookings | ✅ Done | "Book again" button on completed bookings for owners |
 | Reviews-for-discounts | ✅ Done | After submitting a review, owner receives partner discount code via toast |
+| Push notifications | ✅ Done | VAPID web push, service worker handles push/click, sends on booking/decline/meet-greet |
+| Sitter verification (DNI) | ✅ Done | Upload DNI/NIE, status tracking (pending→submitted→approved/rejected), admin approve/reject |
+| Avatar dropdown menu | ✅ Done | Profile avatar in navbar with dropdown (profile link, logout), replaces text "Salir" |
+| Branded icons | ✅ Done | White paws on green — favicon, PWA icons, navbar logo, all consistent |
 
 ### Partially Implemented
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Sitter verification (DNI) | 🔶 Schema ready | `verifications` table exists; no external provider integrated yet |
 | Insurance / guarantee | 🔶 Planning | Need Spanish insurer partner (Caser, Mapfre); MVP: platform guarantee up to €500 |
 
 ### Not Yet Started
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Push notifications | ❌ | Web push via service worker — SW is ready, needs push subscription + backend |
 | Bizum payments | ❌ | Schema supports `method: 'bizum'`, no implementation |
 | WhatsApp integration | ❌ | Not implemented |
-| Background checks API | ❌ | No external provider connected |
+| Background checks API | ❌ | No external provider connected (DNI upload works, external verification not wired) |
 | GPS live map for owners | ❌ | Real-time sitter location on map during visit |
-| Cancellation policy tiers | ❌ | Flexible/moderate/strict per sitter |
-| Sitter response metrics | ❌ | Response rate/time shown on profile |
+| Cancellation policy tiers | ✅ Done | Flexible/moderate/strict — sitter chooses, shown on profile |
+| Sitter response metrics | ✅ Done | Response rate + avg time, calculated from booking data via RPC |
 | Mobile app (React Native) | ❌ | Phase 2 — PWA covers mobile for now |
 
 ---

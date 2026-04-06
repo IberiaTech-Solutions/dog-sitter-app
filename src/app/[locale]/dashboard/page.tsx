@@ -58,6 +58,7 @@ export default async function DashboardPage({ params }: Props) {
       locale={locale}
       userName={profile?.full_name ?? ""}
       userRole={profile?.role ?? "owner"}
+      avatarUrl={profile?.avatar_url}
     >
       <PaymentToast />
 
@@ -97,22 +98,28 @@ export default async function DashboardPage({ params }: Props) {
                         {otherPerson?.full_name}
                       </p>
                       <p className="text-sm text-stone-400">
-                        {booking.is_meet_greet
-                          ? (locale === "es" ? "Cita para conocerse" : "Meet & greet")
-                          : (
-                            <>
-                              {(booking.pet as { name: string })?.name} —{" "}
-                              {new Date(booking.start_date).toLocaleDateString(
-                                locale === "es" ? "es-ES" : "en-GB",
-                                { day: "numeric", month: "short" }
-                              )}
-                              {" → "}
-                              {new Date(booking.end_date).toLocaleDateString(
-                                locale === "es" ? "es-ES" : "en-GB",
-                                { day: "numeric", month: "short" }
-                              )}
-                            </>
-                          )}
+                        {booking.is_meet_greet ? (
+                          booking.owner_notes
+                            ? booking.owner_notes.length > 60
+                              ? booking.owner_notes.slice(0, 60) + "..."
+                              : booking.owner_notes
+                            : (locale === "es" ? "Cita para conocerse" : "Meet & greet")
+                        ) : (
+                          <>
+                            {(booking.pet as { name: string })?.name
+                              ? `${(booking.pet as { name: string }).name} — `
+                              : ""}
+                            {new Date(booking.start_date).toLocaleDateString(
+                              locale === "es" ? "es-ES" : "en-GB",
+                              { day: "numeric", month: "short" }
+                            )}
+                            {" → "}
+                            {new Date(booking.end_date).toLocaleDateString(
+                              locale === "es" ? "es-ES" : "en-GB",
+                              { day: "numeric", month: "short" }
+                            )}
+                          </>
+                        )}
                       </p>
                     </div>
                   </div>

@@ -52,6 +52,10 @@ export default async function SitterProfilePage({ params }: Props) {
       ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
       : null;
 
+  const { data: responseStats } = await supabase.rpc("sitter_response_stats", {
+    sitter_uuid: id,
+  });
+
   return (
     <div className="min-h-screen bg-[#faf9f7]">
       <Header appName={t("common.appName")} isLoggedIn={!!user}>
@@ -146,7 +150,55 @@ export default async function SitterProfilePage({ params }: Props) {
                   {sitterProfile.experience_years} {es ? "años de experiencia" : "years experience"}
                 </div>
               )}
+
+              {/* Response stats */}
+              {responseStats && (responseStats as { total_requests: number }).total_requests > 0 && (
+                <div className="flex items-center gap-4 mt-4 pt-4 border-t border-stone-100">
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-green-600">
+                      {(responseStats as { response_rate: number }).response_rate}%
+                    </p>
+                    <p className="text-xs text-stone-400">
+                      {es ? "Tasa de respuesta" : "Response rate"}
+                    </p>
+                  </div>
+                  {(responseStats as { avg_response_minutes: number }).avg_response_minutes > 0 && (
+                    <div className="text-center">
+                      <p className="text-lg font-bold text-stone-900">
+                        {(responseStats as { avg_response_minutes: number }).avg_response_minutes < 60
+                          ? `${(responseStats as { avg_response_minutes: number }).avg_response_minutes} min`
+                          : `${Math.round((responseStats as { avg_response_minutes: number }).avg_response_minutes / 60)}h`}
+                      </p>
+                      <p className="text-xs text-stone-400">
+                        {es ? "Tiempo de respuesta" : "Response time"}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
             </Card>
+
+            {/* Cancellation policy */}
+            {sitterProfile.cancellation_policy && (
+              <Card padding="md">
+                <p className="text-sm font-medium text-stone-700">
+                  {es ? "Política de cancelación" : "Cancellation policy"}
+                </p>
+                <p className="text-sm text-stone-500 mt-1">
+                  {{
+                    flexible: es
+                      ? "Flexible — Reembolso completo hasta 24h antes del inicio"
+                      : "Flexible — Full refund up to 24h before start",
+                    moderate: es
+                      ? "Moderada — Reembolso completo hasta 5 días antes, 50% después"
+                      : "Moderate — Full refund up to 5 days before, 50% after",
+                    strict: es
+                      ? "Estricta — 50% reembolso hasta 7 días antes, sin reembolso después"
+                      : "Strict — 50% refund up to 7 days before, no refund after",
+                  }[sitterProfile.cancellation_policy as string] ?? sitterProfile.cancellation_policy}
+                </p>
+              </Card>
+            )}
 
             {/* Availability */}
             <div>

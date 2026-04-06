@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getStripe } from "@/lib/stripe";
+import { sendPushToUser } from "@/lib/push";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -68,6 +69,15 @@ export async function POST(request: Request) {
       refunded: !!payment?.stripe_payment_intent_id,
     },
   });
+
+  // Notify owner
+  sendPushToUser(booking.owner_id, {
+    title: "Reserva cancelada",
+    body: payment?.stripe_payment_intent_id
+      ? "Tu reserva ha sido rechazada. El reembolso está en camino."
+      : "Tu reserva ha sido rechazada.",
+    url: "/es/dashboard",
+  }).catch(() => {});
 
   return NextResponse.json({ success: true });
 }

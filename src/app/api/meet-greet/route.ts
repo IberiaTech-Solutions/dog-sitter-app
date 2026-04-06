@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { sendPushToUser } from "@/lib/push";
 
 export async function POST(request: Request) {
   const supabase = await createClient();
@@ -66,7 +67,8 @@ export async function POST(request: Request) {
     .single();
 
   if (bookingError) {
-    return NextResponse.json({ error: "Could not create meet & greet" }, { status: 400 });
+    console.error("Meet & greet insert error:", bookingError);
+    return NextResponse.json({ error: bookingError.message }, { status: 400 });
   }
 
   // Send a message to the sitter
@@ -77,6 +79,13 @@ export async function POST(request: Request) {
       content: message.trim(),
     });
   }
+
+  // Notify sitter
+  sendPushToUser(sitter_id, {
+    title: locale === "es" ? "Nueva solicitud" : "New request",
+    body: locale === "es" ? "Alguien quiere conocerte antes de reservar" : "Someone wants to meet you before booking",
+    url: `/${locale}/dashboard`,
+  }).catch(() => {});
 
   return NextResponse.json({ success: true, booking_id: booking.id });
 }

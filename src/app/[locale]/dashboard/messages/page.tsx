@@ -21,7 +21,7 @@ export default async function MessagesPage({ params }: Props) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, role")
+    .select("full_name, role, avatar_url")
     .eq("id", user.id)
     .single();
 
@@ -80,6 +80,7 @@ export default async function MessagesPage({ params }: Props) {
       locale={locale}
       userName={profile?.full_name ?? ""}
       userRole={profile?.role ?? "owner"}
+      avatarUrl={profile?.avatar_url}
       backHref="/dashboard"
       title={locale === "es" ? "Mensajes" : "Messages"}
     >

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getStripe } from "@/lib/stripe";
 import { createClient } from "@supabase/supabase-js";
+import { sendPushToUser } from "@/lib/push";
 import Stripe from "stripe";
 
 // Use service role client for webhooks (no user session)
@@ -50,6 +51,21 @@ export async function POST(request: Request) {
         stripe_payment_intent_id: session.payment_intent as string,
         status: "completed",
       });
+
+      // Notify sitter about new booking
+      const { data: booking } = await supabase
+        .from("bookings")
+        .select("sitter_id")
+        .eq("id", bookingId)
+        .single();
+
+      if (booking?.sitter_id) {
+        sendPushToUser(booking.sitter_id, {
+          title: "Nueva reserva",
+          body: "Tienes una nueva solicitud de reserva",
+          url: "/es/dashboard",
+        }).catch(() => {});
+      }
 
       // Audit log
       await supabase.from("audit_log").insert({

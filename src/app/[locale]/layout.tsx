@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Toaster } from "sonner";
 import { SwRegister } from "@/components/sw-register";
+import { PushPrompt } from "@/components/push-prompt";
 
 type Props = {
   children: React.ReactNode;
@@ -34,6 +35,7 @@ export default async function LocaleLayout({ children, params }: Props) {
     <NextIntlClientProvider locale={locale} messages={messages}>
       {children}
       <SwRegister />
+      <PushPrompt />
       <Toaster
         position="top-right"
         toastOptions={{

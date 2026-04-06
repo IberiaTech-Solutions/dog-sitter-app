@@ -36,6 +36,7 @@ type SitterProfile = {
   address: string | null;
   radius_km: number;
   is_available: boolean;
+  cancellation_policy: string;
 } | null;
 
 const ALL_SERVICES = ["dog_walking", "pet_sitting", "drop_in", "overnight"];
@@ -78,6 +79,7 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
   );
   const [address, setAddress] = useState(existing?.address ?? "");
   const [radius, setRadius] = useState(existing?.radius_km?.toString() ?? "10");
+  const [cancellationPolicy, setCancellationPolicy] = useState(existing?.cancellation_policy ?? "flexible");
   const [loading, setLoading] = useState(false);
   const [geoLoading, setGeoLoading] = useState(false);
   const [location, setLocation] = useState<{
@@ -149,6 +151,7 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
       address: address || null,
       radius_km: parseInt(radius),
       is_available: true,
+      cancellation_policy: cancellationPolicy,
       location: `SRID=4326;POINT(${finalLocation.lng} ${finalLocation.lat})`,
     };
 
@@ -286,6 +289,56 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
             className="mt-2 w-full accent-green-600"
           />
           <p className="mt-1 text-sm text-stone-500">{radius} km</p>
+        </div>
+      </Card>
+
+      {/* Cancellation policy */}
+      <Card>
+        <label className="block text-sm font-medium text-stone-700">
+          {locale === "es" ? "Política de cancelación" : "Cancellation policy"}
+        </label>
+        <div className="mt-3 space-y-2">
+          {([
+            {
+              value: "flexible",
+              titleEs: "Flexible",
+              titleEn: "Flexible",
+              descEs: "Reembolso completo hasta 24h antes del inicio",
+              descEn: "Full refund up to 24h before start",
+            },
+            {
+              value: "moderate",
+              titleEs: "Moderada",
+              titleEn: "Moderate",
+              descEs: "Reembolso completo hasta 5 días antes, 50% después",
+              descEn: "Full refund up to 5 days before, 50% after",
+            },
+            {
+              value: "strict",
+              titleEs: "Estricta",
+              titleEn: "Strict",
+              descEs: "50% reembolso hasta 7 días antes, sin reembolso después",
+              descEn: "50% refund up to 7 days before, no refund after",
+            },
+          ] as const).map((policy) => (
+            <button
+              key={policy.value}
+              type="button"
+              onClick={() => setCancellationPolicy(policy.value)}
+              className={`w-full text-left rounded-xl border px-4 py-3 transition-colors ${
+                cancellationPolicy === policy.value
+                  ? "border-green-600 bg-green-50"
+                  : "border-stone-200 hover:border-stone-300"
+              }`}
+            >
+              <span className={`text-sm font-medium ${cancellationPolicy === policy.value ? "text-green-700" : "text-stone-900"}`}>
+                {locale === "es" ? policy.titleEs : policy.titleEn}
+              </span>
+              <p className="text-xs text-stone-500 mt-0.5">
+                {locale === "es" ? policy.descEs : policy.descEn}
+              </p>
+            </button>
+          ))}
         </div>
       </Card>
 
