@@ -1,8 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { FormEvent } from "react";
-import { motion, type Variants } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  type Variants,
+} from "framer-motion";
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
@@ -16,18 +21,55 @@ const fadeUp: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
 };
 
+const wordUp: Variants = {
+  hidden: { opacity: 0, y: "0.5em" },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
+};
+
 const container: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.08 } },
 };
 
+const wordContainer: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.04, delayChildren: 0.1 } },
+};
+
 const viewportConfig = { once: true, margin: "-80px" };
+
+function AnimatedWords({ text, className }: { text: string; className?: string }) {
+  const words = text.split(" ");
+  return (
+    <span className={className}>
+      {words.map((word, i) => (
+        <span
+          key={i}
+          className="inline-block overflow-hidden align-bottom"
+          style={{ marginRight: "0.25em" }}
+        >
+          <motion.span variants={wordUp} className="inline-block">
+            {word}
+          </motion.span>
+        </span>
+      ))}
+    </span>
+  );
+}
 
 export function LandingPage() {
   const t = useTranslations();
   const locale = useLocale();
   const es = locale === "es";
   const [waitlistSubmitted, setWaitlistSubmitted] = useState(false);
+
+  // Scroll-driven: thin progress indicator at the top of the viewport.
+  const { scrollYProgress } = useScroll();
+
+  // Scroll-driven: subtle parallax on the hero photo as the page scrolls.
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollY } = useScroll();
+  const heroParallaxY = useTransform(scrollY, [0, 600], [0, 60]);
 
   const handleWaitlistSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -50,6 +92,13 @@ export function LandingPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-canvas">
+      {/* Scroll progress — thin brand bar under the header that fills as you read. */}
+      <motion.div
+        aria-hidden="true"
+        className="fixed top-0 left-0 right-0 h-0.5 bg-brand z-[60] origin-left"
+        style={{ scaleX: scrollYProgress }}
+      />
+
       <header className="sticky top-0 z-50 bg-canvas border-b border-line">
         <div className="mx-auto max-w-6xl flex items-center justify-between px-5 py-4 sm:px-8">
           <Link href="/" className="flex items-center gap-2.5">
@@ -94,13 +143,17 @@ export function LandingPage() {
                 </motion.p>
 
                 <motion.h1
-                  variants={fadeUp}
+                  variants={wordContainer}
                   className="mt-6 font-serif text-display text-ink font-semibold"
                 >
-                  <span className="block">{t("home.heroPetLine1")}</span>
-                  <span className="block text-ink-muted">
-                    {t("home.heroPetLine2")}
-                  </span>
+                  <AnimatedWords
+                    text={t("home.heroPetLine1")}
+                    className="block"
+                  />
+                  <AnimatedWords
+                    text={t("home.heroPetLine2")}
+                    className="block text-ink-muted"
+                  />
                 </motion.h1>
 
                 <motion.p
@@ -125,7 +178,9 @@ export function LandingPage() {
               </div>
 
               <motion.div
+                ref={heroRef}
                 variants={fadeUp}
+                style={{ y: heroParallaxY }}
                 className="lg:col-span-2 hidden lg:block"
               >
                 <div className="relative rounded-2xl overflow-hidden aspect-[4/5]">
@@ -134,7 +189,7 @@ export function LandingPage() {
                     alt=""
                     fill
                     sizes="(max-width: 1024px) 0px, 40vw"
-                    className="object-cover"
+                    className="object-cover [filter:saturate(0.92)_contrast(1.02)]"
                     priority
                   />
                 </div>
@@ -158,7 +213,7 @@ export function LandingPage() {
                 alt=""
                 fill
                 sizes="100vw"
-                className="object-cover"
+                className="object-cover [filter:saturate(0.92)_contrast(1.02)]"
               />
             </div>
           </div>
@@ -201,7 +256,7 @@ export function LandingPage() {
                       <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ink-muted">
                         {es ? "Para dueños" : "For owners"}
                       </p>
-                      <p className="mt-3 font-serif italic text-2xl sm:text-3xl text-ink leading-snug">
+                      <p className="mt-3 font-serif italic text-h2 text-ink leading-snug">
                         &ldquo;{es
                           ? "Busco a alguien que cuide mi mascota."
                           : "I'm looking for someone to care for my pet."}&rdquo;
@@ -231,7 +286,7 @@ export function LandingPage() {
                       <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ink-muted">
                         {es ? "Para cuidadores" : "For sitters"}
                       </p>
-                      <p className="mt-3 font-serif italic text-2xl sm:text-3xl text-ink leading-snug">
+                      <p className="mt-3 font-serif italic text-h2 text-ink leading-snug">
                         &ldquo;{es
                           ? "Quiero cuidar mascotas cerca de casa."
                           : "I want to care for pets near home."}&rdquo;
@@ -261,7 +316,7 @@ export function LandingPage() {
                       <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ink-muted">
                         {es ? "Para negocios" : "For businesses"}
                       </p>
-                      <p className="mt-3 font-serif italic text-2xl sm:text-3xl text-ink leading-snug">
+                      <p className="mt-3 font-serif italic text-h2 text-ink leading-snug">
                         &ldquo;{es
                           ? "Tengo un veterinario, tienda o peluquería en Gijón."
                           : "I run a vet, shop, or groomer in Gijón."}&rdquo;
@@ -387,11 +442,89 @@ export function LandingPage() {
                     alt=""
                     fill
                     sizes="(max-width: 1024px) 0px, 35vw"
-                    className="object-cover"
+                    className="object-cover [filter:saturate(0.92)_contrast(1.02)]"
                   />
                 </div>
               </motion.div>
             </div>
+          </div>
+        </motion.section>
+
+        {/* Horizontal marquee — ecosystem at a glance, continuously moving. */}
+        <section
+          aria-label={es ? "Categorías de la red" : "Network categories"}
+          className="border-t border-line overflow-hidden py-8 bg-canvas"
+        >
+          <motion.div
+            animate={{ x: ["0%", "-50%"] }}
+            transition={{ duration: 45, ease: "linear", repeat: Infinity }}
+            className="flex gap-12 whitespace-nowrap font-serif text-2xl sm:text-3xl text-ink-muted"
+          >
+            {[
+              ...Array(2).fill([
+                "Clínicas veterinarias",
+                "Peluquerías caninas",
+                "Tiendas de mascotas",
+                "Adiestradores",
+                "Nutricionistas",
+                "Paseadores",
+                "Guarderías caninas",
+                "Residencias",
+              ]).flat(),
+            ].map((item, i) => (
+              <span key={i} className="flex items-center gap-12 shrink-0">
+                <span>{item}</span>
+                <span aria-hidden="true" className="text-brand/40">·</span>
+              </span>
+            ))}
+          </motion.div>
+        </section>
+
+        {/* Editorial billboard — dark cinematic moment. */}
+        <motion.section
+          className="bg-ink text-canvas"
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportConfig}
+          variants={container}
+        >
+          <div className="mx-auto max-w-6xl px-5 sm:px-8 py-32 sm:py-48">
+            <motion.p
+              variants={fadeUp}
+              className="text-xs font-semibold uppercase tracking-[0.2em] text-canvas/60"
+            >
+              {es ? "La diferencia" : "The difference"}
+            </motion.p>
+            <motion.h2
+              variants={wordContainer}
+              className="mt-8 font-serif font-semibold leading-[1.02] text-canvas max-w-5xl"
+              style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)" }}
+            >
+              <AnimatedWords
+                text={
+                  es
+                    ? "Rover conoce tu ciudad."
+                    : "Rover knows your city."
+                }
+                className="block"
+              />
+              <AnimatedWords
+                text={
+                  es
+                    ? "Nosotros conocemos tu barrio."
+                    : "We know your neighborhood."
+                }
+                className="block text-canvas/60"
+              />
+            </motion.h2>
+            <motion.p
+              variants={fadeUp}
+              className="mt-12 text-lede text-canvas/70 max-w-2xl"
+            >
+              {es
+                ? "Una red local real. Cuidadores, veterinarios, tiendas y peluquerías que se conocen entre sí. Sin gigantes globales, sin traducciones automáticas."
+                : "A real local network. Sitters, vets, shops, and groomers who know each other. No global giants, no auto-translated copy."}
+            </motion.p>
           </div>
         </motion.section>
 
@@ -403,7 +536,7 @@ export function LandingPage() {
           viewport={viewportConfig}
           variants={container}
         >
-          <div className="mx-auto max-w-6xl px-5 sm:px-8 py-16 sm:py-20">
+          <div className="mx-auto max-w-6xl px-5 sm:px-8 py-20 sm:py-24">
             <div className="max-w-xl">
               <motion.p
                 variants={fadeUp}
