@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { ChevronLeft, MessageCircle, Search, CalendarDays, Settings, Dog, LayoutDashboard, Briefcase, Tag } from "lucide-react";
+import { ChevronLeft, MessageCircle, Search, CalendarDays, Settings, Dog, LayoutDashboard, Briefcase, Tag, ScanLine } from "lucide-react";
 import { Avatar } from "./avatar";
 import { UserMenu } from "../user-menu";
 import { DashboardNav, DashboardBottomNav } from "../dashboard-nav";
@@ -39,11 +39,13 @@ export function DashboardShell({
     { href: "/partner", Icon: LayoutDashboard, label: es ? "Panel" : "Dashboard", show: isPartner, badge: undefined },
     { href: "/partner/profile", Icon: Briefcase, label: es ? "Negocio" : "Business", show: isPartner, badge: undefined },
     { href: "/partner/discounts", Icon: Tag, label: es ? "Ofertas" : "Offers", show: isPartner, badge: undefined },
+    { href: "/partner/redemptions", Icon: ScanLine, label: es ? "Canjes" : "Redemptions", show: isPartner, badge: undefined },
     { href: "/dashboard", Icon: CalendarDays, label: es ? "Reservas" : "Bookings", show: !isAdmin && !isPartner, badge: "bookings" as const },
     { href: "/search", Icon: Search, label: es ? "Buscar" : "Search", show: isOwner && !isAdmin && !isPartner, badge: undefined },
     { href: "/dashboard/pets", Icon: Dog, label: es ? "Mascotas" : "Pets", show: isOwner && !isAdmin && !isPartner, badge: undefined },
     { href: "/dashboard/sitter-setup", Icon: Settings, label: es ? "Servicio" : "Service", show: isSitter && !isAdmin && !isPartner, badge: undefined },
     { href: "/dashboard/messages", Icon: MessageCircle, label: es ? "Mensajes" : "Messages", show: !isAdmin && !isPartner, badge: "messages" as const },
+    { href: "/dashboard/red-local", Icon: Tag, label: es ? "Red local" : "Local network", show: (isOwner || isSitter) && !isAdmin && !isPartner, badge: undefined },
   ].filter((item) => item.show);
 
   const navItems = navItemsDef.map((item) => ({

@@ -19,11 +19,23 @@ export async function requireAdmin(locale: string) {
     redirect(`/${locale}/dashboard`);
   }
 
-  // Fetch pending verification count for admin nav badge
-  const { count: pendingVerifications } = await supabase
-    .from("verifications")
-    .select("*", { count: "exact", head: true })
-    .in("status", ["pending", "submitted"]);
+  // Fetch pending counts for admin nav badges (in parallel)
+  const [{ count: pendingVerifications }, { count: pendingPartners }] = await Promise.all([
+    supabase
+      .from("verifications")
+      .select("*", { count: "exact", head: true })
+      .in("status", ["pending", "submitted"]),
+    supabase
+      .from("partner_profiles")
+      .select("*", { count: "exact", head: true })
+      .eq("is_verified", false),
+  ]);
 
-  return { user, supabase, profile, pendingVerifications: pendingVerifications ?? 0 };
+  return {
+    user,
+    supabase,
+    profile,
+    pendingVerifications: pendingVerifications ?? 0,
+    pendingPartners: pendingPartners ?? 0,
+  };
 }

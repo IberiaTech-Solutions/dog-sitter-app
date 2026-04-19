@@ -94,6 +94,10 @@ Framed as a **lifestyle business** (€0.3-1M ARR over 3-5 years is success), no
 | **Partner recruitment + signup flow** | ✅ Done | Public `/partners` recruitment landing (benefits + how-it-works + CTA), `/partners/signup` with 2-col typographic panel + business form (name, type, city, tax_id, phone, website, contact, email, password + strength checks + terms consent); writes `auth.users` + `profiles` (role=partner) + `partner_profiles` atomically |
 | **Partner dashboard** | ✅ Done | `/partner` overview (verification status, active discounts count, total + month redemptions, quick actions); `/partner/profile` business profile edit (address, postal code, logo URL, bilingual descriptions); `/partner/discounts` create/pause/resume/delete offers with unique-code validation |
 | **Role-aware routing** | ✅ Done | `/` and `/dashboard` redirect partners to `/partner`, admins to `/admin`, owners/sitters to `/dashboard`. Mobile profile pill links to `/partner/profile` when `role='partner'`. |
+| **Admin partner verification queue** | ✅ Done | `/admin/partners` — pending (unverified) + verified partner lists. Approve flips `is_verified` + stamps `verified_at`/`verified_by`; revoke clears. Admin nav shows red badge with pending count via `requireAdmin().pendingPartners`. |
+| **Owner/sitter discount discovery** | ✅ Done | `/dashboard/red-local` — verified partners + active offers visible to owners+sitters. "Usar oferta" server action issues a 256-bit token, inserts into `partner_discount_redemptions` with `status='issued'` + 30-day `expires_at`, redirects to QR detail page. |
+| **QR-based redemption flow** | ✅ Done | `/dashboard/red-local/[redemptionId]` displays the redemption QR code (SVG via `qrcode.react`) with token text + partner location + expiry. States: issued (active QR), redeemed (receipt with redeemed_at), expired (revoke + prompt re-issue). |
+| **Partner redemption verifier** | ✅ Done | `/partner/redemptions` — token-entry form + recent history. Client-side lookup + update to `status='redeemed'` (RLS restricts to partner's own discount rows). Auto-expires stale tokens on lookup. URL-based success/error feedback via toast. |
 | Design system (OKLCH tokens) | ✅ Done | Full palette in `@theme`: canvas/surface/ink/line/brand/brand-ink/brand-soft/mist/rust/warning/danger + semantic aliases; brand at oklch(47% 0.085 170°) — cool Asturian moss |
 | Typography system | ✅ Done | Source Serif 4 (display 600 + italic) + Source Sans 3 (UI 400/500/600) via next/font; fluid `@utility` classes for `text-display`/`text-hero`/`text-h2`/`text-lede` via `clamp()` |
 | Logo component | ✅ Done | Inline SVG React `<Logo>` component (5-ellipse asymmetric paw, `currentColor` stroke) + regenerated PNG icons (favicon, apple-touch, 192, 512) via ImageMagick |
@@ -221,7 +225,8 @@ dog_sitter_app/
 │   │   │   └── partner/              # Partner dashboard (authed, role=partner only; guarded by requirePartner)
 │   │   │       ├── page.tsx          # Overview: verification status, stats, quick actions
 │   │   │       ├── profile/page.tsx  # Business profile edit (uses <PartnerProfileForm>)
-│   │   │       └── discounts/page.tsx # Partner-authored discount CRUD
+│   │   │       ├── discounts/page.tsx # Partner-authored discount CRUD
+│   │   │       └── redemptions/page.tsx # Token verification + redemption history
 │   │   └── api/
 │   │       ├── auth/callback/        # OAuth callback
 │   │       ├── auth/logout/          # Sign out
@@ -248,6 +253,8 @@ dog_sitter_app/
 │   │   ├── partner-profile-form.tsx  # Client form for /partner/profile edit flow
 │   │   ├── partner-discount-form.tsx # Client form for creating a new discount offer (auto-populates code, links to partner_id)
 │   │   ├── partner-discount-actions.tsx # Per-row pause/resume + delete actions on partner's own discounts
+│   │   ├── partner-redemption-verifier.tsx # Client form for partners to verify+redeem customer tokens; handles expired/already-redeemed/not-found states
+│   │   ├── admin-partner-actions.tsx # Approve/revoke verification on partner accounts (admin-only)
 │   │   ├── landing-page.tsx
 │   │   ├── login-form.tsx
 │   │   ├── signup-form.tsx
@@ -474,6 +481,7 @@ Owner searches → checks sitter availability calendar → fills booking form
 | `sonner` | 2.0.7 | Toast notifications |
 | `leaflet` | latest | Interactive maps (OpenStreetMap) |
 | `react-leaflet` | latest | React wrapper for Leaflet |
+| `qrcode.react` | 4.2.0 | QR code rendering (SVG) for partner-discount redemption flow |
 | `tailwindcss` | 4 | CSS framework |
 
 ---
@@ -576,6 +584,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000  # App origin for redirects
 ### Phase 1: Owner launch in Gijón (Month 3–9)
 - **Landing flips to owner-primary** once ≥20 verified sitters live.
 - **Partner-discount network** surfaces on owner booking confirmations, reviews, sitter profiles — primary differentiator vs Rover.
+- **QR-based redemption loop live end-to-end** (owner/sitter issues signed token → QR displayed in-app → partner enters token at their counter → redemption recorded for analytics). Full demo-able flow from discovery to verification.
 - **Reviews-for-discounts** program drives repeat engagement.
 - **Local PR** — La Nueva España, El Comercio ("app local de cuidado de mascotas con red de partners").
 - Target: 100+ active owners, €1-3k MRR in Gijón.

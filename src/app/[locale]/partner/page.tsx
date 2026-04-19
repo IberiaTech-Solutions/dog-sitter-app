@@ -124,7 +124,7 @@ export default async function PartnerOverviewPage({ params }: Props) {
         </div>
 
         {/* Quick actions */}
-        <div className="mt-10 grid gap-4 sm:grid-cols-2">
+        <div className="mt-10 grid gap-4 sm:grid-cols-3">
           <Link
             href="/partner/profile"
             className="group flex items-center justify-between p-5 rounded-2xl bg-surface border border-line hover:border-ink-soft/30 hover:shadow-sm transition-all"
@@ -156,6 +156,25 @@ export default async function PartnerOverviewPage({ params }: Props) {
                 {es
                   ? "Crear, pausar o editar descuentos."
                   : "Create, pause, or edit discount offers."}
+              </p>
+            </div>
+            <ArrowRight
+              className="w-4 h-4 text-ink-soft group-hover:text-ink transition-colors"
+              aria-hidden="true"
+            />
+          </Link>
+          <Link
+            href="/partner/redemptions"
+            className="group flex items-center justify-between p-5 rounded-2xl bg-surface border border-line hover:border-ink-soft/30 hover:shadow-sm transition-all"
+          >
+            <div>
+              <p className="font-semibold text-ink">
+                {es ? "Canjear código" : "Redeem code"}
+              </p>
+              <p className="text-sm text-ink-muted mt-0.5">
+                {es
+                  ? "Introduce el código que trae el cliente."
+                  : "Enter the code the customer brings."}
               </p>
             </div>
             <ArrowRight
