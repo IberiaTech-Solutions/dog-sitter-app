@@ -141,10 +141,10 @@ export function ProfileCompletion({
     <Card padding="lg" className="mb-6">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="font-semibold text-stone-900">
+          <h2 className="font-semibold text-ink">
             {es ? "Completa tu perfil" : "Complete your profile"}
           </h2>
-          <p className="text-sm text-stone-400 mt-0.5">
+          <p className="text-sm text-ink-soft mt-0.5">
             {completed + inReview}/{total} {es ? "completado" : "completed"}
           </p>
         </div>
@@ -216,7 +216,7 @@ export function ProfileCompletion({
 
       {/* Completed steps */}
       {done.length > 0 && (
-        <div className="mt-3 pt-3 border-t border-stone-100">
+        <div className="mt-3 pt-3 border-t border-line">
           <div className="flex flex-wrap gap-2">
             {done.map((step) => (
               <span key={step.key} className="flex items-center gap-1 text-xs text-brand-ink bg-brand-soft px-2.5 py-1 rounded-full">

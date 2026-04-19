@@ -61,7 +61,7 @@ export default async function PetsPage({ params }: Props) {
       {!pets || pets.length === 0 ? (
         <Card className="mt-8 text-center py-16">
           <div className="w-20 h-20 rounded-3xl bg-warning/10 flex items-center justify-center mx-auto mb-5">
-            <PawPrint className="w-9 h-9 text-amber-300" />
+            <PawPrint className="w-9 h-9 text-warning" />
           </div>
           <h3 className="text-lg font-semibold text-ink">
             {es ? "Aún no has añadido mascotas" : "No pets added yet"}
@@ -102,7 +102,7 @@ export default async function PetsPage({ params }: Props) {
                       </div>
                       <Link
                         href={`/dashboard/pets/${pet.id}`}
-                        className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-ink-muted hover:bg-stone-100 hover:text-stone-700 transition-colors"
+                        className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-ink-muted hover:bg-line/50 hover:text-ink transition-colors"
                       >
                         <Pencil className="w-3.5 h-3.5" />
                         {es ? "Editar" : "Edit"}

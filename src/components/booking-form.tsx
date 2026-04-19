@@ -233,7 +233,7 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
               className={`rounded-lg border px-4 py-3 text-sm font-medium transition-colors ${
                 serviceType === s
                   ? "border-brand bg-brand-soft text-brand-ink"
-                  : "border-line text-ink-muted hover:border-stone-400"
+                  : "border-line text-ink-muted hover:border-ink-soft/60"
               }`}
             >
               {serviceLabels[locale]?.[s] ?? s}
@@ -276,13 +276,13 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
 
         {/* Calendar */}
         <div className="flex items-center justify-between mb-3">
-          <button type="button" onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-stone-100 text-ink-muted">
+          <button type="button" onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-line/50 text-ink-muted">
             <ChevronLeft className="w-4 h-4" />
           </button>
           <span className="text-sm font-semibold text-ink">
             {monthNames[lang][month]} {year}
           </span>
-          <button type="button" onClick={nextMonthFn} className="p-1.5 rounded-lg hover:bg-stone-100 text-ink-muted">
+          <button type="button" onClick={nextMonthFn} className="p-1.5 rounded-lg hover:bg-line/50 text-ink-muted">
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
@@ -323,7 +323,7 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
                 disabled={isPast || !isAvailable}
                 onClick={() => handleDayClick(dateStr)}
                 className={`aspect-square flex items-center justify-center rounded-lg text-sm transition-colors ${bgClass} ${
-                  isToday && !isStart && !isEnd ? "ring-2 ring-green-600 ring-offset-1" : ""
+                  isToday && !isStart && !isEnd ? "ring-2 ring-brand ring-offset-1" : ""
                 }`}
               >
                 {day}

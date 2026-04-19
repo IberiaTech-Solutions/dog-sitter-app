@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { User, LogOut, Settings } from "lucide-react";
+import { User, LogOut } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 
 type Props = {
@@ -39,7 +38,7 @@ export function UserMenu({ userName, avatarUrl, locale, userRole }: Props) {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 rounded-full p-0.5 hover:ring-2 hover:ring-stone-200 transition-all"
+        className="flex items-center gap-2 rounded-full p-0.5 hover:ring-2 hover:ring-line transition-all"
       >
         <Avatar name={userName} src={avatarUrl} size="sm" />
       </button>
@@ -61,7 +60,7 @@ export function UserMenu({ userName, avatarUrl, locale, userRole }: Props) {
             <Link
               href="/dashboard/profile"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm text-ink-muted hover:bg-stone-50 transition-colors"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-ink-muted hover:bg-canvas transition-colors"
             >
               <User className="w-4 h-4 text-ink-soft" />
               {es ? "Mi perfil" : "My profile"}

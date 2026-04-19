@@ -75,7 +75,7 @@ export function AdminInviteForm() {
                 className={`px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all ${
                   role === r.value
                     ? r.color
-                    : "border-line bg-surface text-ink-muted hover:border-stone-300"
+                    : "border-line bg-surface text-ink-muted hover:border-ink-soft/40"
                 }`}
               >
                 {es ? r.labelEs : r.labelEn}

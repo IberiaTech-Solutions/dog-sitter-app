@@ -27,7 +27,7 @@ export function Avatar({ name, src, size = "md", className = "" }: AvatarProps) 
 
   return (
     <div
-      className={`${sizeStyles[size]} shrink-0 rounded-2xl bg-gradient-to-br from-green-400 to-green-500 flex items-center justify-center text-white font-bold shadow-sm shadow-green-200 ${className}`}
+      className={`${sizeStyles[size]} shrink-0 rounded-2xl bg-gradient-to-br from-brand to-brand-ink flex items-center justify-center text-white font-bold shadow-sm shadow-brand/20 ${className}`}
     >
       {name.charAt(0).toUpperCase()}
     </div>

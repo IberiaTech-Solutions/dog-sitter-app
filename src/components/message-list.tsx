@@ -131,7 +131,7 @@ export function MessageList({ conversations, currentUserId }: Props) {
           <button
             key={conv.userId}
             onClick={() => setSelectedUser(conv)}
-            className={`w-full px-4 py-4 text-left border-b border-line hover:bg-stone-50 transition-colors ${
+            className={`w-full px-4 py-4 text-left border-b border-line hover:bg-canvas transition-colors ${
               selectedUser?.userId === conv.userId ? "bg-brand-soft" : ""
             }`}
           >
@@ -193,7 +193,7 @@ export function MessageList({ conversations, currentUserId }: Props) {
                       <p>{msg.content}</p>
                       <p
                         className={`mt-1 text-xs ${
-                          isMine ? "text-green-200" : "text-ink-soft"
+                          isMine ? "text-brand-soft" : "text-ink-soft"
                         }`}
                       >
                         {new Date(msg.created_at).toLocaleTimeString(
@@ -220,7 +220,7 @@ export function MessageList({ conversations, currentUserId }: Props) {
                 placeholder={
                   locale === "es" ? "Escribe un mensaje..." : "Type a message..."
                 }
-                className="flex-1 rounded-full border border-line bg-canvas px-4 py-2 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
+                className="flex-1 rounded-full border border-line bg-canvas px-4 py-2 text-sm focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
               />
               <Button
                 type="submit"

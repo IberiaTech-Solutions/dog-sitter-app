@@ -1,26 +1,35 @@
-# CuidaMascotas — Spain Pet Sitting Marketplace Architecture
+# CuidaMascotas — Local Pet-Care Ecosystem (Spain)
 
 ## Overview
 
-A localized pet sitting marketplace for Spain, filling the gap left by Gudog's merger with Rover. The platform connects pet owners with verified sitters, emphasizing trust, home security, and Spanish-native payment/communication workflows.
+A **local pet-care ecosystem** for Spain — not a pure marketplace. Connects four stakeholders: **owners, sitters, and the neighborhood businesses around them** (vets, pet shops, peluquerías caninas, dog trainers). The partner-discount network is the Phase 0 differentiator and the moat Rover cannot replicate at city-level scale: a global platform negotiates with national chains; we negotiate with the vet across the street.
 
-**Initial market:** Gijón, Asturias (Spain-only)  
-**Target MVP launch:** June 2026  
-**Stack:** Next.js 16 App Router + React 19 + TypeScript + Supabase + Tailwind CSS 4  
-**Languages:** Spanish (primary) + English (secondary — for expats/tourists in Spain)  
-**Development base:** Charleston, SC, USA  
-**Jurisdiction:** Spain / EU — all users, data, and operations are Spanish-market only  
-**Business entity:** TBD — will need a Spanish legal entity (S.L. or autónomo) to operate  
-**Deployment:** Vercel (EU edge region)
+Framed as a **lifestyle business** (€0.3-1M ARR over 3-5 years is success), not a VC-scale bet. Geographic expansion is city-at-a-time; brand and design system are deliberately portable — local character comes from photography and partner networks, not from hard-coded Asturian motifs.
+
+**Launch scope:** Gijón (Asturias) → wider Asturias (Oviedo, Avilés, Langreo) → selective wider Spain (Madrid, Barcelona, Valencia, Bilbao).
+**Target Phase 0 (supply-first):** first 20 sitters + 5-10 partner businesses signed in Gijón.
+**Target Phase 1 (owner launch):** flip landing to owner-primary once supply exists.
+**Stack:** Next.js 16 App Router + React 19 + TypeScript + Supabase + Tailwind CSS 4.
+**Languages:** Spanish (primary) + English (secondary — for expats/tourists in Spain).
+**Development base:** Charleston, SC, USA.
+**Jurisdiction:** Spain / EU — all users, data, and operations are Spanish-market only.
+**Business entity:** TBD — will need a Spanish legal entity (S.L. or autónomo) to operate.
+**Deployment:** Vercel (EU edge region, Frankfurt).
 
 ---
 
 ## Business Model
 
-- **Owners:** Free to use. Pay sitter rate + platform commission.
-- **Sitters:** 18% commission per booking (undercuts Rover's 20%).
-- **Affiliate revenue:** Discount partnerships with local pet shops, vets, and grooming salons.
-- **Estimated rates:** €10–20 per visit (validate with Gijón market research).
+**Four revenue streams, diversified beyond a pure marketplace take-rate.**
+
+1. **Booking commission** (Phase 0, live) — 18% sitter commission per booking; undercuts Rover's 20%. Owners pay no platform fee (vs. Rover's ~11%).
+2. **Partner-network listings** (Phase 0, day 1 differentiator) — local vets, pet shops, peluquerías caninas, and dog trainers sign up for a monthly listing fee OR revenue share on app-referred customer spend. Partner discounts flow back to sitters' clients as a perk.
+3. **Sitter Pro tools** (Phase 2) — optional subscription for compliant `facturas` (Spanish-autónomo-aware, Verifactu-ready), client CRM across Rover + WhatsApp + platform bookings, quarterly tax dashboard (`modelo 130`, `modelo 303`), gestor-friendly export. Closes the "Rover doesn't help me stay legit" gap for professional sitters.
+4. **Owner premium membership** (Phase 2+) — priority booking access, enhanced partner perks, annual loyalty rewards. Optional, not gatekeeping.
+
+**Per-booking pricing:** €10-22 per visit in Gijón (validated against Rover/Gudog Gijón listings).
+
+**Unit economics note:** €22/night × 18% = €3.96 per booking. Marketplace-only math is brutal in a 270k city — this is why the ecosystem (stream 2) + sitter tools (stream 3) are essential, not nice-to-haves.
 
 ---
 
@@ -81,6 +90,16 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 | Input validation | ✅ Done | Phone format, file size limits, maxLength on all fields, password strength checks |
 | Consistent navigation | ✅ Done | DashboardShell on all logged-in pages (search, sitter profile, booking, pets), public Header for visitors only |
 | Signup security | ✅ Done | Generic error messages prevent email enumeration, identity check for existing users |
+| Design system (OKLCH tokens) | ✅ Done | Full palette in `@theme`: canvas/surface/ink/line/brand/brand-ink/brand-soft/mist/rust/warning/danger + semantic aliases; brand at oklch(47% 0.085 170°) — cool Asturian moss |
+| Typography system | ✅ Done | Source Serif 4 (display 600 + italic) + Source Sans 3 (UI 400/500/600) via next/font; fluid `@utility` classes for `text-display`/`text-hero`/`text-h2`/`text-lede` via `clamp()` |
+| Logo component | ✅ Done | Inline SVG React `<Logo>` component (5-ellipse asymmetric paw, `currentColor` stroke) + regenerated PNG icons (favicon, apple-touch, 192, 512) via ImageMagick |
+| Landing page — ecosystem positioning | ✅ Done | Pet-voice hero + 3 editorial photos + "why sitters join" + partner network + honest-about-stage block + owner waitlist; no AI-slop motifs |
+| Owner waitlist (Phase 0) | ✅ Done | `/api/waitlist` route + `public.waitlist` table (migration 020) + RLS; landing form captures email + barrio |
+| Contact page | ✅ Done | `/contact` — general / partners / press mailto rows, replaces previously broken landing + footer links |
+| Touch-target compliance | ✅ Done | Button sm/md/lg → 36/44/48px via `min-h-*`; mobile bottom-nav profile pill → 48px; meets WCAG 2.5.5 |
+| Service-worker dev-mode fix | ✅ Done | SW v2 cache; does NOT cache HTML navigations (prevents stale-hydration); auto-unregisters in dev `NODE_ENV !== "production"` |
+| Full token migration | ✅ Done | 435 raw Tailwind color classes migrated to tokens (100% complete); zero residual stone/green/amber/blue/purple/red raw classes in src/ |
+| Badge variants rationalized | ✅ Done | 6 color variants → 4 semantic slots (brand/warning/danger/neutral); legacy aliases (green/amber/red/blue/purple/stone) mapped for back-compat |
 
 ### Not Yet Started
 
@@ -135,14 +154,17 @@ A localized pet sitting marketplace for Spain, filling the gap left by Gudog's m
 
 ### What We Do Better
 
-1. **Lower total cost** — 18% sitter commission, 0% owner fee vs Rover's 31% total (20% + 11%)
-2. **Real-time GPS live map** — full map with trail polyline, not just walking pings
-3. **DNI/NIE/passport + insurance verification** — strongest trust pipeline in Spain
-4. **Meet & greet as first-class feature** — built into booking flow, not just "encouraged"
-5. **Availability calendar on booking** — shows available days visually, blocks unavailable dates
-6. **Spanish-first localization** — designed for Spain from day one, not adapted from US
-7. **No platform guarantee liability** — sitters carry their own RC insurance, zero financial exposure
-8. **Profile completion tracking** — guided onboarding with progress bar and status tracking
+1. **Ecosystem, not just marketplace** — local partner-discount network (vets, pet shops, peluquerías, trainers) that Rover cannot replicate at city-level scale. Rover negotiates with national chains; we negotiate with the vet across the street.
+2. **Lower total cost** — 18% sitter commission, 0% owner fee vs Rover's 31% total (20% + 11%)
+3. **Real-time GPS live map** — full map with trail polyline, not just walking pings
+4. **DNI/NIE/passport + insurance verification** — strongest trust pipeline in Spain
+5. **Meet & greet as first-class feature** — built into booking flow, not just "encouraged"
+6. **Availability calendar on booking** — shows available days visually, blocks unavailable dates
+7. **Spanish-first localization** — designed for Spain from day one, not adapted from US
+8. **No platform guarantee liability** — sitters carry their own RC insurance, zero financial exposure
+9. **Profile completion tracking** — guided onboarding with progress bar and status tracking
+10. **Honest-about-stage messaging** — no fabricated stats, no fake testimonials; "empezamos en Gijón, únete desde el primer día" vs Rover's inflated-testimonial theater
+11. **Editorial design language** — typographic-led hierarchy (Source Serif + Sans), OKLCH palette, zero AI-slop template motifs (no glassmorphism, no 4-up feature grids, no hero-metric layouts)
 
 ### What Competitors Have That We Don't (Priority Gaps)
 
@@ -198,16 +220,17 @@ dog_sitter_app/
 │   │
 │   ├── components/
 │   │   ├── ui/                       # Reusable UI library (custom, not shadcn)
-│   │   │   ├── button.tsx            # Button + LinkButton variants
-│   │   │   ├── input.tsx             # Input + Textarea
+│   │   │   ├── button.tsx            # Button + LinkButton variants; sm/md/lg sizes meet WCAG 2.5.5 touch minimums
+│   │   │   ├── input.tsx             # Input + Textarea; token-based focus ring on brand
 │   │   │   ├── select.tsx            # Select dropdown
-│   │   │   ├── card.tsx              # Card container
-│   │   │   ├── badge.tsx             # Status badges (6 color variants)
-│   │   │   ├── dashboard-shell.tsx   # Dashboard layout (top nav + mobile bottom tabs)
-│   │   │   ├── avatar.tsx            # Initials-based avatar with gradient
-│   │   │   ├── header.tsx            # Sticky glassmorphic nav bar
+│   │   │   ├── card.tsx              # Card container; bg-surface + border-line, no heavy shadow
+│   │   │   ├── badge.tsx             # 4 semantic variants (brand/warning/danger/neutral) + legacy aliases for back-compat
+│   │   │   ├── dashboard-shell.tsx   # Dashboard layout (top nav + mobile bottom tabs); solid bg-canvas + hairline border — no glassmorphism
+│   │   │   ├── avatar.tsx            # Initials-based avatar; brand→brand-ink gradient (token-driven)
+│   │   │   ├── header.tsx            # Sticky top nav; solid bg-canvas + border-b border-line
 │   │   │   ├── page-shell.tsx        # Centered content wrapper
 │   │   │   └── index.ts             # Barrel export
+│   │   ├── logo.tsx                  # <Logo> React component — inline SVG, 5-ellipse asymmetric paw, inherits currentColor, scales from 16px favicon to 512px PWA
 │   │   ├── landing-page.tsx
 │   │   ├── login-form.tsx
 │   │   ├── signup-form.tsx
@@ -257,7 +280,9 @@ dog_sitter_app/
 │   ├── 005_sitter_coords_in_search.sql # Return lat/lng from nearby search
 │   ├── 006_sitter_availability.sql   # Sitter availability calendar table
 │   ├── ...                           # 007–012: meet & greet, push, cancellation, response stats
-│   └── 013_sitter_insurance.sql      # Insurance verification type + has_insurance on sitter_profiles
+│   ├── 013_sitter_insurance.sql      # Insurance verification type + has_insurance on sitter_profiles
+│   ├── ...                           # 014–019: cascade deletes, enriched search, sitter home details
+│   └── 020_waitlist.sql              # Owner waitlist (email, barrio, source, user_agent) + RLS (anon insert, service-role read)
 │
 ├── messages/
 │   ├── es.json                       # Spanish translations (~82 keys)
@@ -476,9 +501,9 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000  # App origin for redirects
 - Cancellation/refund policy compliant with Spanish consumer protection
 
 ### Spain Animal Welfare Law (Ley 7/2023)
-- Sitters must demonstrate animal care knowledge
-- Microchip verification support in pet profiles
-- Liability coverage for animals in sitter care (TBD)
+- Sitters must demonstrate animal care knowledge (future: formal knowledge quiz before receiving bookings).
+- Microchip verification support in pet profiles ✅.
+- **Sitter RC (responsabilidad civil) insurance verification** ✅ — sitters upload proof of liability insurance, admin approves, `Asegurado` badge shown on profile. Owner's own mandatory RC (per Ley 7/2023) remains owner responsibility; the platform does not insure directly.
 
 ### Payment Compliance
 - PSD2 (SCA) — Strong Customer Authentication for European payments (via Stripe)
@@ -487,35 +512,62 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000  # App origin for redirects
 
 ---
 
-## Brand Voice — Pet Perspective
+## Brand & Design System
 
-All marketing copy written from the pet's point of view:
-- Hero: "Encuentra a alguien que me cuide mientras no estás"
-- Features: "Siempre saben dónde estoy", "Mira lo bien que estoy"
-- Testimonials: reviews "translated by their humans"
-- Functional UI (forms, dashboards) stays human-readable
+**Voice:** Pet POV on marketing/emotional copy; direct/human on functional UI (forms, admin, errors). Current landing hero: "Mis humanos a veces tienen que irse. Alguien tiene que cuidarme." (pet-voice) + "Estamos reclutando a los primeros cuidadores..." (direct pitch).
+
+**Design principles** (codified in `.impeccable.md`):
+1. **Calm over loud** — fewer things, more confidently. One primary action per screen, not six.
+2. **Trust through restraint, not badges** — verification/insurance surfaced typographically, never with stripes or shields.
+3. **Local before global** — copy feels specifically Spanish (Gijón-first); "Cuidador del barrio," not "Your pet's best friend."
+4. **Typography carries the hierarchy** — serif display + sans body pair does the heavy lifting.
+5. **Functional UI stays human** — pet-voice lives in marketing only.
+6. **Ecosystem, not marketplace** — surfaces reinforce four-stakeholder model (owners + sitters + vets + shops).
+7. **Honest about stage** — no fabricated stats, no fake testimonials.
+
+**Geographic portability** — brand must travel beyond Gijón. Asturian-specific motifs (hórreo silhouette, Cruz de la Victoria, Cudillero imagery, cider-pour animations) are **explicitly NOT** baked into the design system. Local character at each launch city comes from **photography** and **copy** only; palette/typography/principles are universal across Spanish cities.
+
+**Palette** — OKLCH throughout, calibrated for AA contrast:
+- `brand` — `oklch(47% 0.085 170)` cool Asturian moss (shifted from original 155° warm-Tuscan-emerald for regional authenticity + cross-city portability)
+- `canvas` — `oklch(97% 0.008 95)` warm off-white plaster
+- `ink` — `oklch(22% 0.012 95)` + `ink-muted` + `ink-soft` for 3-tier type hierarchy
+- `mist` — `oklch(78% 0.012 230)` pewter grey, reserved for secondary surfaces
+- `rust` — `oklch(45% 0.12 35)` oxblood accent, never decoratively
+- `warning`, `danger` semantic pairs with `-ink` / `-soft` variants
+
+**Typography** — Source Serif 4 (display, 600 normal + italic) + Source Sans 3 (UI, 400/500/600) via `next/font/google`. Fluid sizes via `@utility text-display` / `text-hero` / `text-h2` / `text-lede` using `clamp()` for marketing surfaces; fixed Tailwind scale for app UI.
+
+**Anti-references** — explicit ban list in `.impeccable.md`: no glassmorphism, no hero-metric stat blocks, no 4-up rainbow feature grids, no icon-tile decoration, no Geist reflex font, no gradient text, no bounce easing, no cartoon mascots, no AI-template SaaS landing patterns.
 
 ---
 
 ## Go-to-Market Strategy
 
-### Phase 1: Soft Launch in Gijón (Month 1–3)
-- Recruit 20–30 beta users (owners + sitters) from personal network
-- Partner with local vets and pet shops for referrals
-- WhatsApp group and Facebook group outreach
-- Waive sitter commission for first bookings
-- Free first booking for owners
+### Phase 0: Supply-first Gijón (Month 0–3)
+**Goal: 5-10 partners signed + 20 sitters recruited BEFORE owner launch.**
+- **Partner-first sign-ups.** Visit vets, pet shops, peluquerías caninas, dog trainers in Gijón. Sign partnership agreements (listing fee OR rev-share on referred customers). Having signed partners is a sitter-recruitment multiplier: "join and your clients get discounts at 8 Gijón businesses."
+- **Sitter recruitment** via personal network, architect/constructor friend referrals, local Facebook groups, neighborhood flyers at vet partners.
+- **Owner waitlist** live — landing form captures email + barrio so launch-day is warm, not cold.
+- **Landing page sitter-first** (90/10 sitter/owner) until supply exists.
+- Waive sitter commission for first bookings; offer partner businesses free first-year listing for early signup.
 
-### Phase 2: Iterate & Grow (Month 3–6)
-- Collect feedback, fix friction points
-- Add partner discount program
-- Reviews-for-discounts program live
-- Target 100+ active users in Gijón
+### Phase 1: Owner launch in Gijón (Month 3–9)
+- **Landing flips to owner-primary** once ≥20 verified sitters live.
+- **Partner-discount network** surfaces on owner booking confirmations, reviews, sitter profiles — primary differentiator vs Rover.
+- **Reviews-for-discounts** program drives repeat engagement.
+- **Local PR** — La Nueva España, El Comercio ("app local de cuidado de mascotas con red de partners").
+- Target: 100+ active owners, €1-3k MRR in Gijón.
 
-### Phase 3: Expand (Month 6+)
-- Scale to other Spanish cities (Oviedo, Madrid, Barcelona)
-- Mobile app launch (React Native)
-- Investor outreach with real traction data
+### Phase 2: Asturias expansion (Month 9–18)
+- **Oviedo, Avilés, Langreo** — each city gets its own partner network (brand portability test: does the design system work without Gijón-specific photography? answer should be yes).
+- **Sitter Pro tools** launch (facturas, tax dashboard, client CRM) as sitter retention + supply-side moat.
+- **Asturian regional ad campaigns** (radio, regional press).
+
+### Phase 3: Wider Spain (Year 2+)
+- **Selective city rollouts** — Madrid, Barcelona, Valencia, Bilbao. City-by-city with local partner acquisition first, not blanket launch.
+- **React Native mobile app** — Expo-based, reusing the OKLCH token system + Logo component + Lucide icons (all portable by design per `.impeccable.md` constraint).
+- **Owner premium membership** launches (Phase 2+ revenue stream).
+- Investor outreach only if unit economics genuinely warrant it; default path is profitable lifestyle-scale operation.
 
 ---
 
@@ -523,11 +575,13 @@ All marketing copy written from the pet's point of view:
 
 | Challenge | Mitigation |
 |-----------|------------|
-| Chicken-and-egg (need sitters before owners join) | Manual recruitment in Gijón, personal network, vet partnerships |
-| Trust for home access | GPS tracking, verified badges, background checks, meet-and-greets |
-| Competing with Rover/Trusted Housesitters | Deep Spanish localization (Bizum, WhatsApp, Spanish-first UX) |
-| Regulatory compliance (GDPR, animal welfare) | Build compliance into MVP from day one |
-| Time constraints (full-time job + certs) | Web-first MVP, keep scope tight, iterate post-launch |
+| Chicken-and-egg (need sitters before owners join) | Phase 0 is explicitly supply-first — 20+ sitters + 5-10 partners signed BEFORE owner-facing marketing. Owner waitlist collects demand without requiring supply. |
+| Trust for home access | GPS tracking, DNI/NIE/passport verification, RC insurance verification, meet-and-greets, honest-about-stage brand voice (no fabricated testimonials). |
+| Competing with Rover (post-Gudog merger, Blackstone-backed) | **Ecosystem moat** — local partner-discount network Rover cannot replicate at city-level scale. City-by-city, Rover's global BD won't prioritize matching. |
+| Small Gijón TAM (~40k pets, ~270k residents) | Lifestyle-business framing accepted from day 1. Success = €0.3-1M ARR over 3-5 years + profitable; multi-city expansion compounds TAM but isn't required for viability. |
+| Brand might over-index on Gijón/Asturias | `.impeccable.md` explicitly prohibits Asturian-specific motifs at brand level. Design system travels to Madrid/Barcelona/etc. with only photography + copy changes. |
+| Regulatory compliance (GDPR, animal welfare, Ley 7/2023) | Build compliance into MVP from day one (RLS, audit log, consent records, DNI + RC verification all live). |
+| Time constraints (solo founder, remote from Charleston, US) | Web-first MVP, keep scope tight, iterate post-launch. Summer trip to Gijón = Phase 0 validation window. |
 
 ---
 

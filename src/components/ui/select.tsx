@@ -6,7 +6,7 @@ type SelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
 };
 
 const selectBase =
-  "w-full rounded-xl border border-line bg-canvas px-4 py-3 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all";
+  "w-full rounded-xl border border-line bg-canvas px-4 py-3 text-sm focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all";
 
 export function Select({ label, error, id, className = "", children, ...props }: SelectProps) {
   return (

@@ -10,6 +10,23 @@ import { toast } from "sonner";
 const inputClass =
   "w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm placeholder:text-ink-soft focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all";
 
+function CheckItem({ ok, label }: { ok: boolean; label: string }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      {ok ? (
+        <Check className="w-3 h-3 text-brand" aria-hidden="true" />
+      ) : (
+        <X className="w-3 h-3 text-ink-soft/60" aria-hidden="true" />
+      )}
+      <span
+        className={`text-[11px] ${ok ? "text-brand-ink" : "text-ink-muted"}`}
+      >
+        {label}
+      </span>
+    </div>
+  );
+}
+
 export function SignupForm() {
   const t = useTranslations();
   const locale = useLocale();
@@ -110,23 +127,6 @@ export function SignupForm() {
       label: es ? "Quiero cuidar" : "I want to sit",
     },
   ];
-
-  function CheckItem({ ok, label }: { ok: boolean; label: string }) {
-    return (
-      <div className="flex items-center gap-1.5">
-        {ok ? (
-          <Check className="w-3 h-3 text-brand" aria-hidden="true" />
-        ) : (
-          <X className="w-3 h-3 text-ink-soft/60" aria-hidden="true" />
-        )}
-        <span
-          className={`text-[11px] ${ok ? "text-brand-ink" : "text-ink-muted"}`}
-        >
-          {label}
-        </span>
-      </div>
-    );
-  }
 
   return (
     <div className="rounded-2xl bg-surface p-5 sm:p-7 border border-line">

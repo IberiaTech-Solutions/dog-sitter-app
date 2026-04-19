@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-import { Card, Button } from "@/components/ui";
+import { Card } from "@/components/ui";
 import { Shield, Upload, Clock, Check, X } from "lucide-react";
 import { toast } from "sonner";
 

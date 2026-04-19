@@ -157,7 +157,7 @@ export function AvailabilityCalendar({ sitterId, isEditable }: Props) {
           } else if (isAvailable) {
             bgClass = "bg-brand-soft text-brand border border-brand/40";
           } else if (hasEntry && !isAvailable) {
-            bgClass = "bg-stone-200 text-ink-muted";
+            bgClass = "bg-line text-ink-muted";
           } else {
             bgClass = "bg-line/50 text-ink-muted";
           }
@@ -173,7 +173,7 @@ export function AvailabilityCalendar({ sitterId, isEditable }: Props) {
               disabled={isPast || !isEditable}
               onClick={() => !isPast && toggleDay(dateStr)}
               className={`relative aspect-square flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${bgClass} ${
-                isToday ? "ring-2 ring-green-600 ring-offset-1" : ""
+                isToday ? "ring-2 ring-brand ring-offset-1" : ""
               }`}
             >
               {day}
@@ -190,7 +190,7 @@ export function AvailabilityCalendar({ sitterId, isEditable }: Props) {
               {lang === "es" ? "Disponible" : "Available"}
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="inline-block w-3 h-3 rounded bg-stone-200" />
+              <span className="inline-block w-3 h-3 rounded bg-line" />
               {lang === "es" ? "No disponible" : "Unavailable"}
             </span>
           </div>

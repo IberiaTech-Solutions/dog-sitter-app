@@ -25,7 +25,7 @@ export function DashboardNav({ items }: { items: NavItem[] }) {
         <Link
           key={item.href}
           href={item.href}
-          className="relative flex items-center gap-1.5 px-3 py-2 text-sm text-ink-muted hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors"
+          className="relative flex items-center gap-1.5 px-3 py-2 text-sm text-ink-muted hover:text-ink hover:bg-line/50 rounded-lg transition-colors"
         >
           {item.iconHtml}
           {item.label}

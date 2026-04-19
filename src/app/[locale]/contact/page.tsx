@@ -61,10 +61,10 @@ export default function ContactPage() {
           <p className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted">
             {es ? "Contacto" : "Contact"}
           </p>
-          <h1 className="mt-6 font-serif text-4xl sm:text-5xl leading-[1.1] tracking-tight text-ink font-semibold">
+          <h1 className="mt-6 font-serif text-display text-ink font-semibold">
             {es ? "Hablemos." : "Let's talk."}
           </h1>
-          <p className="mt-6 text-lg text-ink-muted leading-relaxed max-w-2xl">
+          <p className="mt-6 text-lede text-ink-muted max-w-2xl">
             {es
               ? "Somos un equipo local en Gijón. Escríbenos al canal que mejor se ajuste a tu consulta y te respondemos en un par de días."
               : "We're a local team based in Gijón. Reach out via the channel that best fits your question and we'll get back to you within a couple of days."}

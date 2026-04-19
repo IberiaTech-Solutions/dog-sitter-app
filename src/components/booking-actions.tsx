@@ -174,7 +174,7 @@ export function BookingActions({ bookingId, status, isSitter, isOwner, otherPers
             size="sm"
             disabled={loading}
             onClick={() => updateStatus("cancelled")}
-            className="bg-danger hover:bg-danger shadow-red-600/20"
+            className="bg-danger hover:bg-danger shadow-danger/20"
           >
             {es ? "Sí, cancelar" : "Yes, cancel"}
           </Button>

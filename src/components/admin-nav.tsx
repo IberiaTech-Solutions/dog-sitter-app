@@ -26,7 +26,7 @@ export function AdminNav({ locale, active, pendingVerifications }: Props) {
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
             active === item.key
               ? "bg-brand text-white shadow-sm shadow-brand/20"
-              : "text-ink-muted hover:bg-stone-100 hover:text-stone-900"
+              : "text-ink-muted hover:bg-line/50 hover:text-ink"
           }`}
         >
           <item.icon className="w-4 h-4" />

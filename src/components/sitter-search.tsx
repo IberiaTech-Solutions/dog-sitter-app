@@ -6,7 +6,7 @@ import { useState, useMemo, useEffect, useRef, lazy, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Link } from "@/i18n/navigation";
-import { MapPin, Shield, Star, Dog, Cat, Bird, Rabbit, PawPrint, Search, Navigation, Map, List, ChevronDown, ChevronUp, X } from "lucide-react";
+import { MapPin, Shield, Star, Dog, Cat, Bird, Rabbit, PawPrint, Search, Navigation, ChevronDown, ChevronUp, X } from "lucide-react";
 import { Avatar, Badge, Card, Button, Input } from "@/components/ui";
 import { toast } from "sonner";
 
@@ -88,7 +88,7 @@ export function SitterSearch() {
   const [gpsLoading, setGpsLoading] = useState(false);
   const autoSearched = useRef(false);
   const [searchCenter, setSearchCenter] = useState<{ lat: number; lng: number } | null>(null);
-  const [viewMode, setViewMode] = useState<"split" | "list" | "map">("split");
+  const [viewMode] = useState<"split" | "list" | "map">("split");
 
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selectedServices, setSelectedServices] = useState<Set<string>>(new Set());
@@ -103,10 +103,14 @@ export function SitterSearch() {
 
   const todayStr = new Date().toISOString().split("T")[0];
 
+  // Reset availability filter when the user clears dates or results change.
+  useEffect(() => {
+    if (!dateFrom || sitters.length === 0) setAvailableSitterIds(null);
+  }, [dateFrom, sitters.length]);
+
   // Fetch availability when dates change
   useEffect(() => {
     if (!dateFrom || sitters.length === 0) {
-      setAvailableSitterIds(null);
       return;
     }
 
@@ -239,18 +243,17 @@ export function SitterSearch() {
     setLoading(false);
   }
 
-  // Auto-search if city was passed from landing page
+  // Auto-search if city was passed from landing page (one-shot, guarded by ref).
   useEffect(() => {
-    if (initialCity && !autoSearched.current) {
-      autoSearched.current = true;
-      const query = initialCity.trim().toLowerCase();
-      const coords = CITY_COORDS[query];
-      if (coords) {
-        searchByCoords(coords.lat, coords.lng);
-      } else {
-        const match = Object.keys(CITY_COORDS).find((c) => c.includes(query) || query.includes(c));
-        if (match) searchByCoords(CITY_COORDS[match].lat, CITY_COORDS[match].lng);
-      }
+    if (!initialCity || autoSearched.current) return;
+    autoSearched.current = true;
+    const query = initialCity.trim().toLowerCase();
+    const coords = CITY_COORDS[query];
+    if (coords) {
+      searchByCoords(coords.lat, coords.lng);
+    } else {
+      const match = Object.keys(CITY_COORDS).find((c) => c.includes(query) || query.includes(c));
+      if (match) searchByCoords(CITY_COORDS[match].lat, CITY_COORDS[match].lng);
     }
   }, [initialCity]);
 
@@ -325,7 +328,7 @@ export function SitterSearch() {
               value={cityQuery}
               onChange={(e) => setCityQuery(e.target.value)}
               placeholder={es ? "Escribe tu ciudad (ej: Gijón, Madrid...)" : "Type your city (e.g. Gijón, Madrid...)"}
-              className="w-full pl-11 pr-4 py-3 rounded-xl border border-line bg-canvas text-sm placeholder:text-ink-soft focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
+              className="w-full pl-11 pr-4 py-3 rounded-xl border border-line bg-canvas text-sm placeholder:text-ink-soft focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
             />
           </div>
           <div className="flex gap-2">
@@ -427,14 +430,14 @@ export function SitterSearch() {
                       value={dateFrom}
                       onChange={(e) => setDateFrom(e.target.value)}
                       min={todayStr}
-                      className="w-full rounded-xl border border-line bg-canvas px-3 py-2 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
+                      className="w-full rounded-xl border border-line bg-canvas px-3 py-2 text-sm focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
                     />
                     <input
                       type="date"
                       value={dateTo}
                       onChange={(e) => setDateTo(e.target.value)}
                       min={dateFrom || todayStr}
-                      className="w-full rounded-xl border border-line bg-canvas px-3 py-2 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
+                      className="w-full rounded-xl border border-line bg-canvas px-3 py-2 text-sm focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
                     />
                   </div>
                 </div>
@@ -454,7 +457,7 @@ export function SitterSearch() {
                         className={
                           selectedServices.has(key)
                             ? "bg-brand text-white hover:bg-brand-ink hover:text-white"
-                            : "border border-line text-ink-muted hover:bg-stone-50"
+                            : "border border-line text-ink-muted hover:bg-canvas"
                         }
                         onClick={() => setSelectedServices((s) => toggleInSet(s, key))}
                       >
@@ -481,7 +484,7 @@ export function SitterSearch() {
                           className={
                             selectedPets.has(key)
                               ? "bg-brand text-white hover:bg-brand-ink hover:text-white"
-                              : "border border-line text-ink-muted hover:bg-stone-50"
+                              : "border border-line text-ink-muted hover:bg-canvas"
                           }
                           onClick={() => setSelectedPets((s) => toggleInSet(s, key))}
                         >

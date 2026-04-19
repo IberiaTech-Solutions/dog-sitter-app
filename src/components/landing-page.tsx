@@ -60,14 +60,14 @@ export function LandingPage() {
                   {t("home.heroProof")}
                 </p>
 
-                <h1 className="mt-6 font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1.1] tracking-tight text-ink font-semibold">
+                <h1 className="mt-6 font-serif text-display text-ink font-semibold">
                   <span className="block">{t("home.heroPetLine1")}</span>
                   <span className="block text-ink-muted">
                     {t("home.heroPetLine2")}
                   </span>
                 </h1>
 
-                <p className="mt-8 text-lg text-ink-muted leading-relaxed max-w-xl">
+                <p className="mt-8 text-lede text-ink-muted max-w-xl">
                   {t("home.heroPitch")}
                 </p>
 
@@ -123,7 +123,7 @@ export function LandingPage() {
             <div className="mt-10 space-y-14">
               {(["why1", "why2", "why3"] as const).map((key) => (
                 <div key={key}>
-                  <h2 className="font-serif text-2xl sm:text-3xl font-semibold text-ink tracking-tight leading-[1.2]">
+                  <h2 className="font-serif text-h2 font-semibold text-ink">
                     {t(`home.${key}Title`)}
                   </h2>
                   <p className="mt-3 text-lg text-ink-muted leading-relaxed">
@@ -143,7 +143,7 @@ export function LandingPage() {
                 <p className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted">
                   {t("home.partnersLabel")}
                 </p>
-                <h2 className="mt-6 font-serif text-2xl sm:text-3xl font-semibold text-ink tracking-tight leading-[1.2]">
+                <h2 className="mt-6 font-serif text-h2 font-semibold text-ink">
                   {t("home.partnersTitle")}
                 </h2>
                 <p className="mt-4 text-lg text-ink-muted leading-relaxed">
@@ -193,7 +193,7 @@ export function LandingPage() {
             <p className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted">
               {t("home.honestLabel")}
             </p>
-            <h2 className="mt-6 font-serif text-2xl sm:text-3xl font-semibold text-ink tracking-tight leading-[1.2]">
+            <h2 className="mt-6 font-serif text-h2 font-semibold text-ink">
               {t("home.honestTitle")}
             </h2>
             <p className="mt-4 text-base text-ink-muted leading-relaxed">
@@ -208,7 +208,7 @@ export function LandingPage() {
             <p className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted">
               {t("home.ownerLabel")}
             </p>
-            <h2 className="mt-6 font-serif italic text-2xl sm:text-3xl font-semibold text-ink tracking-tight leading-[1.25] max-w-xl">
+            <h2 className="mt-6 font-serif italic text-h2 font-semibold text-ink max-w-xl">
               {t("home.ownerWaitlistTitle")}
             </h2>
             <p className="mt-4 text-lg text-ink-muted leading-relaxed max-w-2xl">

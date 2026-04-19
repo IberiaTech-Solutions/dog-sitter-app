@@ -36,7 +36,7 @@ export function DeletePetButton({ petId }: { petId: string }) {
         </button>
         <button
           onClick={() => setConfirming(false)}
-          className="px-3 py-1.5 text-xs font-medium text-ink-muted bg-line/50 rounded-lg hover:bg-stone-200 transition-colors"
+          className="px-3 py-1.5 text-xs font-medium text-ink-muted bg-line/50 rounded-lg hover:bg-line transition-colors"
         >
           {es ? "Cancelar" : "Cancel"}
         </button>

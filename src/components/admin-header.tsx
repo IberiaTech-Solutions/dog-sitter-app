@@ -27,7 +27,7 @@ export function AdminHeader({ appName, locale, userName, avatarUrl }: Props) {
         <div className="flex items-center gap-1">
           <Link
             href="/dashboard"
-            className="flex items-center gap-1.5 px-3 py-2 text-sm text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors"
+            className="flex items-center gap-1.5 px-3 py-2 text-sm text-ink-muted hover:text-ink hover:bg-line/50 rounded-lg transition-colors"
           >
             <LayoutDashboard className="w-4 h-4" />
             <span className="hidden sm:inline">{es ? "Mi panel" : "Dashboard"}</span>

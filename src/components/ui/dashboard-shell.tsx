@@ -66,13 +66,13 @@ export function DashboardShell({
             <div className="flex items-center gap-3">
               <Link
                 href={backHref}
-                className="flex items-center gap-1 text-sm text-stone-500 hover:text-stone-900 transition-colors -ml-1"
+                className="flex items-center gap-1 text-sm text-ink-muted hover:text-ink transition-colors -ml-1"
               >
                 <ChevronLeft className="w-4 h-4" />
                 <span className="hidden sm:inline">{backLabel ?? (es ? "Volver" : "Back")}</span>
               </Link>
               {title && (
-                <span className="text-sm font-semibold text-stone-900">{title}</span>
+                <span className="text-sm font-semibold text-ink">{title}</span>
               )}
             </div>
           ) : (

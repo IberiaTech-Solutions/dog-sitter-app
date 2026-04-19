@@ -74,7 +74,7 @@ export function DiscountForm() {
             required
             value={form.partner_name}
             onChange={(e) => update("partner_name", e.target.value)}
-            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
             placeholder="Veterinaria San Marcos"
           />
         </div>
@@ -85,7 +85,7 @@ export function DiscountForm() {
           <select
             value={form.partner_type}
             onChange={(e) => update("partner_type", e.target.value)}
-            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
           >
             <option value="vet">{es ? "Veterinario" : "Vet"}</option>
             <option value="pet_shop">{es ? "Tienda" : "Pet shop"}</option>
@@ -101,7 +101,7 @@ export function DiscountForm() {
             required
             value={form.discount_code}
             onChange={(e) => update("discount_code", e.target.value)}
-            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm font-mono focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm font-mono focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
             placeholder="VETGIJON10"
           />
         </div>
@@ -116,7 +116,7 @@ export function DiscountForm() {
             max="100"
             value={form.discount_percent}
             onChange={(e) => update("discount_percent", e.target.value)}
-            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
           />
         </div>
         <div>
@@ -127,7 +127,7 @@ export function DiscountForm() {
             required
             value={form.description_es}
             onChange={(e) => update("description_es", e.target.value)}
-            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
             placeholder="10% en primera consulta"
           />
         </div>
@@ -138,7 +138,7 @@ export function DiscountForm() {
           <input
             value={form.description_en}
             onChange={(e) => update("description_en", e.target.value)}
-            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
             placeholder="10% off first visit"
           />
         </div>
@@ -150,7 +150,7 @@ export function DiscountForm() {
             required
             value={form.city}
             onChange={(e) => update("city", e.target.value)}
-            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
           />
         </div>
         <div className="flex items-end">

@@ -49,6 +49,31 @@ body {
   font-feature-settings: "kern", "liga";
 }
 
+/* Fluid display type — clamp()-based sizes for marketing/editorial surfaces.
+   App UI continues to use the default Tailwind text-* scale at fixed steps. */
+@utility text-display {
+  font-size: clamp(2.25rem, 4.5vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+@utility text-hero {
+  font-size: clamp(1.875rem, 3.5vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+
+@utility text-h2 {
+  font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+@utility text-lede {
+  font-size: clamp(1.0625rem, 0.75vw + 0.85rem, 1.25rem);
+  line-height: 1.6;
+}
+
 html[data-scroll-behavior="smooth"] {
   scroll-behavior: smooth;
 }

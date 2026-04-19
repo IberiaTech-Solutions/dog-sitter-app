@@ -211,7 +211,7 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
               className={`rounded-lg border px-4 py-3 text-sm font-medium transition-colors ${
                 services.includes(s)
                   ? "border-brand bg-brand-soft text-brand-ink"
-                  : "border-line text-ink-muted hover:border-stone-400"
+                  : "border-line text-ink-muted hover:border-ink-soft/60"
               }`}
             >
               {serviceLabels[locale]?.[s] ?? s}
@@ -234,7 +234,7 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
               className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                 petTypes.includes(p)
                   ? "border-brand bg-brand-soft text-brand-ink"
-                  : "border-line text-ink-muted hover:border-stone-400"
+                  : "border-line text-ink-muted hover:border-ink-soft/60"
               }`}
             >
               {petTypeLabels[locale]?.[p] ?? p}
@@ -307,7 +307,7 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
             max="50"
             value={radius}
             onChange={(e) => setRadius(e.target.value)}
-            className="mt-2 w-full accent-green-600"
+            className="mt-2 w-full accent-[var(--color-brand)]"
           />
           <p className="mt-1 text-sm text-ink-muted">{radius} km</p>
         </div>
@@ -349,7 +349,7 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
               className={`w-full text-left rounded-xl border px-4 py-3 transition-colors ${
                 cancellationPolicy === policy.value
                   ? "border-brand bg-brand-soft"
-                  : "border-line hover:border-stone-300"
+                  : "border-line hover:border-ink-soft/40"
               }`}
             >
               <span className={`text-sm font-medium ${cancellationPolicy === policy.value ? "text-brand-ink" : "text-ink"}`}>
@@ -381,7 +381,7 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
                 className={`flex-1 rounded-xl border-2 px-4 py-2.5 text-sm font-medium transition-all ${
                   homeType === opt.value
                     ? "border-brand bg-brand-soft text-brand-ink"
-                    : "border-line text-ink-muted hover:border-stone-300"
+                    : "border-line text-ink-muted hover:border-ink-soft/40"
                 }`}
               >
                 {locale === "es" ? opt.labelEs : opt.labelEn}
@@ -391,13 +391,13 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
 
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" checked={hasYard} onChange={(e) => setHasYard(e.target.checked)}
-              className="w-4 h-4 rounded border-line text-brand focus:ring-green-500" />
+              className="w-4 h-4 rounded border-line text-brand focus:ring-brand/40" />
             <span className="text-sm text-ink">{locale === "es" ? "Tengo jardín o patio" : "I have a yard/garden"}</span>
           </label>
 
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" checked={hasChildren} onChange={(e) => setHasChildren(e.target.checked)}
-              className="w-4 h-4 rounded border-line text-brand focus:ring-green-500" />
+              className="w-4 h-4 rounded border-line text-brand focus:ring-brand/40" />
             <span className="text-sm text-ink">{locale === "es" ? "Hay niños en casa" : "Children in the home"}</span>
           </label>
 

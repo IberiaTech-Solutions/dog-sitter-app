@@ -330,7 +330,7 @@ export function ActiveBookingView({
                   ? "Nota de salud o alimentación..."
                   : "Health or feeding note..."
               }
-              className="flex-1 rounded-xl border border-line bg-canvas px-4 py-3 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
+              className="flex-1 rounded-xl border border-line bg-canvas px-4 py-3 text-sm focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
             />
             <Button
               variant="primary"
@@ -381,11 +381,11 @@ export function ActiveBookingView({
                         : log.event_type === "check_out"
                           ? "bg-danger"
                           : log.event_type === "photo"
-                            ? "bg-blue-500"
-                            : "bg-stone-400"
+                            ? "bg-brand"
+                            : "bg-ink-soft"
                     }`}
                   />
-                  <div className="w-px flex-1 bg-stone-200" />
+                  <div className="w-px flex-1 bg-line" />
                 </div>
                 <div className="pb-4">
                   <p className="text-sm font-medium text-ink">

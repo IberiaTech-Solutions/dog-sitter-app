@@ -142,7 +142,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
   }
 
   const inputClass =
-    "w-full rounded-xl border border-line bg-canvas px-4 py-3 text-sm placeholder:text-stone-400 focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all";
+    "w-full rounded-xl border border-line bg-canvas px-4 py-3 text-sm placeholder:text-ink-soft focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -160,7 +160,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
             </div>
           )}
           <div className="flex flex-col gap-2">
-            <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-line text-sm font-medium text-ink-muted hover:bg-stone-50 transition-colors">
+            <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-line text-sm font-medium text-ink-muted hover:bg-canvas transition-colors">
               <Upload className="w-4 h-4" />
               {uploading ? (es ? "Subiendo..." : "Uploading...") : es ? "Subir foto" : "Upload photo"}
               <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
@@ -192,7 +192,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
               className={`flex flex-col items-center gap-1.5 rounded-xl border-2 px-3 py-3 transition-all ${
                 species === opt.value
                   ? "border-brand bg-brand-soft"
-                  : "border-line hover:border-stone-300"
+                  : "border-line hover:border-ink-soft/40"
               }`}
             >
               <opt.icon className={`w-6 h-6 ${species === opt.value ? "text-brand" : "text-ink-soft"}`} />
@@ -207,7 +207,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
             type="text"
             value={customSpecies}
             onChange={(e) => setCustomSpecies(e.target.value)}
-            className="mt-3 w-full rounded-xl border border-line bg-canvas px-4 py-3 text-sm placeholder:text-stone-400 focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
+            className="mt-3 w-full rounded-xl border border-line bg-canvas px-4 py-3 text-sm placeholder:text-ink-soft focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
             placeholder={es ? "Ej: hámster, tortuga, pez..." : "E.g. hamster, turtle, fish..."}
             maxLength={30}
           />
