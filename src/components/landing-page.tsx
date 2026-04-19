@@ -163,7 +163,7 @@ export function LandingPage() {
 
                 <p className="mt-10">
                   <Link
-                    href="/contact"
+                    href="/partners"
                     className="inline-flex items-center gap-1.5 text-brand hover:text-brand-ink font-medium text-sm"
                   >
                     {t("home.partnersCta")}

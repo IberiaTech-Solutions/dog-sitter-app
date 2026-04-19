@@ -90,6 +90,10 @@ Framed as a **lifestyle business** (€0.3-1M ARR over 3-5 years is success), no
 | Input validation | ✅ Done | Phone format, file size limits, maxLength on all fields, password strength checks |
 | Consistent navigation | ✅ Done | DashboardShell on all logged-in pages (search, sitter profile, booking, pets), public Header for visitors only |
 | Signup security | ✅ Done | Generic error messages prevent email enumeration, identity check for existing users |
+| **Partner role (business accounts)** | ✅ Done | Phase 0 live: `profiles.role = 'partner'`, `partner_profiles` table, role-aware `DashboardShell`, `requirePartner()` guard. Partners self-onboard at `/partners/signup`, admin verifies, partners self-manage discount offerings via `/partner/*` dashboard |
+| **Partner recruitment + signup flow** | ✅ Done | Public `/partners` recruitment landing (benefits + how-it-works + CTA), `/partners/signup` with 2-col typographic panel + business form (name, type, city, tax_id, phone, website, contact, email, password + strength checks + terms consent); writes `auth.users` + `profiles` (role=partner) + `partner_profiles` atomically |
+| **Partner dashboard** | ✅ Done | `/partner` overview (verification status, active discounts count, total + month redemptions, quick actions); `/partner/profile` business profile edit (address, postal code, logo URL, bilingual descriptions); `/partner/discounts` create/pause/resume/delete offers with unique-code validation |
+| **Role-aware routing** | ✅ Done | `/` and `/dashboard` redirect partners to `/partner`, admins to `/admin`, owners/sitters to `/dashboard`. Mobile profile pill links to `/partner/profile` when `role='partner'`. |
 | Design system (OKLCH tokens) | ✅ Done | Full palette in `@theme`: canvas/surface/ink/line/brand/brand-ink/brand-soft/mist/rust/warning/danger + semantic aliases; brand at oklch(47% 0.085 170°) — cool Asturian moss |
 | Typography system | ✅ Done | Source Serif 4 (display 600 + italic) + Source Sans 3 (UI 400/500/600) via next/font; fluid `@utility` classes for `text-display`/`text-hero`/`text-h2`/`text-lede` via `clamp()` |
 | Logo component | ✅ Done | Inline SVG React `<Logo>` component (5-ellipse asymmetric paw, `currentColor` stroke) + regenerated PNG icons (favicon, apple-touch, 192, 512) via ImageMagick |
@@ -204,18 +208,27 @@ dog_sitter_app/
 │   │   │   │   ├── booking/[id]/     # Active booking + visit tracking
 │   │   │   │   ├── sitter-setup/     # Sitter settings + availability calendar
 │   │   │   │   └── review/[bookingId]/ # Post-booking review
-│   │   │   └── admin/
-│   │   │       ├── page.tsx           # Stats dashboard (RPC)
-│   │   │       ├── sitters/          # Sitter management
-│   │   │       ├── bookings/         # Booking administration
-│   │   │       ├── users/            # User management
-│   │   │       └── discounts/        # Partner discount CRUD
+│   │   │   ├── admin/
+│   │   │   │   ├── page.tsx           # Stats dashboard (RPC) — extended with partner + redemption metrics
+│   │   │   │   ├── sitters/          # Sitter management
+│   │   │   │   ├── bookings/         # Booking administration
+│   │   │   │   ├── users/            # User management
+│   │   │   │   └── discounts/        # Partner discount CRUD (admin override on any partner's discounts)
+│   │   │   ├── contact/              # Public /contact page — general / partners / press mailto rows
+│   │   │   ├── partners/             # Partner recruitment + signup (public)
+│   │   │   │   ├── page.tsx          # /partners — benefits, how-it-works, CTA to signup
+│   │   │   │   └── signup/page.tsx   # /partners/signup — 2-col typographic panel + business signup form
+│   │   │   └── partner/              # Partner dashboard (authed, role=partner only; guarded by requirePartner)
+│   │   │       ├── page.tsx          # Overview: verification status, stats, quick actions
+│   │   │       ├── profile/page.tsx  # Business profile edit (uses <PartnerProfileForm>)
+│   │   │       └── discounts/page.tsx # Partner-authored discount CRUD
 │   │   └── api/
 │   │       ├── auth/callback/        # OAuth callback
 │   │       ├── auth/logout/          # Sign out
 │   │       ├── checkout/             # Booking creation + Stripe Checkout
 │   │       ├── bookings/decline/     # Sitter decline + auto-refund
 │   │       ├── admin/users/          # Admin user management (role change, delete via service role)
+│   │       ├── waitlist/             # Owner waitlist capture (anon insert with dedup)
 │   │       └── webhooks/stripe/      # Stripe event handler
 │   │
 │   ├── components/
@@ -231,6 +244,10 @@ dog_sitter_app/
 │   │   │   ├── page-shell.tsx        # Centered content wrapper
 │   │   │   └── index.ts             # Barrel export
 │   │   ├── logo.tsx                  # <Logo> React component — inline SVG, 5-ellipse asymmetric paw, inherits currentColor, scales from 16px favicon to 512px PWA
+│   │   ├── partner-signup-form.tsx   # Client form: business fields + contact + password + terms; auth.signUp + partner_profiles insert
+│   │   ├── partner-profile-form.tsx  # Client form for /partner/profile edit flow
+│   │   ├── partner-discount-form.tsx # Client form for creating a new discount offer (auto-populates code, links to partner_id)
+│   │   ├── partner-discount-actions.tsx # Per-row pause/resume + delete actions on partner's own discounts
 │   │   ├── landing-page.tsx
 │   │   ├── login-form.tsx
 │   │   ├── signup-form.tsx
@@ -263,7 +280,8 @@ dog_sitter_app/
 │   │   ├── supabase/client.ts        # Browser Supabase client
 │   │   ├── supabase/server.ts        # Server Supabase client (cookies)
 │   │   ├── stripe.ts                 # Stripe singleton (lazy init)
-│   │   └── admin.ts                  # requireAdmin() auth guard
+│   │   ├── admin.ts                  # requireAdmin() auth guard
+│   │   └── partner.ts                # requirePartner() auth guard — loads profile + partner_profiles, redirects non-partners to their appropriate dashboard
 │   │
 │   ├── i18n/
 │   │   ├── routing.ts                # Locale routing config (es default, en)
@@ -282,7 +300,8 @@ dog_sitter_app/
 │   ├── ...                           # 007–012: meet & greet, push, cancellation, response stats
 │   ├── 013_sitter_insurance.sql      # Insurance verification type + has_insurance on sitter_profiles
 │   ├── ...                           # 014–019: cascade deletes, enriched search, sitter home details
-│   └── 020_waitlist.sql              # Owner waitlist (email, barrio, source, user_agent) + RLS (anon insert, service-role read)
+│   ├── 020_waitlist.sql              # Owner waitlist (email, barrio, source, user_agent) + RLS (anon insert, service-role read)
+│   └── 021_partner_profiles.sql      # Partner role, partner_profiles table, partner_discount_redemptions table, RLS, admin_dashboard_stats extension
 │
 ├── messages/
 │   ├── es.json                       # Spanish translations (~82 keys)
@@ -373,10 +392,13 @@ dog_sitter_app/
 | `messages` | Sender/recipient, content, read_at | Sender + recipient only |
 | `visit_logs` | Check-in/out timestamps, photos, health notes, GPS | Booking participants |
 | `verifications` | DNI/NIE, background check status | Own read, admin write |
-| `partner_discounts` | Code, percent off, city, valid_until | Public read, admin write |
+| `partner_discounts` | Code, percent off, city, valid_until. `partner_id` FK → partner_profiles (nullable for legacy admin-created rows) | Partners CRUD own; public read active; admin all |
+| `partner_profiles` | Business accounts — name, type, tax_id, address, city, logo_url, bilingual descriptions, verification lifecycle (is_verified, verified_at, verified_by) | Partners read/update own; public reads verified; admin all |
+| `partner_discount_redemptions` | Token-based redemption tracking for QR-verified discount usage. Includes owner/sitter issuer, referred_sitter_id (Phase 1 growth-loop hook), booking_id, redemption_token (signed payload for QR), status lifecycle (issued/redeemed/expired/void) | Partners see own discount's redemptions; users see own redemptions; admin all |
 | `consent_records` | GDPR consent tracking (terms, privacy, marketing) | Own read |
 | `sitter_availability` | Per-day availability calendar for sitters | Public read, own write |
 | `audit_log` | Data access/modification trail (GDPR accountability) | Admin only |
+| `waitlist` | Owner email + barrio capture from landing page pre-launch | Anon insert, service-role read |
 
 ### Key Indexes
 - `idx_sitter_profiles_location` — GiST index on PostGIS location

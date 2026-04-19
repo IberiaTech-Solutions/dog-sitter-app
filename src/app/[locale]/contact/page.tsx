@@ -1,6 +1,6 @@
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { Mail, Briefcase, Megaphone } from "lucide-react";
+import { Mail, Briefcase, Megaphone, ArrowRight } from "lucide-react";
 import { Logo } from "@/components/logo";
 
 type ContactRowProps = {
@@ -8,9 +8,10 @@ type ContactRowProps = {
   label: string;
   email: string;
   description: string;
+  cta?: { href: string; label: string };
 };
 
-function ContactRow({ icon, label, email, description }: ContactRowProps) {
+function ContactRow({ icon, label, email, description, cta }: ContactRowProps) {
   return (
     <div className="flex items-start gap-4 pb-8 border-b border-line last:border-0 last:pb-0">
       <div className="shrink-0 mt-1">{icon}</div>
@@ -27,6 +28,15 @@ function ContactRow({ icon, label, email, description }: ContactRowProps) {
         <p className="mt-2 text-base text-ink-muted leading-relaxed">
           {description}
         </p>
+        {cta && (
+          <Link
+            href={cta.href}
+            className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-brand hover:text-brand-ink transition-colors"
+          >
+            {cta.label}
+            <ArrowRight className="w-4 h-4" aria-hidden="true" />
+          </Link>
+        )}
       </div>
     </div>
   );
@@ -87,9 +97,13 @@ export default function ContactPage() {
               email="partners@cuidamascotas.es"
               description={
                 es
-                  ? "¿Tienes un veterinario, tienda o peluquería canina en Gijón? Únete a la red de descuentos."
-                  : "Vet, pet shop, or groomer in Gijón? Join the partner network."
+                  ? "¿Tienes un veterinario, tienda o peluquería canina en Gijón? Puedes unirte directamente a la red."
+                  : "Vet, pet shop, or groomer in Gijón? Join the partner network directly."
               }
+              cta={{
+                href: "/partners",
+                label: es ? "Únete a la red" : "Join the network",
+              }}
             />
             <ContactRow
               icon={<Megaphone className="w-5 h-5 text-brand" aria-hidden="true" />}

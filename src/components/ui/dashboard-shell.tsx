@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { ChevronLeft, MessageCircle, Search, CalendarDays, Settings, Dog } from "lucide-react";
+import { ChevronLeft, MessageCircle, Search, CalendarDays, Settings, Dog, LayoutDashboard, Briefcase, Tag } from "lucide-react";
 import { Avatar } from "./avatar";
 import { UserMenu } from "../user-menu";
 import { DashboardNav, DashboardBottomNav } from "../dashboard-nav";
@@ -32,14 +32,18 @@ export function DashboardShell({
   const isOwner = userRole === "owner" || userRole === "both";
   const isSitter = userRole === "sitter" || userRole === "both";
   const isAdmin = userRole === "admin";
+  const isPartner = userRole === "partner";
 
   const navItemsDef = [
     { href: "/admin", Icon: Settings, label: es ? "Panel" : "Dashboard", show: isAdmin, badge: undefined },
-    { href: "/dashboard", Icon: CalendarDays, label: es ? "Reservas" : "Bookings", show: !isAdmin, badge: "bookings" as const },
-    { href: "/search", Icon: Search, label: es ? "Buscar" : "Search", show: isOwner && !isAdmin, badge: undefined },
-    { href: "/dashboard/pets", Icon: Dog, label: es ? "Mascotas" : "Pets", show: isOwner && !isAdmin, badge: undefined },
-    { href: "/dashboard/sitter-setup", Icon: Settings, label: es ? "Servicio" : "Service", show: isSitter && !isAdmin, badge: undefined },
-    { href: "/dashboard/messages", Icon: MessageCircle, label: es ? "Mensajes" : "Messages", show: !isAdmin, badge: "messages" as const },
+    { href: "/partner", Icon: LayoutDashboard, label: es ? "Panel" : "Dashboard", show: isPartner, badge: undefined },
+    { href: "/partner/profile", Icon: Briefcase, label: es ? "Negocio" : "Business", show: isPartner, badge: undefined },
+    { href: "/partner/discounts", Icon: Tag, label: es ? "Ofertas" : "Offers", show: isPartner, badge: undefined },
+    { href: "/dashboard", Icon: CalendarDays, label: es ? "Reservas" : "Bookings", show: !isAdmin && !isPartner, badge: "bookings" as const },
+    { href: "/search", Icon: Search, label: es ? "Buscar" : "Search", show: isOwner && !isAdmin && !isPartner, badge: undefined },
+    { href: "/dashboard/pets", Icon: Dog, label: es ? "Mascotas" : "Pets", show: isOwner && !isAdmin && !isPartner, badge: undefined },
+    { href: "/dashboard/sitter-setup", Icon: Settings, label: es ? "Servicio" : "Service", show: isSitter && !isAdmin && !isPartner, badge: undefined },
+    { href: "/dashboard/messages", Icon: MessageCircle, label: es ? "Mensajes" : "Messages", show: !isAdmin && !isPartner, badge: "messages" as const },
   ].filter((item) => item.show);
 
   const navItems = navItemsDef.map((item) => ({
@@ -107,7 +111,7 @@ export function DashboardShell({
           items={mobileNavItems}
           profileSlot={
             <Link
-              href="/dashboard/profile"
+              href={isPartner ? "/partner/profile" : "/dashboard/profile"}
               className="flex flex-col items-center justify-center gap-0.5 px-3 min-h-12 min-w-12 text-ink-soft hover:text-brand transition-colors"
             >
               <Avatar name={userName} src={avatarUrl} size="sm" className="w-5 h-5 text-[8px]" />

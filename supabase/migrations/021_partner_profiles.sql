@@ -9,13 +9,16 @@
 --
 -- Phase 1 hook: partner_discount_redemptions.referred_sitter_id
 -- supports the partner→sitter referral growth loop.
+--
+-- Fully idempotent — safe to run multiple times or to replay on a
+-- partial apply (drop-if-exists + create-if-not-exists throughout).
 -- ============================================================
 
 -- ------------------------------------------------------------
 -- 1. Extend profiles.role to include 'partner'
 -- ------------------------------------------------------------
 
-alter table public.profiles drop constraint profiles_role_check;
+alter table public.profiles drop constraint if exists profiles_role_check;
 alter table public.profiles add constraint profiles_role_check
   check (role in ('owner', 'sitter', 'both', 'admin', 'partner'));
 
@@ -24,7 +27,7 @@ alter table public.profiles add constraint profiles_role_check
 -- (adds 'trainer', 'nutritionist')
 -- ------------------------------------------------------------
 
-alter table public.partner_discounts drop constraint partner_discounts_partner_type_check;
+alter table public.partner_discounts drop constraint if exists partner_discounts_partner_type_check;
 alter table public.partner_discounts add constraint partner_discounts_partner_type_check
   check (partner_type in ('vet', 'pet_shop', 'grooming', 'trainer', 'nutritionist', 'other'));
 
@@ -33,7 +36,7 @@ alter table public.partner_discounts add constraint partner_discounts_partner_ty
 -- Mirrors the sitter_profiles pattern (id FK to profiles.id).
 -- ------------------------------------------------------------
 
-create table public.partner_profiles (
+create table if not exists public.partner_profiles (
   id uuid primary key references public.profiles(id) on delete cascade,
   business_name text not null,
   business_type text not null check (business_type in ('vet', 'pet_shop', 'grooming', 'trainer', 'nutritionist', 'other')),
@@ -53,32 +56,38 @@ create table public.partner_profiles (
   updated_at timestamptz not null default now()
 );
 
-create index idx_partner_profiles_city on public.partner_profiles (city);
-create index idx_partner_profiles_verified on public.partner_profiles (is_verified);
+create index if not exists idx_partner_profiles_city on public.partner_profiles (city);
+create index if not exists idx_partner_profiles_verified on public.partner_profiles (is_verified);
 
 -- updated_at trigger (reuses the existing handle_updated_at function)
+drop trigger if exists handle_partner_profiles_updated_at on public.partner_profiles;
 create trigger handle_partner_profiles_updated_at
   before update on public.partner_profiles
   for each row execute function public.handle_updated_at();
 
 alter table public.partner_profiles enable row level security;
 
+drop policy if exists "Verified partners viewable by everyone" on public.partner_profiles;
 create policy "Verified partners viewable by everyone"
   on public.partner_profiles for select
   using (is_verified = true);
 
+drop policy if exists "Partners can view their own profile" on public.partner_profiles;
 create policy "Partners can view their own profile"
   on public.partner_profiles for select
   using (auth.uid() = id);
 
+drop policy if exists "Partners can insert their own profile" on public.partner_profiles;
 create policy "Partners can insert their own profile"
   on public.partner_profiles for insert
   with check (auth.uid() = id);
 
+drop policy if exists "Partners can update their own profile" on public.partner_profiles;
 create policy "Partners can update their own profile"
   on public.partner_profiles for update
   using (auth.uid() = id);
 
+drop policy if exists "Admins can manage all partner profiles" on public.partner_profiles;
 create policy "Admins can manage all partner profiles"
   on public.partner_profiles for all
   using (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
@@ -91,22 +100,26 @@ create policy "Admins can manage all partner profiles"
 -- ------------------------------------------------------------
 
 alter table public.partner_discounts
-  add column partner_id uuid references public.partner_profiles(id) on delete cascade;
+  add column if not exists partner_id uuid references public.partner_profiles(id) on delete cascade;
 
-create index idx_partner_discounts_partner on public.partner_discounts (partner_id);
+create index if not exists idx_partner_discounts_partner on public.partner_discounts (partner_id);
 
+drop policy if exists "Partners can view their own discounts" on public.partner_discounts;
 create policy "Partners can view their own discounts"
   on public.partner_discounts for select
   using (partner_id = auth.uid());
 
+drop policy if exists "Partners can insert their own discounts" on public.partner_discounts;
 create policy "Partners can insert their own discounts"
   on public.partner_discounts for insert
   with check (partner_id = auth.uid());
 
+drop policy if exists "Partners can update their own discounts" on public.partner_discounts;
 create policy "Partners can update their own discounts"
   on public.partner_discounts for update
   using (partner_id = auth.uid());
 
+drop policy if exists "Partners can delete their own discounts" on public.partner_discounts;
 create policy "Partners can delete their own discounts"
   on public.partner_discounts for delete
   using (partner_id = auth.uid());
@@ -125,7 +138,7 @@ create policy "Partners can delete their own discounts"
 -- a sitter to the network — enables partner→sitter growth loop tracking.
 -- ------------------------------------------------------------
 
-create table public.partner_discount_redemptions (
+create table if not exists public.partner_discount_redemptions (
   id uuid primary key default uuid_generate_v4(),
   discount_id uuid not null references public.partner_discounts(id) on delete cascade,
   redeemed_by_owner_id uuid references public.profiles(id) on delete set null,
@@ -140,13 +153,14 @@ create table public.partner_discount_redemptions (
   notes text
 );
 
-create index idx_partner_discount_redemptions_discount on public.partner_discount_redemptions (discount_id);
-create index idx_partner_discount_redemptions_token on public.partner_discount_redemptions (redemption_token);
-create index idx_partner_discount_redemptions_status on public.partner_discount_redemptions (status);
-create index idx_partner_discount_redemptions_issued on public.partner_discount_redemptions (issued_at desc);
+create index if not exists idx_partner_discount_redemptions_discount on public.partner_discount_redemptions (discount_id);
+create index if not exists idx_partner_discount_redemptions_token on public.partner_discount_redemptions (redemption_token);
+create index if not exists idx_partner_discount_redemptions_status on public.partner_discount_redemptions (status);
+create index if not exists idx_partner_discount_redemptions_issued on public.partner_discount_redemptions (issued_at desc);
 
 alter table public.partner_discount_redemptions enable row level security;
 
+drop policy if exists "Partners see redemptions for their own discounts" on public.partner_discount_redemptions;
 create policy "Partners see redemptions for their own discounts"
   on public.partner_discount_redemptions for select
   using (
@@ -157,6 +171,7 @@ create policy "Partners see redemptions for their own discounts"
     )
   );
 
+drop policy if exists "Users see their own redemptions" on public.partner_discount_redemptions;
 create policy "Users see their own redemptions"
   on public.partner_discount_redemptions for select
   using (
@@ -164,6 +179,7 @@ create policy "Users see their own redemptions"
     or redeemed_by_sitter_id = auth.uid()
   );
 
+drop policy if exists "Authenticated users can issue a redemption" on public.partner_discount_redemptions;
 create policy "Authenticated users can issue a redemption"
   on public.partner_discount_redemptions for insert
   to authenticated
@@ -172,6 +188,7 @@ create policy "Authenticated users can issue a redemption"
     or redeemed_by_sitter_id = auth.uid()
   );
 
+drop policy if exists "Partners can mark their discount redemptions" on public.partner_discount_redemptions;
 create policy "Partners can mark their discount redemptions"
   on public.partner_discount_redemptions for update
   using (
@@ -182,6 +199,7 @@ create policy "Partners can mark their discount redemptions"
     )
   );
 
+drop policy if exists "Admins can manage all redemptions" on public.partner_discount_redemptions;
 create policy "Admins can manage all redemptions"
   on public.partner_discount_redemptions for all
   using (exists (select 1 from public.profiles where id = auth.uid() and role = 'admin'));
@@ -189,6 +207,8 @@ create policy "Admins can manage all redemptions"
 -- ------------------------------------------------------------
 -- 6. Admin stats addendum — extend admin_dashboard_stats to include partners.
 -- Replaces the function so admin dashboard can surface partner metrics.
+-- Uses `return (select ...)` instead of SELECT INTO to avoid parser
+-- ambiguity with tools that don't honor dollar-quoting.
 -- ------------------------------------------------------------
 
 create or replace function public.admin_dashboard_stats()
