@@ -5,7 +5,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/navigation";
 import { Dog, Cat, Bird, Rabbit, PawPrint, Upload } from "lucide-react";
-import { Button, Card } from "@/components/ui";
+import { Button, Card, Input, Textarea } from "@/components/ui";
 import { toast } from "sonner";
 
 type Pet = {
@@ -141,9 +141,6 @@ export function PetForm({ existing }: { existing?: Pet }) {
     router.refresh();
   }
 
-  const inputClass =
-    "w-full rounded-xl border border-line bg-canvas px-4 py-3 text-sm placeholder:text-ink-soft focus:bg-surface focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all";
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Photo upload */}
@@ -217,67 +214,47 @@ export function PetForm({ existing }: { existing?: Pet }) {
       {/* Basic info */}
       <Card padding="lg">
         <div className="space-y-4">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-ink mb-1.5">
-              {es ? "Nombre" : "Name"} *
-            </label>
-            <input
-              id="name"
-              type="text"
-              required
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className={inputClass}
-              placeholder={es ? "Nombre de tu mascota" : "Your pet's name"}
-              maxLength={50}
-            />
-          </div>
+          <Input
+            id="name"
+            type="text"
+            label={`${es ? "Nombre" : "Name"} *`}
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder={es ? "Nombre de tu mascota" : "Your pet's name"}
+            maxLength={50}
+          />
 
-          <div>
-            <label htmlFor="breed" className="block text-sm font-medium text-ink mb-1.5">
-              {es ? "Raza" : "Breed"}
-            </label>
-            <input
-              id="breed"
-              type="text"
-              value={breed}
-              onChange={(e) => setBreed(e.target.value)}
-              className={inputClass}
-              placeholder={es ? "Ej: Golden Retriever" : "E.g. Golden Retriever"}
-              maxLength={50}
-            />
-          </div>
+          <Input
+            id="breed"
+            type="text"
+            label={es ? "Raza" : "Breed"}
+            value={breed}
+            onChange={(e) => setBreed(e.target.value)}
+            placeholder={es ? "Ej: Golden Retriever" : "E.g. Golden Retriever"}
+            maxLength={50}
+          />
 
           <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="age" className="block text-sm font-medium text-ink mb-1.5">
-                {es ? "Edad (años)" : "Age (years)"}
-              </label>
-              <input
-                id="age"
-                type="number"
-                min="0"
-                max="30"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-                className={inputClass}
-              />
-            </div>
-            <div>
-              <label htmlFor="weight" className="block text-sm font-medium text-ink mb-1.5">
-                {es ? "Peso (kg)" : "Weight (kg)"}
-              </label>
-              <input
-                id="weight"
-                type="number"
-                min="0"
-                max="200"
-                step="0.1"
-                value={weight}
-                onChange={(e) => setWeight(e.target.value)}
-                className={inputClass}
-              />
-            </div>
+            <Input
+              id="age"
+              type="number"
+              label={es ? "Edad (años)" : "Age (years)"}
+              min="0"
+              max="30"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+            />
+            <Input
+              id="weight"
+              type="number"
+              label={es ? "Peso (kg)" : "Weight (kg)"}
+              min="0"
+              max="200"
+              step="0.1"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+            />
           </div>
         </div>
       </Card>
@@ -289,54 +266,39 @@ export function PetForm({ existing }: { existing?: Pet }) {
         </h3>
 
         <div className="space-y-4">
-          <div>
-            <label htmlFor="microchip" className="block text-sm font-medium text-ink mb-1.5">
-              {es ? "Número de microchip" : "Microchip number"}
-            </label>
-            <input
-              id="microchip"
-              type="text"
-              value={microchip}
-              onChange={(e) => setMicrochip(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))}
-              className={inputClass}
-              placeholder="941000XXXXXXXXX"
-              maxLength={20}
-            />
-          </div>
+          <Input
+            id="microchip"
+            type="text"
+            label={es ? "Número de microchip" : "Microchip number"}
+            value={microchip}
+            onChange={(e) => setMicrochip(e.target.value.replace(/[^a-zA-Z0-9]/g, ""))}
+            placeholder="941000XXXXXXXXX"
+            maxLength={20}
+          />
 
-          <div>
-            <label htmlFor="medical" className="block text-sm font-medium text-ink mb-1.5">
-              {es ? "Notas médicas" : "Medical notes"}
-            </label>
-            <textarea
-              id="medical"
-              rows={3}
-              value={medical}
-              onChange={(e) => setMedical(e.target.value)}
-              className={inputClass}
-              maxLength={1000}
-              placeholder={es
-                ? "Alergias, medicación, condiciones especiales..."
-                : "Allergies, medication, special conditions..."}
-            />
-          </div>
+          <Textarea
+            id="medical"
+            label={es ? "Notas médicas" : "Medical notes"}
+            rows={3}
+            value={medical}
+            onChange={(e) => setMedical(e.target.value)}
+            maxLength={1000}
+            placeholder={es
+              ? "Alergias, medicación, condiciones especiales..."
+              : "Allergies, medication, special conditions..."}
+          />
 
-          <div>
-            <label htmlFor="instructions" className="block text-sm font-medium text-ink mb-1.5">
-              {es ? "Instrucciones para el cuidador" : "Instructions for the sitter"}
-            </label>
-            <textarea
-              id="instructions"
-              rows={3}
-              value={instructions}
-              onChange={(e) => setInstructions(e.target.value)}
-              className={inputClass}
-              maxLength={1000}
-              placeholder={es
-                ? "Horarios de comida, rutinas, cosas que le gustan..."
-                : "Feeding times, routines, things they like..."}
-            />
-          </div>
+          <Textarea
+            id="instructions"
+            label={es ? "Instrucciones para el cuidador" : "Instructions for the sitter"}
+            rows={3}
+            value={instructions}
+            onChange={(e) => setInstructions(e.target.value)}
+            maxLength={1000}
+            placeholder={es
+              ? "Horarios de comida, rutinas, cosas que le gustan..."
+              : "Feeding times, routines, things they like..."}
+          />
         </div>
       </Card>
 
