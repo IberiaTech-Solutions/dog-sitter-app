@@ -35,7 +35,8 @@ async function issueRedemption(formData: FormData) {
 
   // Generate signed token. Using crypto.randomUUID twice for ~256 bits of entropy.
   const token = `${crypto.randomUUID()}-${crypto.randomUUID()}`.replace(/-/g, "");
-  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+  // 14-day TTL. Short enough to feel time-boxed, long enough for a vacation trip.
+  const expiresAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
 
   const { data: inserted, error } = await supabase
     .from("partner_discount_redemptions")
@@ -143,9 +144,10 @@ export default async function RedLocalPage({ params }: Props) {
               <Card key={discount.id} padding="md">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="flex items-start gap-3 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-brand-soft flex items-center justify-center shrink-0">
-                      <Briefcase className="w-5 h-5 text-brand-ink" aria-hidden="true" />
-                    </div>
+                    <Briefcase
+                      className="w-6 h-6 text-brand-ink shrink-0 mt-0.5"
+                      aria-hidden="true"
+                    />
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="font-semibold text-ink">{partner.business_name}</p>

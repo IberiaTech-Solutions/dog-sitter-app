@@ -3,6 +3,8 @@ import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Card, DashboardShell, PageShell, Badge } from "@/components/ui";
 import { QRCodeSVG } from "qrcode.react";
+import { isExpired as isTimestampExpired } from "@/lib/time";
+import { CopyButton } from "@/components/copy-button";
 
 type Props = {
   params: Promise<{ locale: string; redemptionId: string }>;
@@ -57,9 +59,7 @@ export default async function RedemptionDetailPage({ params }: Props) {
   };
   const partner = discount.partner;
   const isRedeemed = redemption.status === "redeemed";
-  const isExpired =
-    redemption.expires_at != null &&
-    new Date(redemption.expires_at).getTime() < Date.now();
+  const isExpired = isTimestampExpired(redemption.expires_at);
 
   return (
     <DashboardShell
@@ -126,9 +126,16 @@ export default async function RedemptionDetailPage({ params }: Props) {
                   marginSize={0}
                 />
               </div>
-              <p className="mt-6 font-mono text-xs text-ink-soft break-all px-4">
-                {redemption.redemption_token}
-              </p>
+              <div className="mt-6 flex items-center justify-center gap-2">
+                <p className="font-mono text-xs text-ink-soft break-all">
+                  {redemption.redemption_token}
+                </p>
+                <CopyButton
+                  value={redemption.redemption_token}
+                  labelCopy={es ? "Copiar" : "Copy"}
+                  labelCopied={es ? "Copiado" : "Copied"}
+                />
+              </div>
               <p className="mt-4 text-sm text-ink-muted">
                 {es
                   ? "Muestra este código al llegar al negocio."

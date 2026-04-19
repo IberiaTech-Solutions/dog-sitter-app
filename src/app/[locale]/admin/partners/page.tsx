@@ -125,9 +125,10 @@ export default async function AdminPartnersPage({ params }: Props) {
                   <Card key={p.id} padding="md">
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-brand-soft flex items-center justify-center shrink-0">
-                          <Briefcase className="w-5 h-5 text-brand-ink" aria-hidden="true" />
-                        </div>
+                        <Briefcase
+                          className="w-6 h-6 text-brand-ink shrink-0 mt-0.5"
+                          aria-hidden="true"
+                        />
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <p className="font-semibold text-ink">{p.business_name}</p>
@@ -206,9 +207,10 @@ export default async function AdminPartnersPage({ params }: Props) {
                   <Card key={p.id} padding="md">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-10 h-10 rounded-xl bg-brand-soft flex items-center justify-center shrink-0">
-                          <Briefcase className="w-5 h-5 text-brand-ink" aria-hidden="true" />
-                        </div>
+                        <Briefcase
+                          className="w-6 h-6 text-brand-ink shrink-0 mt-0.5"
+                          aria-hidden="true"
+                        />
                         <div className="min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <p className="font-semibold text-ink truncate">{p.business_name}</p>
@@ -228,7 +230,11 @@ export default async function AdminPartnersPage({ params }: Props) {
                     </div>
 
                     {/* Partner's discount offers — inline for admin oversight (Phase 0 — discount CRUD lives on /partner/discounts) */}
-                    {discounts.length > 0 && (
+                    {discounts.length === 0 ? (
+                      <p className="mt-3 pt-3 border-t border-line text-xs text-ink-soft italic">
+                        {es ? "Sin ofertas activas." : "No active offers yet."}
+                      </p>
+                    ) : (
                       <div className="mt-4 pt-4 border-t border-line">
                         <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ink-muted mb-3 flex items-center gap-1.5">
                           <Tag className="w-3 h-3" aria-hidden="true" />

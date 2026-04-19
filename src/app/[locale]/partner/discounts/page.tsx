@@ -67,13 +67,16 @@ export default async function PartnerDiscountsPage({ params }: Props) {
           </h2>
           <div className="mt-4 space-y-3">
             {!discounts || discounts.length === 0 ? (
-              <Card className="text-center py-10">
-                <p className="text-ink-muted">
-                  {es
-                    ? "Aún no has creado ninguna oferta."
-                    : "You haven't created any offers yet."}
+              <div className="rounded-2xl border-2 border-dashed border-line py-12 px-6 text-center">
+                <p className="font-serif text-xl text-ink">
+                  {es ? "Crea tu primera oferta" : "Create your first offer"}
                 </p>
-              </Card>
+                <p className="mt-2 text-sm text-ink-muted max-w-sm mx-auto leading-relaxed">
+                  {es
+                    ? "Un descuento real que los cuidadores presentarán a sus clientes en Gijón. Ej. 10% en la primera consulta, 2x1 en pienso, una sesión de peluquería gratis..."
+                    : "A real discount that sitters will present to their Gijón clients. E.g. 10% off first visit, buy-one-get-one on food, a free grooming session..."}
+                </p>
+              </div>
             ) : (
               discounts.map((d) => (
                 <Card key={d.id} padding="md">

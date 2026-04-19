@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Input } from "@/components/ui";
 import { Check, XCircle } from "lucide-react";
+import { isExpired } from "@/lib/time";
 
 type Props = {
   initialToken?: string;
@@ -74,7 +75,7 @@ export function PartnerRedemptionVerifier({ initialToken = "", initialOk = false
       return;
     }
 
-    if (redemption.expires_at && new Date(redemption.expires_at).getTime() < Date.now()) {
+    if (isExpired(redemption.expires_at)) {
       // Mark as expired for cleanliness (even if RLS permits)
       await supabase
         .from("partner_discount_redemptions")
