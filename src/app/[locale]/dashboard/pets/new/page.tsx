@@ -31,7 +31,7 @@ export default async function NewPetPage({ params }: Props) {
       userRole={profile?.role ?? "owner"}
       avatarUrl={profile?.avatar_url}
     >
-      <h1 className="text-2xl font-bold text-ink">
+      <h1 className="font-serif text-h2 font-semibold text-ink">
         {es ? "Añadir mascota" : "Add a pet"}
       </h1>
       <p className="mt-1 text-ink-muted">

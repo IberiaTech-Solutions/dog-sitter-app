@@ -73,7 +73,7 @@ export default async function BookingPage({ params }: Props) {
       userRole={myProfile?.role ?? "owner"}
       avatarUrl={myProfile?.avatar_url}
     >
-      <h1 className="text-2xl font-bold text-ink">
+      <h1 className="font-serif text-h2 font-semibold text-ink">
         {t("booking.title")}
       </h1>
 

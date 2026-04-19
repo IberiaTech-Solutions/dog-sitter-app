@@ -45,7 +45,7 @@ export default async function ProfilePage({ params }: Props) {
       avatarUrl={profile.avatar_url}
     >
       <div>
-        <h1 className="text-2xl font-bold text-ink">
+        <h1 className="font-serif text-h2 font-semibold text-ink">
           {locale === "es" ? "Mi perfil" : "My profile"}
         </h1>
         <p className="mt-1 text-ink-muted">

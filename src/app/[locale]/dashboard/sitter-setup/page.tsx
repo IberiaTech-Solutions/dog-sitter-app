@@ -67,7 +67,7 @@ export default async function SitterSetupPage({ params }: Props) {
       <div>
         {!hasProfile ? (
           <>
-            <h1 className="text-2xl font-bold text-ink">
+            <h1 className="font-serif text-h2 font-semibold text-ink">
               {es ? "Configurar perfil de cuidador" : "Set up sitter profile"}
             </h1>
             <p className="mt-1 text-ink-muted">
@@ -79,7 +79,7 @@ export default async function SitterSetupPage({ params }: Props) {
           </>
         ) : (
           <>
-            <h1 className="text-2xl font-bold text-ink">
+            <h1 className="font-serif text-h2 font-semibold text-ink">
               {es ? "Mi servicio" : "My service"}
             </h1>
             <p className="mt-1 text-ink-muted">

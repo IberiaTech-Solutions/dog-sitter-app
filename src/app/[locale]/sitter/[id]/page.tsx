@@ -82,7 +82,7 @@ export default async function SitterProfilePage({ params }: Props) {
                 <Avatar name={profile.full_name} src={profile.avatar_url} size="xl" />
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
-                    <h1 className="text-2xl font-bold text-ink">
+                    <h1 className="font-serif text-h2 font-semibold text-ink">
                       {profile.full_name}
                     </h1>
                     {sitterProfile.is_verified && (

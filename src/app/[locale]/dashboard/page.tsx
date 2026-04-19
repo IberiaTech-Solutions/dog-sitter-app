@@ -110,7 +110,7 @@ export default async function DashboardPage({ params }: Props) {
         hasInsurance={insuranceDone ?? false}
       />
 
-      <h1 className="text-2xl font-bold text-ink">
+      <h1 className="font-serif text-h2 font-semibold text-ink">
         {locale === "es" ? "Mis reservas" : "My bookings"}
       </h1>
 

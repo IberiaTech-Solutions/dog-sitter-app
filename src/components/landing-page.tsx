@@ -2,14 +2,31 @@
 
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useTranslations } from "next-intl";
+import { motion, type Variants } from "framer-motion";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { Logo } from "./logo";
 
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: EASE } },
+};
+
+const container: Variants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+};
+
+const viewportConfig = { once: true, margin: "-80px" };
+
 export function LandingPage() {
   const t = useTranslations();
+  const locale = useLocale();
+  const es = locale === "es";
   const [waitlistSubmitted, setWaitlistSubmitted] = useState(false);
 
   const handleWaitlistSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -34,55 +51,83 @@ export function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-canvas">
       <header className="sticky top-0 z-50 bg-canvas border-b border-line">
-        <div className="mx-auto max-w-3xl flex items-center justify-between px-5 py-4 sm:px-8">
+        <div className="mx-auto max-w-6xl flex items-center justify-between px-5 py-4 sm:px-8">
           <Link href="/" className="flex items-center gap-2.5">
             <Logo size={28} />
             <span className="text-base font-bold text-ink tracking-tight">
               {t("common.appName")}
             </span>
           </Link>
-          <Link
-            href="/login"
-            className="inline-flex items-center px-3 py-2.5 min-h-11 text-sm font-medium text-ink-muted hover:text-ink transition-colors"
-          >
-            {t("common.login")}
-          </Link>
+          <nav className="flex items-center gap-1">
+            <Link
+              href="/partners"
+              className="hidden sm:inline-flex items-center px-3 py-2.5 min-h-11 text-sm font-medium text-ink-muted hover:text-ink transition-colors"
+            >
+              {es ? "Negocios" : "Businesses"}
+            </Link>
+            <Link
+              href="/login"
+              className="inline-flex items-center px-3 py-2.5 min-h-11 text-sm font-medium text-ink-muted hover:text-ink transition-colors"
+            >
+              {t("common.login")}
+            </Link>
+          </nav>
         </div>
       </header>
 
       <main className="flex-1">
-        {/* 1. Hero — pet-voice emotional line + direct pitch + action, with editorial photo on desktop. */}
+        {/* 1. Hero — staggered reveal on mount. */}
         <section>
           <div className="mx-auto max-w-6xl px-5 sm:px-8 py-16 sm:py-24">
-            <div className="grid lg:grid-cols-5 gap-10 lg:gap-16 items-center">
+            <motion.div
+              initial="hidden"
+              animate="show"
+              variants={container}
+              className="grid lg:grid-cols-5 gap-10 lg:gap-16 items-center"
+            >
               <div className="lg:col-span-3">
-                <p className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted">
+                <motion.p
+                  variants={fadeUp}
+                  className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted"
+                >
                   {t("home.heroProof")}
-                </p>
+                </motion.p>
 
-                <h1 className="mt-6 font-serif text-display text-ink font-semibold">
+                <motion.h1
+                  variants={fadeUp}
+                  className="mt-6 font-serif text-display text-ink font-semibold"
+                >
                   <span className="block">{t("home.heroPetLine1")}</span>
                   <span className="block text-ink-muted">
                     {t("home.heroPetLine2")}
                   </span>
-                </h1>
+                </motion.h1>
 
-                <p className="mt-8 text-lede text-ink-muted max-w-xl">
+                <motion.p
+                  variants={fadeUp}
+                  className="mt-8 text-lede text-ink-muted max-w-xl"
+                >
                   {t("home.heroPitch")}
-                </p>
+                </motion.p>
 
-                <div className="mt-10">
+                <motion.div variants={fadeUp} className="mt-10">
                   <Link
                     href="/signup"
-                    className="inline-flex items-center gap-2 px-7 py-3.5 bg-brand text-surface text-sm font-semibold rounded-xl hover:bg-brand-ink active:scale-[0.98] transition-all shadow-sm shadow-brand/20"
+                    className="group inline-flex items-center gap-2 px-7 py-3.5 bg-brand text-surface text-sm font-semibold rounded-xl hover:bg-brand-ink active:scale-[0.98] transition-all shadow-sm shadow-brand/20"
                   >
                     {t("home.heroCta")}
-                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                    <ArrowRight
+                      className="w-4 h-4 transition-transform group-hover:translate-x-0.5"
+                      aria-hidden="true"
+                    />
                   </Link>
-                </div>
+                </motion.div>
               </div>
 
-              <div className="lg:col-span-2 hidden lg:block">
+              <motion.div
+                variants={fadeUp}
+                className="lg:col-span-2 hidden lg:block"
+              >
                 <div className="relative rounded-2xl overflow-hidden aspect-[4/5]">
                   <Image
                     src="/images/hero-dog.jpg"
@@ -93,13 +138,19 @@ export function LandingPage() {
                     priority
                   />
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </section>
 
         {/* Editorial interlude — full-bleed photo between hero and value props. */}
-        <section className="border-t border-line">
+        <motion.section
+          className="border-t border-line"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={viewportConfig}
+          transition={{ duration: 0.9, ease: EASE }}
+        >
           <div className="mx-auto max-w-6xl">
             <div className="relative aspect-[21/9] lg:aspect-[3/1] overflow-hidden">
               <Image
@@ -111,68 +162,225 @@ export function LandingPage() {
               />
             </div>
           </div>
-        </section>
+        </motion.section>
 
-        {/* 2. Why sitters join — typographic, no icon-tiles. */}
-        <section className="border-t border-line">
-          <div className="mx-auto max-w-3xl px-5 sm:px-8 py-20 sm:py-24">
-            <p className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted">
-              {t("home.whyLabel")}
-            </p>
+        {/* Three-path section — addresses all stakeholders explicitly. */}
+        <motion.section
+          className="border-t border-line"
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportConfig}
+          variants={container}
+        >
+          <div className="mx-auto max-w-6xl px-5 sm:px-8 py-20 sm:py-24">
+            <motion.p
+              variants={fadeUp}
+              className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted"
+            >
+              {es ? "¿Qué te trae aquí?" : "What brings you here?"}
+            </motion.p>
 
-            <div className="mt-10 space-y-14">
-              {(["why1", "why2", "why3"] as const).map((key) => (
-                <div key={key}>
-                  <h2 className="font-serif text-h2 font-semibold text-ink">
-                    {t(`home.${key}Title`)}
-                  </h2>
-                  <p className="mt-3 text-lg text-ink-muted leading-relaxed">
-                    {t(`home.${key}Desc`)}
-                  </p>
-                </div>
-              ))}
+            <motion.h2
+              variants={fadeUp}
+              className="mt-6 font-serif text-h2 font-semibold text-ink max-w-2xl"
+            >
+              {es
+                ? "Una red, tres formas de entrar."
+                : "One network, three ways in."}
+            </motion.h2>
+
+            <motion.div variants={container} className="mt-12 divide-y divide-line border-y border-line">
+              {/* Owner path */}
+              <motion.div variants={fadeUp}>
+                <Link
+                  href="/signup"
+                  className="group block py-8 transition-colors"
+                >
+                  <div className="flex items-center justify-between gap-6">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ink-muted">
+                        {es ? "Para dueños" : "For owners"}
+                      </p>
+                      <p className="mt-3 font-serif italic text-2xl sm:text-3xl text-ink leading-snug">
+                        &ldquo;{es
+                          ? "Busco a alguien que cuide mi mascota."
+                          : "I'm looking for someone to care for my pet."}&rdquo;
+                      </p>
+                      <p className="mt-3 text-base text-ink-muted max-w-xl">
+                        {es
+                          ? "Únete a la lista de espera. Cuando haya cuidadores verificados en tu barrio, te avisamos."
+                          : "Join the waitlist. We'll notify you when verified sitters are in your neighborhood."}
+                      </p>
+                    </div>
+                    <ArrowRight
+                      className="w-5 h-5 text-ink-soft group-hover:text-ink group-hover:translate-x-1 transition-all shrink-0"
+                      aria-hidden="true"
+                    />
+                  </div>
+                </Link>
+              </motion.div>
+
+              {/* Sitter path */}
+              <motion.div variants={fadeUp}>
+                <Link
+                  href="/signup"
+                  className="group block py-8 transition-colors"
+                >
+                  <div className="flex items-center justify-between gap-6">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ink-muted">
+                        {es ? "Para cuidadores" : "For sitters"}
+                      </p>
+                      <p className="mt-3 font-serif italic text-2xl sm:text-3xl text-ink leading-snug">
+                        &ldquo;{es
+                          ? "Quiero cuidar mascotas cerca de casa."
+                          : "I want to care for pets near home."}&rdquo;
+                      </p>
+                      <p className="mt-3 text-base text-ink-muted max-w-xl">
+                        {es
+                          ? "Tú pones precios y horarios. Herramientas reales + red local de descuentos para tus clientes."
+                          : "You set prices and schedule. Real tools + local discount network for your clients."}
+                      </p>
+                    </div>
+                    <ArrowRight
+                      className="w-5 h-5 text-ink-soft group-hover:text-ink group-hover:translate-x-1 transition-all shrink-0"
+                      aria-hidden="true"
+                    />
+                  </div>
+                </Link>
+              </motion.div>
+
+              {/* Business path */}
+              <motion.div variants={fadeUp}>
+                <Link
+                  href="/partners"
+                  className="group block py-8 transition-colors"
+                >
+                  <div className="flex items-center justify-between gap-6">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ink-muted">
+                        {es ? "Para negocios" : "For businesses"}
+                      </p>
+                      <p className="mt-3 font-serif italic text-2xl sm:text-3xl text-ink leading-snug">
+                        &ldquo;{es
+                          ? "Tengo un veterinario, tienda o peluquería en Gijón."
+                          : "I run a vet, shop, or groomer in Gijón."}&rdquo;
+                      </p>
+                      <p className="mt-3 text-base text-ink-muted max-w-xl">
+                        {es
+                          ? "Únete a la red local. Clientes verificados del barrio, sin coste el primer año."
+                          : "Join the local network. Verified neighborhood clients, free the first year."}
+                      </p>
+                    </div>
+                    <ArrowRight
+                      className="w-5 h-5 text-ink-soft group-hover:text-ink group-hover:translate-x-1 transition-all shrink-0"
+                      aria-hidden="true"
+                    />
+                  </div>
+                </Link>
+              </motion.div>
+            </motion.div>
+          </div>
+        </motion.section>
+
+        {/* 2. Why sitters join — typographic, stagger reveal on scroll. */}
+        <motion.section
+          className="border-t border-line"
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportConfig}
+          variants={container}
+        >
+          <div className="mx-auto max-w-6xl px-5 sm:px-8 py-20 sm:py-24">
+            <div className="max-w-3xl">
+              <motion.p
+                variants={fadeUp}
+                className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted"
+              >
+                {t("home.whyLabel")}
+              </motion.p>
+
+              <div className="mt-10 space-y-14">
+                {(["why1", "why2", "why3"] as const).map((key) => (
+                  <motion.div key={key} variants={fadeUp}>
+                    <h2 className="font-serif text-h2 font-semibold text-ink">
+                      {t(`home.${key}Title`)}
+                    </h2>
+                    <p className="mt-3 text-lg text-ink-muted leading-relaxed">
+                      {t(`home.${key}Desc`)}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
-        {/* 3. Local network — placeholder categories until real partners sign. Two-col on desktop with supporting photo. */}
-        <section className="border-t border-line">
+        {/* 3. Local network — addresses owners + businesses explicitly. */}
+        <motion.section
+          className="border-t border-line"
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportConfig}
+          variants={container}
+        >
           <div className="mx-auto max-w-6xl px-5 sm:px-8 py-20 sm:py-24">
             <div className="grid lg:grid-cols-5 gap-10 lg:gap-16 items-start">
               <div className="lg:col-span-3">
-                <p className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted">
+                <motion.p
+                  variants={fadeUp}
+                  className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted"
+                >
                   {t("home.partnersLabel")}
-                </p>
-                <h2 className="mt-6 font-serif text-h2 font-semibold text-ink">
+                </motion.p>
+                <motion.h2
+                  variants={fadeUp}
+                  className="mt-6 font-serif text-h2 font-semibold text-ink"
+                >
                   {t("home.partnersTitle")}
-                </h2>
-                <p className="mt-4 text-lg text-ink-muted leading-relaxed">
+                </motion.h2>
+                <motion.p
+                  variants={fadeUp}
+                  className="mt-4 text-lg text-ink-muted leading-relaxed"
+                >
                   {t("home.partnersLead")}
-                </p>
+                </motion.p>
 
-                <ul className="mt-10 divide-y divide-line border-y border-line">
-                  {(["vet", "grooming", "petshop", "trainer"] as const).map((key) => (
-                    <li
-                      key={key}
-                      className="py-4 font-serif text-lg text-ink"
-                    >
-                      {t(`home.partnerCategory.${key}`)}
-                    </li>
-                  ))}
-                </ul>
+                <motion.ul
+                  variants={container}
+                  className="mt-10 divide-y divide-line border-y border-line"
+                >
+                  {(["vet", "grooming", "petshop", "trainer"] as const).map(
+                    (key) => (
+                      <motion.li
+                        key={key}
+                        variants={fadeUp}
+                        className="py-4 font-serif text-lg text-ink"
+                      >
+                        {t(`home.partnerCategory.${key}`)}
+                      </motion.li>
+                    )
+                  )}
+                </motion.ul>
 
-                <p className="mt-10">
+                <motion.p variants={fadeUp} className="mt-10">
                   <Link
                     href="/partners"
-                    className="inline-flex items-center gap-1.5 text-brand hover:text-brand-ink font-medium text-sm"
+                    className="group inline-flex items-center gap-1.5 text-brand hover:text-brand-ink font-medium text-sm"
                   >
                     {t("home.partnersCta")}
-                    <ChevronRight className="w-4 h-4" aria-hidden="true" />
+                    <ChevronRight
+                      className="w-4 h-4 transition-transform group-hover:translate-x-0.5"
+                      aria-hidden="true"
+                    />
                   </Link>
-                </p>
+                </motion.p>
               </div>
 
-              <div className="lg:col-span-2 hidden lg:block lg:pt-14">
+              <motion.div
+                variants={fadeUp}
+                className="lg:col-span-2 hidden lg:block lg:pt-14"
+              >
                 <div className="relative rounded-2xl overflow-hidden aspect-[4/5]">
                   <Image
                     src="/images/happy-dog.jpg"
@@ -182,83 +390,161 @@ export function LandingPage() {
                     className="object-cover"
                   />
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
-        {/* 4. Honest about the stage — narrower, aside-like. No fake stats. */}
-        <section className="border-t border-line">
-          <div className="mx-auto max-w-xl px-5 sm:px-8 py-16 sm:py-20">
-            <p className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted">
-              {t("home.honestLabel")}
-            </p>
-            <h2 className="mt-6 font-serif text-h2 font-semibold text-ink">
-              {t("home.honestTitle")}
-            </h2>
-            <p className="mt-4 text-base text-ink-muted leading-relaxed">
-              {t("home.honestBody")}
-            </p>
+        {/* 4. Honest about the stage. */}
+        <motion.section
+          className="border-t border-line"
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportConfig}
+          variants={container}
+        >
+          <div className="mx-auto max-w-6xl px-5 sm:px-8 py-16 sm:py-20">
+            <div className="max-w-xl">
+              <motion.p
+                variants={fadeUp}
+                className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted"
+              >
+                {t("home.honestLabel")}
+              </motion.p>
+              <motion.h2
+                variants={fadeUp}
+                className="mt-6 font-serif text-h2 font-semibold text-ink"
+              >
+                {t("home.honestTitle")}
+              </motion.h2>
+              <motion.p
+                variants={fadeUp}
+                className="mt-4 text-base text-ink-muted leading-relaxed"
+              >
+                {t("home.honestBody")}
+              </motion.p>
+            </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* 5. Owner waitlist — quiet, pet-voice atmospheric, direct form. */}
-        <section className="border-t border-line bg-surface">
-          <div className="mx-auto max-w-3xl px-5 sm:px-8 py-20 sm:py-24">
-            <p className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted">
-              {t("home.ownerLabel")}
-            </p>
-            <h2 className="mt-6 font-serif italic text-h2 font-semibold text-ink max-w-xl">
-              {t("home.ownerWaitlistTitle")}
-            </h2>
-            <p className="mt-4 text-lg text-ink-muted leading-relaxed max-w-2xl">
-              {t("home.ownerWaitlistDesc")}
-            </p>
-
-            {waitlistSubmitted ? (
-              <p className="mt-8 text-base font-medium text-brand-ink">
-                {t("home.ownerThanks")}
-              </p>
-            ) : (
-              <form
-                onSubmit={handleWaitlistSubmit}
-                className="mt-8 flex flex-col gap-3 max-w-md"
+        <motion.section
+          className="border-t border-line bg-surface"
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportConfig}
+          variants={container}
+        >
+          <div className="mx-auto max-w-6xl px-5 sm:px-8 py-20 sm:py-24">
+            <div className="max-w-3xl">
+              <motion.p
+                variants={fadeUp}
+                className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted"
               >
-                <label className="block">
-                  <span className="block text-sm font-medium text-ink mb-1.5">
-                    {t("home.ownerEmailLabel")}
-                  </span>
-                  <input
-                    type="email"
-                    name="email"
-                    required
-                    className="w-full rounded-xl border border-line bg-canvas px-4 py-3 text-sm placeholder:text-ink-soft focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
-                  />
-                </label>
-                <label className="block">
-                  <span className="block text-sm font-medium text-ink mb-1.5">
-                    {t("home.ownerBarrioLabel")}
-                  </span>
-                  <input
-                    type="text"
-                    name="barrio"
-                    className="w-full rounded-xl border border-line bg-canvas px-4 py-3 text-sm placeholder:text-ink-soft focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
-                  />
-                </label>
-                <button
-                  type="submit"
-                  className="mt-2 inline-flex items-center justify-center gap-2 px-6 py-3 bg-brand text-surface text-sm font-semibold rounded-xl hover:bg-brand-ink active:scale-[0.98] transition-all shadow-sm shadow-brand/20 sm:self-start"
+                {t("home.ownerLabel")}
+              </motion.p>
+              <motion.h2
+                variants={fadeUp}
+                className="mt-6 font-serif italic text-h2 font-semibold text-ink max-w-xl"
+              >
+                {t("home.ownerWaitlistTitle")}
+              </motion.h2>
+              <motion.p
+                variants={fadeUp}
+                className="mt-4 text-lg text-ink-muted leading-relaxed max-w-2xl"
+              >
+                {t("home.ownerWaitlistDesc")}
+              </motion.p>
+
+              {waitlistSubmitted ? (
+                <motion.p
+                  variants={fadeUp}
+                  className="mt-8 text-base font-medium text-brand-ink"
                 >
-                  {t("home.ownerSubmit")}
-                </button>
-              </form>
-            )}
+                  {t("home.ownerThanks")}
+                </motion.p>
+              ) : (
+                <motion.form
+                  variants={fadeUp}
+                  onSubmit={handleWaitlistSubmit}
+                  className="mt-8 flex flex-col gap-3 max-w-md"
+                >
+                  <label className="block">
+                    <span className="block text-sm font-medium text-ink mb-1.5">
+                      {t("home.ownerEmailLabel")}
+                    </span>
+                    <input
+                      type="email"
+                      name="email"
+                      required
+                      className="w-full rounded-xl border border-line bg-canvas px-4 py-3 text-sm placeholder:text-ink-soft focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="block text-sm font-medium text-ink mb-1.5">
+                      {t("home.ownerBarrioLabel")}
+                    </span>
+                    <input
+                      type="text"
+                      name="barrio"
+                      className="w-full rounded-xl border border-line bg-canvas px-4 py-3 text-sm placeholder:text-ink-soft focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
+                    />
+                  </label>
+                  <button
+                    type="submit"
+                    className="mt-2 inline-flex items-center justify-center gap-2 px-6 py-3 bg-brand text-surface text-sm font-semibold rounded-xl hover:bg-brand-ink active:scale-[0.98] transition-all shadow-sm shadow-brand/20 sm:self-start min-h-11"
+                  >
+                    {t("home.ownerSubmit")}
+                  </button>
+                </motion.form>
+              )}
+            </div>
           </div>
-        </section>
+        </motion.section>
+
+        {/* 6. Founder note — humanizes, anchors the brand to a real person + place. */}
+        <motion.section
+          className="border-t border-line"
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportConfig}
+          variants={container}
+        >
+          <div className="mx-auto max-w-6xl px-5 sm:px-8 py-16 sm:py-20">
+            <div className="max-w-2xl">
+              <motion.p
+                variants={fadeUp}
+                className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted"
+              >
+                {es ? "Quién lo construye" : "Who's building this"}
+              </motion.p>
+              <motion.p
+                variants={fadeUp}
+                className="mt-6 font-serif text-xl text-ink leading-relaxed"
+              >
+                {es
+                  ? "Soy Javier, de Gijón. Construyo esto pensando en mis vecinos — en la vet de mi familia, en la peluquería canina de la esquina, en los cuidadores que nos acompañan desde hace años."
+                  : "I'm Javier, from Gijón. I'm building this for my neighborhood — the family vet, the groomer on the corner, the sitters who've looked after our pets for years."}
+              </motion.p>
+              <motion.p
+                variants={fadeUp}
+                className="mt-4 text-sm text-ink-muted leading-relaxed"
+              >
+                {es ? "¿Preguntas o ideas? " : "Questions or ideas? "}
+                <a
+                  href="mailto:hola@cuidamascotas.es"
+                  className="text-brand hover:text-brand-ink font-medium transition-colors"
+                >
+                  hola@cuidamascotas.es
+                </a>
+              </motion.p>
+            </div>
+          </div>
+        </motion.section>
       </main>
 
       <footer className="border-t border-line py-10">
-        <div className="mx-auto max-w-3xl px-5 sm:px-8">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-2.5 text-sm">
               <Logo size={24} />
@@ -266,6 +552,9 @@ export function LandingPage() {
               <span className="text-ink-soft">· Gijón</span>
             </div>
             <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-ink-muted">
+              <Link href="/partners" className="hover:text-ink transition-colors">
+                {es ? "Negocios" : "Businesses"}
+              </Link>
               <Link href="/terms" className="hover:text-ink transition-colors">
                 {t("footer.terms")}
               </Link>

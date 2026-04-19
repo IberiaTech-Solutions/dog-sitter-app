@@ -33,7 +33,7 @@ export default async function AdminUsersPage({ params }: Props) {
 
       <PageShell>
         <div className="flex items-center gap-3 mb-6">
-          <h1 className="text-2xl font-bold text-ink">
+          <h1 className="font-serif text-h2 font-semibold text-ink">
             {es ? "Todos los usuarios" : "All users"} ({users?.length ?? 0})
           </h1>
         </div>

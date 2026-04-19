@@ -49,7 +49,7 @@ export default async function PetsPage({ params }: Props) {
       avatarUrl={profile?.avatar_url}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-ink">
+        <h1 className="font-serif text-h2 font-semibold text-ink">
           {es ? "Mis mascotas" : "My pets"}
         </h1>
         <LinkButton href="/dashboard/pets/new" variant="primary" size="md">

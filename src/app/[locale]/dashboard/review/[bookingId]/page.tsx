@@ -59,7 +59,7 @@ export default async function ReviewPage({ params }: Props) {
       avatarUrl={profile?.avatar_url}
     >
       <div className="max-w-lg">
-        <h1 className="text-2xl font-bold text-ink">
+        <h1 className="font-serif text-h2 font-semibold text-ink">
           {locale === "es" ? "Dejar una opinión" : "Leave a review"}
         </h1>
         <p className="mt-1 text-ink-muted">
