@@ -4,7 +4,8 @@ import { PageShell, Card, Badge } from "@/components/ui";
 import { AdminHeader } from "@/components/admin-header";
 import { AdminNav } from "@/components/admin-nav";
 import { AdminPartnerActions } from "@/components/admin-partner-actions";
-import { Briefcase, Globe, Phone, MapPin } from "lucide-react";
+import { PartnerDiscountActions } from "@/components/partner-discount-actions";
+import { Briefcase, Globe, Phone, MapPin, Tag } from "lucide-react";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -39,6 +40,34 @@ export default async function AdminPartnersPage({ params }: Props) {
   const profileById = new Map(
     (linkedProfiles ?? []).map((p) => [p.id, p] as const)
   );
+
+  // Fetch all discounts belonging to these partners, grouped by partner_id.
+  const { data: allDiscounts } = partnerUserIds.length === 0
+    ? { data: [] }
+    : await supabase
+        .from("partner_discounts")
+        .select("id, partner_id, discount_code, discount_percent, description_es, description_en, is_active, valid_until")
+        .in("partner_id", partnerUserIds)
+        .order("created_at", { ascending: false });
+
+  type DiscountRow = {
+    id: string;
+    partner_id: string | null;
+    discount_code: string;
+    discount_percent: number;
+    description_es: string;
+    description_en: string | null;
+    is_active: boolean;
+    valid_until: string | null;
+  };
+
+  const discountsByPartner = new Map<string, DiscountRow[]>();
+  ((allDiscounts ?? []) as DiscountRow[]).forEach((d) => {
+    if (!d.partner_id) return;
+    const list = discountsByPartner.get(d.partner_id) ?? [];
+    list.push(d);
+    discountsByPartner.set(d.partner_id, list);
+  });
 
   const pending = partners?.filter((p) => !p.is_verified) ?? [];
   const verified = partners?.filter((p) => p.is_verified) ?? [];
@@ -172,6 +201,7 @@ export default async function AdminPartnersPage({ params }: Props) {
                   full_name: "—",
                   email: "—",
                 };
+                const discounts = discountsByPartner.get(p.id) ?? [];
                 return (
                   <Card key={p.id} padding="md">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -196,6 +226,49 @@ export default async function AdminPartnersPage({ params }: Props) {
                         adminId={user.id}
                       />
                     </div>
+
+                    {/* Partner's discount offers — inline for admin oversight (Phase 0 — discount CRUD lives on /partner/discounts) */}
+                    {discounts.length > 0 && (
+                      <div className="mt-4 pt-4 border-t border-line">
+                        <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ink-muted mb-3 flex items-center gap-1.5">
+                          <Tag className="w-3 h-3" aria-hidden="true" />
+                          {es ? "Ofertas" : "Offers"} ({discounts.length})
+                        </p>
+                        <div className="space-y-2">
+                          {discounts.map((d) => (
+                            <div
+                              key={d.id}
+                              className="flex items-center justify-between gap-3 py-2 px-3 rounded-lg bg-canvas"
+                            >
+                              <div className="flex items-center gap-2 flex-wrap min-w-0">
+                                <Badge variant={d.is_active ? "brand" : "neutral"}>
+                                  {d.is_active
+                                    ? es
+                                      ? "Activa"
+                                      : "Active"
+                                    : es
+                                      ? "Pausada"
+                                      : "Paused"}
+                                </Badge>
+                                <span className="font-mono text-xs text-ink">
+                                  {d.discount_code}
+                                </span>
+                                <span className="text-sm font-semibold text-brand">
+                                  -{d.discount_percent}%
+                                </span>
+                                <span className="text-sm text-ink-muted truncate">
+                                  {d.description_es}
+                                </span>
+                              </div>
+                              <PartnerDiscountActions
+                                discountId={d.id}
+                                isActive={d.is_active}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </Card>
                 );
               })

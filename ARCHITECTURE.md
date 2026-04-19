@@ -217,7 +217,7 @@ dog_sitter_app/
 │   │   │   │   ├── sitters/          # Sitter management
 │   │   │   │   ├── bookings/         # Booking administration
 │   │   │   │   ├── users/            # User management
-│   │   │   │   └── discounts/        # Partner discount CRUD (admin override on any partner's discounts)
+│   │   │   │   └── partners/         # Admin verification queue + oversight. Discounts shown inline per verified partner (admin can pause/delete via shared actions — no separate /admin/discounts page).
 │   │   │   ├── contact/              # Public /contact page — general / partners / press mailto rows
 │   │   │   ├── partners/             # Partner recruitment + signup (public)
 │   │   │   │   ├── page.tsx          # /partners — benefits, how-it-works, CTA to signup
@@ -279,9 +279,7 @@ dog_sitter_app/
 │   │   ├── admin-sitter-actions.tsx
 │   │   ├── admin-user-actions.tsx     # Role change + delete (via API route)
 │   │   ├── admin-booking-actions.tsx  # Status change dropdown
-│   │   ├── admin-discount-actions.tsx # Toggle active + delete
-│   │   ├── user-menu.tsx              # Avatar dropdown with role badge
-│   │   └── discount-form.tsx
+│   │   └── user-menu.tsx              # Avatar dropdown with role badge
 │   │
 │   ├── lib/
 │   │   ├── supabase/client.ts        # Browser Supabase client

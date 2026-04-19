@@ -1,9 +1,9 @@
 import { Link } from "@/i18n/navigation";
-import { BarChart3, Dog, CalendarDays, Users, Tag, Briefcase } from "lucide-react";
+import { BarChart3, Dog, CalendarDays, Users, Briefcase } from "lucide-react";
 
 type Props = {
   locale: string;
-  active: "overview" | "sitters" | "bookings" | "users" | "discounts" | "partners";
+  active: "overview" | "sitters" | "bookings" | "users" | "partners";
   pendingVerifications?: number;
   pendingPartners?: number;
 };
@@ -16,7 +16,6 @@ export function AdminNav({ locale, active, pendingVerifications, pendingPartners
     { key: "partners" as const, href: "/admin/partners", icon: Briefcase, label: es ? "Partners" : "Partners" },
     { key: "bookings" as const, href: "/admin/bookings", icon: CalendarDays, label: es ? "Reservas" : "Bookings" },
     { key: "users" as const, href: "/admin/users", icon: Users, label: es ? "Usuarios" : "Users" },
-    { key: "discounts" as const, href: "/admin/discounts", icon: Tag, label: es ? "Descuentos" : "Discounts" },
   ];
 
   const badgeFor = (key: typeof items[number]["key"]): number => {
