@@ -33,12 +33,12 @@ export default async function AdminOverviewPage({ params }: Props) {
   ];
 
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
+    <div className="min-h-screen bg-canvas">
       <AdminHeader appName={t("common.appName")} locale={locale} userName={profile.full_name} avatarUrl={profile.avatar_url} />
 
       <PageShell>
         <div className="flex items-center gap-3 mb-6">
-          <h1 className="text-2xl font-bold text-stone-900">
+          <h1 className="text-2xl font-bold text-ink">
             {es ? "Panel de administración" : "Admin dashboard"}
           </h1>
         </div>
@@ -48,9 +48,9 @@ export default async function AdminOverviewPage({ params }: Props) {
         <div className="mt-8 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {statCards.map((stat) => (
             <Card key={stat.label} padding="md">
-              <stat.icon className="w-5 h-5 text-stone-400" />
-              <p className="mt-2 text-2xl font-bold text-stone-900">{stat.value}</p>
-              <p className="text-sm text-stone-400">{stat.label}</p>
+              <stat.icon className="w-5 h-5 text-ink-soft" />
+              <p className="mt-2 text-2xl font-bold text-ink">{stat.value}</p>
+              <p className="text-sm text-ink-soft">{stat.label}</p>
             </Card>
           ))}
         </div>

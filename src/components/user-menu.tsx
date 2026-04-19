@@ -14,10 +14,10 @@ type Props = {
 };
 
 const roleBadge: Record<string, { label: { es: string; en: string }; color: string }> = {
-  owner: { label: { es: "Dueño", en: "Owner" }, color: "bg-blue-100 text-blue-700" },
-  sitter: { label: { es: "Cuidador", en: "Sitter" }, color: "bg-green-100 text-green-700" },
-  both: { label: { es: "Dueño y cuidador", en: "Owner & Sitter" }, color: "bg-purple-100 text-purple-700" },
-  admin: { label: { es: "Admin", en: "Admin" }, color: "bg-red-100 text-red-700" },
+  owner: { label: { es: "Dueño", en: "Owner" }, color: "bg-line/50 text-ink" },
+  sitter: { label: { es: "Cuidador", en: "Sitter" }, color: "bg-brand-soft text-brand-ink" },
+  both: { label: { es: "Dueño y cuidador", en: "Owner & Sitter" }, color: "bg-line/50 text-ink-muted" },
+  admin: { label: { es: "Admin", en: "Admin" }, color: "bg-danger-soft text-danger" },
 };
 
 export function UserMenu({ userName, avatarUrl, locale, userRole }: Props) {
@@ -45,10 +45,10 @@ export function UserMenu({ userName, avatarUrl, locale, userRole }: Props) {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-56 rounded-xl bg-white border border-stone-200 shadow-lg shadow-stone-200/50 overflow-hidden z-50">
+        <div className="absolute right-0 mt-2 w-56 rounded-xl bg-surface border border-line shadow-md overflow-hidden z-50">
           {/* User info */}
-          <div className="px-4 py-3 border-b border-stone-100">
-            <p className="text-sm font-semibold text-stone-900 truncate">{userName}</p>
+          <div className="px-4 py-3 border-b border-line">
+            <p className="text-sm font-semibold text-ink truncate">{userName}</p>
             {userRole && roleBadge[userRole] && (
               <span className={`inline-block mt-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ${roleBadge[userRole].color}`}>
                 {es ? roleBadge[userRole].label.es : roleBadge[userRole].label.en}
@@ -61,19 +61,19 @@ export function UserMenu({ userName, avatarUrl, locale, userRole }: Props) {
             <Link
               href="/dashboard/profile"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm text-stone-600 hover:bg-stone-50 transition-colors"
+              className="flex items-center gap-3 px-4 py-2.5 text-sm text-ink-muted hover:bg-stone-50 transition-colors"
             >
-              <User className="w-4 h-4 text-stone-400" />
+              <User className="w-4 h-4 text-ink-soft" />
               {es ? "Mi perfil" : "My profile"}
             </Link>
           </div>
 
           {/* Logout */}
-          <div className="border-t border-stone-100 py-1">
+          <div className="border-t border-line py-1">
             <form action="/api/auth/logout" method="POST">
               <button
                 type="submit"
-                className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors w-full"
+                className="flex items-center gap-3 px-4 py-2.5 text-sm text-danger hover:bg-danger-soft transition-colors w-full"
               >
                 <LogOut className="w-4 h-4" />
                 {es ? "Cerrar sesión" : "Log out"}

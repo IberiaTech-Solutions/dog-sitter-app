@@ -24,19 +24,19 @@ export function DeletePetButton({ petId }: { petId: string }) {
   if (confirming) {
     return (
       <div className="flex items-center gap-2">
-        <span className="text-xs text-stone-500">
+        <span className="text-xs text-ink-muted">
           {es ? "¿Seguro?" : "Are you sure?"}
         </span>
         <button
           onClick={handleDelete}
           disabled={loading}
-          className="px-3 py-1.5 text-xs font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 transition-colors"
+          className="px-3 py-1.5 text-xs font-medium text-white bg-danger rounded-lg hover:bg-danger disabled:opacity-50 transition-colors"
         >
           {es ? "Sí, eliminar" : "Yes, delete"}
         </button>
         <button
           onClick={() => setConfirming(false)}
-          className="px-3 py-1.5 text-xs font-medium text-stone-600 bg-stone-100 rounded-lg hover:bg-stone-200 transition-colors"
+          className="px-3 py-1.5 text-xs font-medium text-ink-muted bg-line/50 rounded-lg hover:bg-stone-200 transition-colors"
         >
           {es ? "Cancelar" : "Cancel"}
         </button>
@@ -47,7 +47,7 @@ export function DeletePetButton({ petId }: { petId: string }) {
   return (
     <button
       onClick={() => setConfirming(true)}
-      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-danger hover:bg-danger-soft rounded-lg transition-colors"
     >
       <Trash2 className="w-3.5 h-3.5" />
       {es ? "Eliminar" : "Delete"}

@@ -7,9 +7,9 @@ import { toast } from "sonner";
 import { UserPlus } from "lucide-react";
 
 const roles = [
-  { value: "owner", labelEs: "Dueño", labelEn: "Owner", color: "border-blue-500 bg-blue-50 text-blue-700" },
-  { value: "sitter", labelEs: "Cuidador", labelEn: "Sitter", color: "border-green-500 bg-green-50 text-green-700" },
-  { value: "admin", labelEs: "Admin", labelEn: "Admin", color: "border-red-500 bg-red-50 text-red-700" },
+  { value: "owner", labelEs: "Dueño", labelEn: "Owner", color: "border-line bg-line/40 text-ink" },
+  { value: "sitter", labelEs: "Cuidador", labelEn: "Sitter", color: "border-brand bg-brand-soft text-brand-ink" },
+  { value: "admin", labelEs: "Admin", labelEn: "Admin", color: "border-danger/70 bg-danger-soft text-danger" },
 ];
 
 export function AdminInviteForm() {
@@ -54,8 +54,8 @@ export function AdminInviteForm() {
   return (
     <Card padding="lg">
       <div className="flex items-center gap-3 mb-4">
-        <UserPlus className="w-5 h-5 text-green-600" />
-        <h3 className="font-semibold text-stone-900">
+        <UserPlus className="w-5 h-5 text-brand" />
+        <h3 className="font-semibold text-ink">
           {es ? "Invitar usuario" : "Invite user"}
         </h3>
       </div>
@@ -63,7 +63,7 @@ export function AdminInviteForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Role selection */}
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-2">
+          <label className="block text-sm font-medium text-ink mb-2">
             {es ? "Tipo de cuenta" : "Account type"}
           </label>
           <div className="flex gap-2">
@@ -75,7 +75,7 @@ export function AdminInviteForm() {
                 className={`px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-all ${
                   role === r.value
                     ? r.color
-                    : "border-stone-200 bg-white text-stone-500 hover:border-stone-300"
+                    : "border-line bg-surface text-ink-muted hover:border-stone-300"
                 }`}
               >
                 {es ? r.labelEs : r.labelEn}

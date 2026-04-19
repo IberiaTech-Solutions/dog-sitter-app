@@ -110,13 +110,13 @@ export default async function DashboardPage({ params }: Props) {
         hasInsurance={insuranceDone ?? false}
       />
 
-      <h1 className="text-2xl font-bold text-stone-900">
+      <h1 className="text-2xl font-bold text-ink">
         {locale === "es" ? "Mis reservas" : "My bookings"}
       </h1>
 
       {!bookings || bookings.length === 0 ? (
         <Card className="mt-6 text-center py-12">
-          <p className="text-stone-400">
+          <p className="text-ink-soft">
             {locale === "es"
               ? "No tienes reservas todavía."
               : "You don't have any bookings yet."}
@@ -142,10 +142,10 @@ export default async function DashboardPage({ params }: Props) {
                   <div className="flex items-center gap-3.5 flex-1 min-w-0">
                     <Avatar name={otherPerson?.full_name ?? "?"} />
                     <div className="min-w-0">
-                      <p className="font-semibold text-stone-900 truncate">
+                      <p className="font-semibold text-ink truncate">
                         {otherPerson?.full_name}
                       </p>
-                      <p className="text-sm text-stone-400">
+                      <p className="text-sm text-ink-soft">
                         {booking.is_meet_greet ? (
                           booking.owner_notes
                             ? booking.owner_notes.length > 60
@@ -173,7 +173,7 @@ export default async function DashboardPage({ params }: Props) {
                   </div>
                   <div className="flex items-center gap-3 sm:shrink-0">
                     {!booking.is_meet_greet && (
-                      <span className="text-sm font-semibold text-stone-900">
+                      <span className="text-sm font-semibold text-ink">
                         {Number(booking.total_amount)
                           .toFixed(2)
                           .replace(".", ",")} €

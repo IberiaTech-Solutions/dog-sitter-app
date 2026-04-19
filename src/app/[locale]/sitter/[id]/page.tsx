@@ -82,45 +82,45 @@ export default async function SitterProfilePage({ params }: Props) {
                 <Avatar name={profile.full_name} src={profile.avatar_url} size="xl" />
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
-                    <h1 className="text-2xl font-bold text-stone-900">
+                    <h1 className="text-2xl font-bold text-ink">
                       {profile.full_name}
                     </h1>
                     {sitterProfile.is_verified && (
-                      <div className="flex items-center gap-1.5 bg-green-50 border border-green-200/60 rounded-full px-3 py-1">
-                        <Shield className="w-3.5 h-3.5 text-green-600" />
-                        <span className="text-xs font-medium text-green-700">
+                      <div className="flex items-center gap-1.5 bg-brand-soft border border-brand/40 rounded-full px-3 py-1">
+                        <Shield className="w-3.5 h-3.5 text-brand" />
+                        <span className="text-xs font-medium text-brand-ink">
                           {t("sitter.verified")}
                         </span>
                       </div>
                     )}
                     {sitterProfile.has_insurance && (
-                      <div className="flex items-center gap-1.5 bg-blue-50 border border-blue-200/60 rounded-full px-3 py-1">
-                        <Shield className="w-3.5 h-3.5 text-blue-600" />
-                        <span className="text-xs font-medium text-blue-700">
+                      <div className="flex items-center gap-1.5 bg-line/40 border border-line rounded-full px-3 py-1">
+                        <Shield className="w-3.5 h-3.5 text-ink-muted" />
+                        <span className="text-xs font-medium text-ink">
                           {es ? "Asegurado" : "Insured"}
                         </span>
                       </div>
                     )}
                   </div>
                   {profile.city && (
-                    <div className="flex items-center gap-1.5 mt-1.5 text-sm text-stone-500">
+                    <div className="flex items-center gap-1.5 mt-1.5 text-sm text-ink-muted">
                       <MapPin className="w-3.5 h-3.5" />
                       {profile.city}
                     </div>
                   )}
                   {avgRating !== null && (
                     <div className="flex items-center gap-2 mt-2">
-                      <div className="flex text-amber-400">
+                      <div className="flex text-warning">
                         {[...Array(5)].map((_, i) => (
-                          <Star key={i} className={`w-4 h-4 ${i < Math.round(avgRating) ? "fill-current" : "text-stone-200"}`} />
+                          <Star key={i} className={`w-4 h-4 ${i < Math.round(avgRating) ? "fill-current" : "text-ink-soft"}`} />
                         ))}
                       </div>
-                      <span className="text-sm font-medium text-stone-700">{avgRating.toFixed(1)}</span>
-                      <span className="text-sm text-stone-400">({reviews!.length} {t("sitter.reviews")})</span>
+                      <span className="text-sm font-medium text-ink">{avgRating.toFixed(1)}</span>
+                      <span className="text-sm text-ink-soft">({reviews!.length} {t("sitter.reviews")})</span>
                     </div>
                   )}
                   {profile.bio && (
-                    <p className="mt-4 text-stone-600 leading-relaxed">{profile.bio}</p>
+                    <p className="mt-4 text-ink-muted leading-relaxed">{profile.bio}</p>
                   )}
                 </div>
               </div>
@@ -128,7 +128,7 @@ export default async function SitterProfilePage({ params }: Props) {
 
             {/* Services */}
             <Card padding="lg">
-              <h2 className="font-semibold text-stone-900 mb-4">
+              <h2 className="font-semibold text-ink mb-4">
                 {es ? "Servicios" : "Services"}
               </h2>
               <div className="flex flex-wrap gap-2">
@@ -139,23 +139,23 @@ export default async function SitterProfilePage({ params }: Props) {
                 ))}
               </div>
 
-              <h3 className="font-medium text-stone-700 mt-6 mb-3">
+              <h3 className="font-medium text-ink mt-6 mb-3">
                 {es ? "Tipos de mascotas" : "Pet types"}
               </h3>
               <div className="flex gap-3">
                 {(sitterProfile.pet_types as string[]).map((pet: string) => {
                   const Icon = speciesIcons[pet] ?? PawPrint;
                   return (
-                    <div key={pet} className="flex items-center gap-2 bg-stone-50 rounded-xl px-4 py-2.5">
-                      <Icon className="w-5 h-5 text-stone-500" />
-                      <span className="text-sm text-stone-700 capitalize">{pet}</span>
+                    <div key={pet} className="flex items-center gap-2 bg-canvas rounded-xl px-4 py-2.5">
+                      <Icon className="w-5 h-5 text-ink-muted" />
+                      <span className="text-sm text-ink capitalize">{pet}</span>
                     </div>
                   );
                 })}
               </div>
 
               {sitterProfile.experience_years && (
-                <div className="flex items-center gap-2 mt-6 text-sm text-stone-500">
+                <div className="flex items-center gap-2 mt-6 text-sm text-ink-muted">
                   <Clock className="w-4 h-4" />
                   {sitterProfile.experience_years} {es ? "años de experiencia" : "years experience"}
                 </div>
@@ -163,33 +163,33 @@ export default async function SitterProfilePage({ params }: Props) {
 
               {/* Response stats + repeat clients */}
               {(responseStats && (responseStats as { total_requests: number }).total_requests > 0) || repeatClients > 0 ? (
-                <div className="flex items-center gap-4 mt-4 pt-4 border-t border-stone-100">
+                <div className="flex items-center gap-4 mt-4 pt-4 border-t border-line">
                   {responseStats && (responseStats as { total_requests: number }).total_requests > 0 && (
                     <div className="text-center">
-                      <p className="text-lg font-bold text-green-600">
+                      <p className="text-lg font-bold text-brand">
                         {(responseStats as { response_rate: number }).response_rate}%
                       </p>
-                      <p className="text-xs text-stone-400">
+                      <p className="text-xs text-ink-soft">
                         {es ? "Tasa de respuesta" : "Response rate"}
                       </p>
                     </div>
                   )}
                   {responseStats && (responseStats as { avg_response_minutes: number }).avg_response_minutes > 0 && (
                     <div className="text-center">
-                      <p className="text-lg font-bold text-stone-900">
+                      <p className="text-lg font-bold text-ink">
                         {(responseStats as { avg_response_minutes: number }).avg_response_minutes < 60
                           ? `${(responseStats as { avg_response_minutes: number }).avg_response_minutes} min`
                           : `${Math.round((responseStats as { avg_response_minutes: number }).avg_response_minutes / 60)}h`}
                       </p>
-                      <p className="text-xs text-stone-400">
+                      <p className="text-xs text-ink-soft">
                         {es ? "Tiempo de respuesta" : "Response time"}
                       </p>
                     </div>
                   )}
                   {repeatClients > 0 && (
                     <div className="text-center">
-                      <p className="text-lg font-bold text-stone-900">{repeatClients}</p>
-                      <p className="text-xs text-stone-400">
+                      <p className="text-lg font-bold text-ink">{repeatClients}</p>
+                      <p className="text-xs text-ink-soft">
                         {es ? "Clientes que repiten" : "Repeat clients"}
                       </p>
                     </div>
@@ -199,24 +199,24 @@ export default async function SitterProfilePage({ params }: Props) {
 
               {/* Home details */}
               {(sitterProfile.home_type || sitterProfile.has_own_pets) && (
-                <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t border-stone-100">
+                <div className="flex flex-wrap gap-3 mt-4 pt-4 border-t border-line">
                   {sitterProfile.home_type && (
-                    <span className="text-xs bg-stone-50 text-stone-600 px-3 py-1.5 rounded-full">
+                    <span className="text-xs bg-canvas text-ink-muted px-3 py-1.5 rounded-full">
                       {sitterProfile.home_type === "house" ? (es ? "Casa" : "House") : (es ? "Piso" : "Apartment")}
                     </span>
                   )}
                   {sitterProfile.has_yard && (
-                    <span className="text-xs bg-green-50 text-green-600 px-3 py-1.5 rounded-full">
+                    <span className="text-xs bg-brand-soft text-brand px-3 py-1.5 rounded-full">
                       {es ? "Con jardín" : "Has yard"}
                     </span>
                   )}
                   {sitterProfile.has_children && (
-                    <span className="text-xs bg-amber-50 text-amber-600 px-3 py-1.5 rounded-full">
+                    <span className="text-xs bg-warning/10 text-warning-ink px-3 py-1.5 rounded-full">
                       {es ? "Niños en casa" : "Children at home"}
                     </span>
                   )}
                   {sitterProfile.has_own_pets && (
-                    <span className="text-xs bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full">
+                    <span className="text-xs bg-line/40 text-ink-muted px-3 py-1.5 rounded-full">
                       {sitterProfile.has_own_pets}
                     </span>
                   )}
@@ -227,10 +227,10 @@ export default async function SitterProfilePage({ params }: Props) {
             {/* Cancellation policy */}
             {sitterProfile.cancellation_policy && (
               <Card padding="md">
-                <p className="text-sm font-medium text-stone-700">
+                <p className="text-sm font-medium text-ink">
                   {es ? "Política de cancelación" : "Cancellation policy"}
                 </p>
-                <p className="text-sm text-stone-500 mt-1">
+                <p className="text-sm text-ink-muted mt-1">
                   {{
                     flexible: es
                       ? "Flexible — Reembolso completo hasta 24h antes del inicio"
@@ -248,7 +248,7 @@ export default async function SitterProfilePage({ params }: Props) {
 
             {/* Availability */}
             <div>
-              <h2 className="text-lg font-semibold text-stone-900 mb-4">
+              <h2 className="text-lg font-semibold text-ink mb-4">
                 {es ? "Disponibilidad" : "Availability"}
               </h2>
               <AvailabilityCalendar sitterId={id} isEditable={false} />
@@ -257,7 +257,7 @@ export default async function SitterProfilePage({ params }: Props) {
             {/* Reviews */}
             {reviews && reviews.length > 0 && (
               <div>
-                <h2 className="text-lg font-semibold text-stone-900 mb-4">
+                <h2 className="text-lg font-semibold text-ink mb-4">
                   {t("sitter.reviews")} ({reviews.length})
                 </h2>
                 <div className="space-y-3">
@@ -269,21 +269,21 @@ export default async function SitterProfilePage({ params }: Props) {
                           <Avatar name={reviewer?.full_name ?? "?"} src={reviewer?.avatar_url} size="sm" />
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
-                              <p className="text-sm font-medium text-stone-900">
+                              <p className="text-sm font-medium text-ink">
                                 {reviewer?.full_name}
                               </p>
-                              <div className="flex text-amber-400">
+                              <div className="flex text-warning">
                                 {[...Array(5)].map((_, i) => (
-                                  <Star key={i} className={`w-3.5 h-3.5 ${i < review.rating ? "fill-current" : "text-stone-200"}`} />
+                                  <Star key={i} className={`w-3.5 h-3.5 ${i < review.rating ? "fill-current" : "text-ink-soft"}`} />
                                 ))}
                               </div>
                             </div>
                             {review.comment && (
-                              <p className="mt-2 text-sm text-stone-600 leading-relaxed">
+                              <p className="mt-2 text-sm text-ink-muted leading-relaxed">
                                 {review.comment}
                               </p>
                             )}
-                            <p className="mt-2 text-xs text-stone-400">
+                            <p className="mt-2 text-xs text-ink-soft">
                               {new Date(review.created_at).toLocaleDateString(
                                 es ? "es-ES" : "en-GB",
                                 { day: "numeric", month: "long", year: "numeric" }
@@ -302,22 +302,22 @@ export default async function SitterProfilePage({ params }: Props) {
           {/* Sticky sidebar — booking card */}
           <div className="lg:col-span-1">
             <div className="lg:sticky lg:top-20">
-              <Card padding="lg" className="border-green-100">
+              <Card padding="lg" className="border-brand-soft">
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-stone-900">
+                  <p className="text-3xl font-bold text-ink">
                     {Number(sitterProfile.hourly_rate).toFixed(0)}€
                   </p>
-                  <p className="text-sm text-stone-400 mt-1">{t("sitter.perVisit")}</p>
+                  <p className="text-sm text-ink-soft mt-1">{t("sitter.perVisit")}</p>
                 </div>
 
                 {avgRating !== null && (
                   <div className="flex items-center justify-center gap-2 mt-4">
-                    <div className="flex text-amber-400">
+                    <div className="flex text-warning">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} className={`w-4 h-4 ${i < Math.round(avgRating) ? "fill-current" : "text-stone-200"}`} />
+                        <Star key={i} className={`w-4 h-4 ${i < Math.round(avgRating) ? "fill-current" : "text-ink-soft"}`} />
                       ))}
                     </div>
-                    <span className="text-sm text-stone-600">{avgRating.toFixed(1)} ({reviews!.length})</span>
+                    <span className="text-sm text-ink-muted">{avgRating.toFixed(1)} ({reviews!.length})</span>
                   </div>
                 )}
 
@@ -334,13 +334,13 @@ export default async function SitterProfilePage({ params }: Props) {
                 {(sitterProfile.is_verified || sitterProfile.has_insurance) && (
                   <div className="mt-4 space-y-1.5">
                     {sitterProfile.is_verified && (
-                      <div className="flex items-center gap-2 justify-center text-xs text-green-700">
+                      <div className="flex items-center gap-2 justify-center text-xs text-brand-ink">
                         <Shield className="w-3.5 h-3.5" />
                         {es ? "Identidad verificada" : "Identity verified"}
                       </div>
                     )}
                     {sitterProfile.has_insurance && (
-                      <div className="flex items-center gap-2 justify-center text-xs text-blue-700">
+                      <div className="flex items-center gap-2 justify-center text-xs text-ink">
                         <Shield className="w-3.5 h-3.5" />
                         {es ? "Seguro de responsabilidad civil" : "Liability insurance"}
                       </div>
@@ -350,12 +350,12 @@ export default async function SitterProfilePage({ params }: Props) {
               </Card>
 
               {/* Guarantee mini */}
-              <div className="mt-4 rounded-2xl bg-green-50 border border-green-100 p-5">
+              <div className="mt-4 rounded-2xl bg-brand-soft border border-brand-soft p-5">
                 <div className="flex items-center gap-2 mb-2">
-                  <Shield className="w-4 h-4 text-green-600" />
-                  <span className="text-sm font-semibold text-green-800">{t("home.guarantee")}</span>
+                  <Shield className="w-4 h-4 text-brand" />
+                  <span className="text-sm font-semibold text-brand-ink">{t("home.guarantee")}</span>
                 </div>
-                <p className="text-xs text-green-700 leading-relaxed">
+                <p className="text-xs text-brand-ink leading-relaxed">
                   {t("home.guaranteeDesc")}
                 </p>
               </div>
@@ -379,9 +379,9 @@ export default async function SitterProfilePage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
+    <div className="min-h-screen bg-canvas">
       <Header appName={t("common.appName")} isLoggedIn={false}>
-        <Link href="/login" className="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">
+        <Link href="/login" className="text-sm font-medium text-ink-muted hover:text-ink transition-colors">
           {t("common.login")}
         </Link>
       </Header>

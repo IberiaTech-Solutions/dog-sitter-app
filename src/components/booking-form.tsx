@@ -221,7 +221,7 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
     <form onSubmit={handleSubmit} className="mt-6 space-y-6">
       {/* Service type */}
       <Card>
-        <label className="block text-sm font-medium text-stone-700">
+        <label className="block text-sm font-medium text-ink">
           {t("booking.selectService")}
         </label>
         <div className="mt-3 grid grid-cols-2 gap-3">
@@ -232,8 +232,8 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
               onClick={() => setServiceType(s)}
               className={`rounded-lg border px-4 py-3 text-sm font-medium transition-colors ${
                 serviceType === s
-                  ? "border-green-600 bg-green-50 text-green-700"
-                  : "border-stone-300 text-stone-600 hover:border-stone-400"
+                  ? "border-brand bg-brand-soft text-brand-ink"
+                  : "border-line text-ink-muted hover:border-stone-400"
               }`}
             >
               {serviceLabels[locale]?.[s] ?? s}
@@ -261,10 +261,10 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
 
       {/* Date selection calendar */}
       <Card>
-        <label className="block text-sm font-medium text-stone-700 mb-1">
+        <label className="block text-sm font-medium text-ink mb-1">
           {t("booking.selectDates")}
         </label>
-        <p className="text-xs text-stone-400 mb-4">
+        <p className="text-xs text-ink-soft mb-4">
           {es
             ? startDate && !endDate
               ? "Selecciona el último día"
@@ -276,20 +276,20 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
 
         {/* Calendar */}
         <div className="flex items-center justify-between mb-3">
-          <button type="button" onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-stone-100 text-stone-500">
+          <button type="button" onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-stone-100 text-ink-muted">
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <span className="text-sm font-semibold text-stone-900">
+          <span className="text-sm font-semibold text-ink">
             {monthNames[lang][month]} {year}
           </span>
-          <button type="button" onClick={nextMonthFn} className="p-1.5 rounded-lg hover:bg-stone-100 text-stone-500">
+          <button type="button" onClick={nextMonthFn} className="p-1.5 rounded-lg hover:bg-stone-100 text-ink-muted">
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
 
         <div className="grid grid-cols-7 gap-1 mb-1">
           {dayNames[lang].map((d) => (
-            <div key={d} className="text-center text-xs font-medium text-stone-400 py-1">{d}</div>
+            <div key={d} className="text-center text-xs font-medium text-ink-soft py-1">{d}</div>
           ))}
         </div>
 
@@ -307,13 +307,13 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
 
             let bgClass: string;
             if (isStart || isEnd) {
-              bgClass = "bg-green-600 text-white font-bold";
+              bgClass = "bg-brand text-white font-bold";
             } else if (inRange) {
-              bgClass = "bg-green-100 text-green-700";
+              bgClass = "bg-brand-soft text-brand-ink";
             } else if (isPast || !isAvailable) {
-              bgClass = "bg-stone-50 text-stone-300 cursor-not-allowed";
+              bgClass = "bg-canvas text-ink-soft cursor-not-allowed";
             } else {
-              bgClass = "bg-green-50 text-green-600 border border-green-200 cursor-pointer hover:bg-green-100";
+              bgClass = "bg-brand-soft text-brand border border-brand/40 cursor-pointer hover:bg-brand-soft";
             }
 
             return (
@@ -333,18 +333,18 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center gap-4 mt-3 text-xs text-stone-400">
+        <div className="flex items-center gap-4 mt-3 text-xs text-ink-soft">
           <span className="flex items-center gap-1.5">
-            <span className="inline-block w-3 h-3 rounded bg-green-50 border border-green-200" />
+            <span className="inline-block w-3 h-3 rounded bg-brand-soft border border-brand/40" />
             {es ? "Disponible" : "Available"}
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="inline-block w-3 h-3 rounded bg-stone-50" />
+            <span className="inline-block w-3 h-3 rounded bg-canvas" />
             {es ? "No disponible" : "Unavailable"}
           </span>
           {startDate && (
             <span className="flex items-center gap-1.5">
-              <span className="inline-block w-3 h-3 rounded bg-green-600" />
+              <span className="inline-block w-3 h-3 rounded bg-brand" />
               {es ? "Seleccionado" : "Selected"}
             </span>
           )}
@@ -352,14 +352,14 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
 
         {/* Selected dates summary */}
         {startDate && (
-          <div className="mt-4 pt-3 border-t border-stone-100 flex items-center justify-between text-sm">
-            <span className="text-stone-500">
+          <div className="mt-4 pt-3 border-t border-line flex items-center justify-between text-sm">
+            <span className="text-ink-muted">
               {new Date(startDate).toLocaleDateString(es ? "es-ES" : "en-GB", { day: "numeric", month: "short" })}
               {endDate && endDate !== startDate && (
                 <> → {new Date(endDate).toLocaleDateString(es ? "es-ES" : "en-GB", { day: "numeric", month: "short" })}</>
               )}
             </span>
-            <span className="font-medium text-stone-700">
+            <span className="font-medium text-ink">
               {days} {days === 1 ? (es ? "día" : "day") : (es ? "días" : "days")}
             </span>
           </div>
@@ -384,15 +384,15 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
       {days > 0 && (
         <Card>
           <div className="space-y-2 text-sm">
-            <div className="flex justify-between text-stone-600">
+            <div className="flex justify-between text-ink-muted">
               <span>{formatEur(sitterRate)} x {days} {es ? "días" : "days"}</span>
               <span>{formatEur(subtotal)}</span>
             </div>
-            <div className="flex justify-between text-stone-600">
+            <div className="flex justify-between text-ink-muted">
               <span>{t("booking.commission")} (18%)</span>
               <span>{formatEur(commission)}</span>
             </div>
-            <div className="border-t border-stone-200 pt-2 flex justify-between font-semibold text-stone-900">
+            <div className="border-t border-line pt-2 flex justify-between font-semibold text-ink">
               <span>{t("booking.total")}</span>
               <span>{formatEur(total)}</span>
             </div>

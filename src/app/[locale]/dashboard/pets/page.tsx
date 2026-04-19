@@ -49,7 +49,7 @@ export default async function PetsPage({ params }: Props) {
       avatarUrl={profile?.avatar_url}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-stone-900">
+        <h1 className="text-2xl font-bold text-ink">
           {es ? "Mis mascotas" : "My pets"}
         </h1>
         <LinkButton href="/dashboard/pets/new" variant="primary" size="md">
@@ -60,13 +60,13 @@ export default async function PetsPage({ params }: Props) {
 
       {!pets || pets.length === 0 ? (
         <Card className="mt-8 text-center py-16">
-          <div className="w-20 h-20 rounded-3xl bg-amber-50 flex items-center justify-center mx-auto mb-5">
+          <div className="w-20 h-20 rounded-3xl bg-warning/10 flex items-center justify-center mx-auto mb-5">
             <PawPrint className="w-9 h-9 text-amber-300" />
           </div>
-          <h3 className="text-lg font-semibold text-stone-900">
+          <h3 className="text-lg font-semibold text-ink">
             {es ? "Aún no has añadido mascotas" : "No pets added yet"}
           </h3>
-          <p className="mt-2 text-sm text-stone-500 max-w-sm mx-auto">
+          <p className="mt-2 text-sm text-ink-muted max-w-sm mx-auto">
             {es
               ? "Añade tu primera mascota para poder buscar cuidadores y hacer reservas."
               : "Add your first pet to start searching for sitters and making bookings."}
@@ -88,30 +88,30 @@ export default async function PetsPage({ params }: Props) {
                       <Image src={pet.photo_url} alt={pet.name} width={80} height={80} className="object-cover w-full h-full" />
                     </div>
                   ) : (
-                    <div className="w-20 h-20 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0">
-                      <Icon className="w-8 h-8 text-amber-500" />
+                    <div className="w-20 h-20 rounded-2xl bg-warning/10 flex items-center justify-center shrink-0">
+                      <Icon className="w-8 h-8 text-warning" />
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-semibold text-stone-900 truncate">{pet.name}</h3>
+                        <h3 className="text-lg font-semibold text-ink truncate">{pet.name}</h3>
                         <Badge variant="amber">
                           {speciesLabels[locale]?.[pet.species] ?? pet.species}
                         </Badge>
                       </div>
                       <Link
                         href={`/dashboard/pets/${pet.id}`}
-                        className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-stone-500 hover:bg-stone-100 hover:text-stone-700 transition-colors"
+                        className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-ink-muted hover:bg-stone-100 hover:text-stone-700 transition-colors"
                       >
                         <Pencil className="w-3.5 h-3.5" />
                         {es ? "Editar" : "Edit"}
                       </Link>
                     </div>
                     {pet.breed && (
-                      <p className="text-sm text-stone-500 mt-0.5">{pet.breed}</p>
+                      <p className="text-sm text-ink-muted mt-0.5">{pet.breed}</p>
                     )}
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm text-stone-400">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm text-ink-soft">
                       {pet.age_years != null && (
                         <span>{pet.age_years} {es ? "años" : "yrs"}</span>
                       )}
@@ -125,23 +125,23 @@ export default async function PetsPage({ params }: Props) {
                   </div>
                 </div>
                 {(pet.medical_notes || pet.special_instructions) && (
-                  <div className="mt-4 pt-4 border-t border-stone-100 space-y-3">
+                  <div className="mt-4 pt-4 border-t border-line space-y-3">
                     {pet.medical_notes && (
                       <div>
-                        <p className="text-xs font-medium text-stone-500 mb-1">
+                        <p className="text-xs font-medium text-ink-muted mb-1">
                           {es ? "Notas médicas" : "Medical notes"}
                         </p>
-                        <p className="text-sm text-stone-600 bg-stone-50 rounded-xl px-4 py-2.5">
+                        <p className="text-sm text-ink-muted bg-canvas rounded-xl px-4 py-2.5">
                           {pet.medical_notes}
                         </p>
                       </div>
                     )}
                     {pet.special_instructions && (
                       <div>
-                        <p className="text-xs font-medium text-stone-500 mb-1">
+                        <p className="text-xs font-medium text-ink-muted mb-1">
                           {es ? "Instrucciones para el cuidador" : "Instructions for the sitter"}
                         </p>
-                        <p className="text-sm text-stone-600 bg-stone-50 rounded-xl px-4 py-2.5">
+                        <p className="text-sm text-ink-muted bg-canvas rounded-xl px-4 py-2.5">
                           {pet.special_instructions}
                         </p>
                       </div>

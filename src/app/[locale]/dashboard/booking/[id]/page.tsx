@@ -57,13 +57,13 @@ export default async function ActiveBookingPage({ params }: Props) {
       avatarUrl={profile?.avatar_url}
     >
       {/* Booking summary */}
-      <div className="rounded-2xl bg-white border border-stone-100 p-6 shadow-sm">
+      <div className="rounded-2xl bg-surface border border-line p-6 shadow-sm">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-stone-900">
+            <h1 className="text-xl font-bold text-ink">
               {petName} — {otherName}
             </h1>
-            <p className="mt-1 text-sm text-stone-500">
+            <p className="mt-1 text-sm text-ink-muted">
               {new Date(booking.start_date).toLocaleDateString(
                 locale === "es" ? "es-ES" : "en-GB"
               )}{" "}

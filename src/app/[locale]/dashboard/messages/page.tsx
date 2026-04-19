@@ -82,12 +82,12 @@ export default async function MessagesPage({ params }: Props) {
       userRole={profile?.role ?? "owner"}
       avatarUrl={profile?.avatar_url}
     >
-      <h1 className="text-2xl font-bold text-stone-900">
+      <h1 className="text-2xl font-bold text-ink">
         {locale === "es" ? "Mensajes" : "Messages"}
       </h1>
 
       {conversations.length === 0 ? (
-        <p className="mt-6 text-sm text-stone-500">
+        <p className="mt-6 text-sm text-ink-muted">
           {locale === "es"
             ? "No tienes mensajes todavía."
             : "You don't have any messages yet."}

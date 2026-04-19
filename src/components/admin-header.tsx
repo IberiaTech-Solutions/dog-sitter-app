@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { LayoutDashboard } from "lucide-react";
 import { UserMenu } from "./user-menu";
+import { Logo } from "./logo";
 
 type Props = {
   appName: string;
@@ -13,12 +14,12 @@ export function AdminHeader({ appName, locale, userName, avatarUrl }: Props) {
   const es = locale === "es";
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-stone-200/60">
+    <header className="sticky top-0 z-50 bg-canvas border-b border-line">
       <div className="mx-auto max-w-6xl flex items-center justify-between px-5 py-3 sm:px-8">
         <div className="flex items-center gap-4">
           <Link href="/dashboard" className="flex items-center gap-2.5">
-            <img src="/icons/icon-192.png" alt="" width={32} height={32} className="rounded-lg" />
-            <span className="text-lg font-bold text-stone-900 tracking-tight hidden sm:inline">
+            <Logo size={32} />
+            <span className="text-lg font-bold text-ink tracking-tight hidden sm:inline">
               {appName}
             </span>
           </Link>

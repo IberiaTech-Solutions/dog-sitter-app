@@ -55,22 +55,22 @@ export function AdminBookingActions({ bookingId, currentStatus }: Props) {
       <button
         onClick={() => setShowMenu(!showMenu)}
         disabled={loading}
-        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors"
+        className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-ink-muted hover:text-ink hover:bg-canvas rounded-lg transition-colors"
       >
         <RefreshCw className="w-3.5 h-3.5" />
         {es ? "Estado" : "Status"}
       </button>
       {showMenu && (
-        <div className="absolute right-0 top-full mt-1 z-10 bg-white border border-stone-200 rounded-xl shadow-lg py-1 min-w-[140px]">
+        <div className="absolute right-0 top-full mt-1 z-10 bg-surface border border-line rounded-xl shadow-md py-1 min-w-[140px]">
           {statuses.map((s) => (
             <button
               key={s.value}
               onClick={() => handleStatusChange(s.value)}
               disabled={loading}
-              className={`w-full text-left px-4 py-2 text-sm hover:bg-stone-50 transition-colors ${
+              className={`w-full text-left px-4 py-2 text-sm hover:bg-canvas transition-colors ${
                 s.value === currentStatus
-                  ? "font-semibold text-green-600"
-                  : "text-stone-700"
+                  ? "font-semibold text-brand"
+                  : "text-ink"
               }`}
             >
               {s.label}

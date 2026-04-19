@@ -28,12 +28,12 @@ export default async function AdminSittersPage({ params }: Props) {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
+    <div className="min-h-screen bg-canvas">
       <AdminHeader appName={t("common.appName")} locale={locale} userName={profile.full_name} avatarUrl={profile.avatar_url} />
 
       <PageShell>
         <div className="flex items-center gap-3 mb-6">
-          <h1 className="text-2xl font-bold text-stone-900">
+          <h1 className="text-2xl font-bold text-ink">
             {es ? "Gestión de cuidadores" : "Sitter management"}
           </h1>
         </div>
@@ -43,7 +43,7 @@ export default async function AdminSittersPage({ params }: Props) {
         {/* Pending verifications */}
         {pendingVerificationsList && pendingVerificationsList.length > 0 && (
           <div className="mt-8">
-            <h2 className="text-lg font-semibold text-stone-900 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-ink flex items-center gap-2">
               {es ? "Verificaciones pendientes" : "Pending verifications"}
               <Badge variant="amber">{pendingVerificationsList.length}</Badge>
             </h2>
@@ -54,13 +54,13 @@ export default async function AdminSittersPage({ params }: Props) {
                     <div className="flex items-center gap-3">
                       <Avatar name={(v.user as unknown as { full_name: string })?.full_name ?? "?"} />
                       <div>
-                        <p className="font-semibold text-stone-900">
+                        <p className="font-semibold text-ink">
                           {(v.user as unknown as { full_name: string })?.full_name}
                         </p>
-                        <p className="text-sm text-stone-400">
+                        <p className="text-sm text-ink-soft">
                           {(v.user as unknown as { email: string })?.email}
                         </p>
-                        <p className="text-xs text-stone-400">
+                        <p className="text-xs text-ink-soft">
                           {v.type === "dni_nie" ? "DNI/NIE" : v.type === "sitter_insurance" ? (es ? "Seguro RC" : "Insurance") : v.type === "background_check" ? (es ? "Antecedentes" : "Background") : v.type}
                         </p>
                       </div>
@@ -80,13 +80,13 @@ export default async function AdminSittersPage({ params }: Props) {
 
         {/* All sitters */}
         <div className="mt-8">
-          <h2 className="text-lg font-semibold text-stone-900">
+          <h2 className="text-lg font-semibold text-ink">
             {es ? "Todos los cuidadores" : "All sitters"} ({sitters?.length ?? 0})
           </h2>
           <div className="mt-4 space-y-3">
             {!sitters || sitters.length === 0 ? (
               <Card className="text-center py-8">
-                <p className="text-stone-400">
+                <p className="text-ink-soft">
                   {es ? "No hay cuidadores registrados." : "No sitters registered yet."}
                 </p>
               </Card>
@@ -104,25 +104,25 @@ export default async function AdminSittersPage({ params }: Props) {
                         <Avatar name={profile?.full_name ?? "?"} />
                         <div>
                           <div className="flex items-center gap-2">
-                            <p className="font-semibold text-stone-900">{profile?.full_name}</p>
+                            <p className="font-semibold text-ink">{profile?.full_name}</p>
                             {sitter.is_verified ? (
                               <Badge variant="green">{es ? "Verificado" : "Verified"}</Badge>
                             ) : (
                               <Badge variant="amber">{es ? "Sin verificar" : "Unverified"}</Badge>
                             )}
                           </div>
-                          <p className="text-sm text-stone-400">{profile?.email}</p>
+                          <p className="text-sm text-ink-soft">{profile?.email}</p>
                           {profile?.city && (
-                            <p className="text-xs text-stone-400">{profile.city}</p>
+                            <p className="text-xs text-ink-soft">{profile.city}</p>
                           )}
                         </div>
                       </div>
                       <div className="flex items-center gap-4 text-sm">
                         <div className="text-right">
-                          <p className="font-semibold text-stone-900">
+                          <p className="font-semibold text-ink">
                             {Number(sitter.hourly_rate).toFixed(0)}€
                           </p>
-                          <p className="text-xs text-stone-400">{es ? "por visita" : "per visit"}</p>
+                          <p className="text-xs text-ink-soft">{es ? "por visita" : "per visit"}</p>
                         </div>
                         <Badge variant={sitter.is_available ? "green" : "stone"}>
                           {sitter.is_available ? (es ? "Disponible" : "Available") : (es ? "No disponible" : "Unavailable")}

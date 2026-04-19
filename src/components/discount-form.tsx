@@ -67,25 +67,25 @@ export function DiscountForm() {
     <Card padding="lg">
       <form onSubmit={handleSubmit} className="grid gap-4 sm:grid-cols-2">
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-1.5">
+          <label className="block text-sm font-medium text-ink mb-1.5">
             {es ? "Nombre del partner" : "Partner name"}
           </label>
           <input
             required
             value={form.partner_name}
             onChange={(e) => update("partner_name", e.target.value)}
-            className="w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
             placeholder="Veterinaria San Marcos"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-1.5">
+          <label className="block text-sm font-medium text-ink mb-1.5">
             {es ? "Tipo" : "Type"}
           </label>
           <select
             value={form.partner_type}
             onChange={(e) => update("partner_type", e.target.value)}
-            className="w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
           >
             <option value="vet">{es ? "Veterinario" : "Vet"}</option>
             <option value="pet_shop">{es ? "Tienda" : "Pet shop"}</option>
@@ -94,19 +94,19 @@ export function DiscountForm() {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-1.5">
+          <label className="block text-sm font-medium text-ink mb-1.5">
             {es ? "Código de descuento" : "Discount code"}
           </label>
           <input
             required
             value={form.discount_code}
             onChange={(e) => update("discount_code", e.target.value)}
-            className="w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm font-mono focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm font-mono focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
             placeholder="VETGIJON10"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-1.5">
+          <label className="block text-sm font-medium text-ink mb-1.5">
             {es ? "Porcentaje de descuento" : "Discount %"}
           </label>
           <input
@@ -116,41 +116,41 @@ export function DiscountForm() {
             max="100"
             value={form.discount_percent}
             onChange={(e) => update("discount_percent", e.target.value)}
-            className="w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-1.5">
+          <label className="block text-sm font-medium text-ink mb-1.5">
             {es ? "Descripción (español)" : "Description (Spanish)"}
           </label>
           <input
             required
             value={form.description_es}
             onChange={(e) => update("description_es", e.target.value)}
-            className="w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
             placeholder="10% en primera consulta"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-1.5">
+          <label className="block text-sm font-medium text-ink mb-1.5">
             {es ? "Descripción (inglés)" : "Description (English)"}
           </label>
           <input
             value={form.description_en}
             onChange={(e) => update("description_en", e.target.value)}
-            className="w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
             placeholder="10% off first visit"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-1.5">
+          <label className="block text-sm font-medium text-ink mb-1.5">
             {es ? "Ciudad" : "City"}
           </label>
           <input
             required
             value={form.city}
             onChange={(e) => update("city", e.target.value)}
-            className="w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+            className="w-full rounded-xl border border-line bg-canvas px-4 py-2.5 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
           />
         </div>
         <div className="flex items-end">
@@ -159,7 +159,7 @@ export function DiscountForm() {
           </Button>
         </div>
         {error && (
-          <p className="sm:col-span-2 text-sm text-red-600">{error}</p>
+          <p className="sm:col-span-2 text-sm text-danger">{error}</p>
         )}
       </form>
     </Card>

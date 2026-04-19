@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { MapPin } from "lucide-react";
 import { Header, PageShell, LinkButton, DashboardShell } from "@/components/ui";
 import { SitterSearch } from "@/components/sitter-search";
 
@@ -17,18 +16,9 @@ export default async function SearchPage({ params }: Props) {
 
   const searchContent = (
     <>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
-            <MapPin className="w-5 h-5 text-green-600" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-stone-900">
-              {t("sitter.nearYou")}
-            </h1>
-          </div>
-        </div>
-      </div>
+      <h1 className="font-serif text-2xl sm:text-3xl font-semibold text-ink tracking-tight">
+        {t("sitter.nearYou")}
+      </h1>
       <SitterSearch />
     </>
   );
@@ -54,9 +44,12 @@ export default async function SearchPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
+    <div className="min-h-screen bg-canvas">
       <Header appName={t("common.appName")} isLoggedIn={false}>
-        <Link href="/login" className="text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">
+        <Link
+          href="/login"
+          className="inline-flex items-center px-3 py-2.5 min-h-11 text-sm font-medium text-ink-muted hover:text-ink transition-colors"
+        >
           {t("common.login")}
         </Link>
         <LinkButton href="/signup" variant="primary" size="sm">

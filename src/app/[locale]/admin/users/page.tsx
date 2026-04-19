@@ -28,12 +28,12 @@ export default async function AdminUsersPage({ params }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
+    <div className="min-h-screen bg-canvas">
       <AdminHeader appName={t("common.appName")} locale={locale} userName={profile.full_name} avatarUrl={profile.avatar_url} />
 
       <PageShell>
         <div className="flex items-center gap-3 mb-6">
-          <h1 className="text-2xl font-bold text-stone-900">
+          <h1 className="text-2xl font-bold text-ink">
             {es ? "Todos los usuarios" : "All users"} ({users?.length ?? 0})
           </h1>
         </div>
@@ -47,7 +47,7 @@ export default async function AdminUsersPage({ params }: Props) {
         <div className="mt-8 space-y-3">
           {!users || users.length === 0 ? (
             <Card className="text-center py-8">
-              <p className="text-stone-400">{es ? "No hay usuarios." : "No users yet."}</p>
+              <p className="text-ink-soft">{es ? "No hay usuarios." : "No users yet."}</p>
             </Card>
           ) : (
             users.map((user) => {
@@ -59,15 +59,15 @@ export default async function AdminUsersPage({ params }: Props) {
                       <Avatar name={user.full_name || "?"} src={user.avatar_url} />
                       <div>
                         <div className="flex items-center gap-2">
-                          <p className="font-semibold text-stone-900">{user.full_name || "—"}</p>
+                          <p className="font-semibold text-ink">{user.full_name || "—"}</p>
                           <Badge variant={config?.variant ?? "stone"}>
                             {es ? config?.labelEs : config?.labelEn}
                           </Badge>
                         </div>
-                        <p className="text-sm text-stone-400">{user.email}</p>
+                        <p className="text-sm text-ink-soft">{user.email}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 text-sm text-stone-400">
+                    <div className="flex items-center gap-4 text-sm text-ink-soft">
                       {user.city && <span>{user.city}</span>}
                       <span>{user.locale.toUpperCase()}</span>
                       <span>

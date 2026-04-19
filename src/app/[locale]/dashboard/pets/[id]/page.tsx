@@ -42,7 +42,7 @@ export default async function EditPetPage({ params }: Props) {
       avatarUrl={profile?.avatar_url}
     >
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold text-stone-900">
+        <h1 className="text-2xl font-bold text-ink">
           {es ? `Editar ${pet.name}` : `Edit ${pet.name}`}
         </h1>
         <DeletePetButton petId={id} />

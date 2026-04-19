@@ -199,7 +199,7 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
     <form onSubmit={handleSubmit} className="mt-6 space-y-6">
       {/* Services */}
       <Card>
-        <label className="block text-sm font-medium text-stone-700">
+        <label className="block text-sm font-medium text-ink">
           {locale === "es" ? "Servicios que ofreces" : "Services you offer"}
         </label>
         <div className="mt-3 grid grid-cols-2 gap-3">
@@ -210,8 +210,8 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
               onClick={() => toggleItem(services, s, setServices)}
               className={`rounded-lg border px-4 py-3 text-sm font-medium transition-colors ${
                 services.includes(s)
-                  ? "border-green-600 bg-green-50 text-green-700"
-                  : "border-stone-300 text-stone-600 hover:border-stone-400"
+                  ? "border-brand bg-brand-soft text-brand-ink"
+                  : "border-line text-ink-muted hover:border-stone-400"
               }`}
             >
               {serviceLabels[locale]?.[s] ?? s}
@@ -222,7 +222,7 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
 
       {/* Pet types */}
       <Card>
-        <label className="block text-sm font-medium text-stone-700">
+        <label className="block text-sm font-medium text-ink">
           {locale === "es" ? "Tipos de mascotas" : "Pet types"}
         </label>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -233,8 +233,8 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
               onClick={() => toggleItem(petTypes, p, setPetTypes)}
               className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                 petTypes.includes(p)
-                  ? "border-green-600 bg-green-50 text-green-700"
-                  : "border-stone-300 text-stone-600 hover:border-stone-400"
+                  ? "border-brand bg-brand-soft text-brand-ink"
+                  : "border-line text-ink-muted hover:border-stone-400"
               }`}
             >
               {petTypeLabels[locale]?.[p] ?? p}
@@ -292,13 +292,13 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
                 : "Use my current location"}
           </Button>
           {location && (
-            <span className="text-sm text-green-600">
+            <span className="text-sm text-brand">
               {locale === "es" ? "Ubicación guardada" : "Location saved"}
             </span>
           )}
         </div>
         <div className="mt-4">
-          <label className="block text-sm font-medium text-stone-700">
+          <label className="block text-sm font-medium text-ink">
             {locale === "es" ? "Radio de servicio (km)" : "Service radius (km)"}
           </label>
           <input
@@ -309,13 +309,13 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
             onChange={(e) => setRadius(e.target.value)}
             className="mt-2 w-full accent-green-600"
           />
-          <p className="mt-1 text-sm text-stone-500">{radius} km</p>
+          <p className="mt-1 text-sm text-ink-muted">{radius} km</p>
         </div>
       </Card>
 
       {/* Cancellation policy */}
       <Card>
-        <label className="block text-sm font-medium text-stone-700">
+        <label className="block text-sm font-medium text-ink">
           {locale === "es" ? "Política de cancelación" : "Cancellation policy"}
         </label>
         <div className="mt-3 space-y-2">
@@ -348,14 +348,14 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
               onClick={() => setCancellationPolicy(policy.value)}
               className={`w-full text-left rounded-xl border px-4 py-3 transition-colors ${
                 cancellationPolicy === policy.value
-                  ? "border-green-600 bg-green-50"
-                  : "border-stone-200 hover:border-stone-300"
+                  ? "border-brand bg-brand-soft"
+                  : "border-line hover:border-stone-300"
               }`}
             >
-              <span className={`text-sm font-medium ${cancellationPolicy === policy.value ? "text-green-700" : "text-stone-900"}`}>
+              <span className={`text-sm font-medium ${cancellationPolicy === policy.value ? "text-brand-ink" : "text-ink"}`}>
                 {locale === "es" ? policy.titleEs : policy.titleEn}
               </span>
-              <p className="text-xs text-stone-500 mt-0.5">
+              <p className="text-xs text-ink-muted mt-0.5">
                 {locale === "es" ? policy.descEs : policy.descEn}
               </p>
             </button>
@@ -365,7 +365,7 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
 
       {/* Home details */}
       <Card>
-        <label className="block text-sm font-medium text-stone-700 mb-3">
+        <label className="block text-sm font-medium text-ink mb-3">
           {locale === "es" ? "Tu hogar" : "Your home"}
         </label>
         <div className="space-y-3">
@@ -380,8 +380,8 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
                 onClick={() => setHomeType(opt.value)}
                 className={`flex-1 rounded-xl border-2 px-4 py-2.5 text-sm font-medium transition-all ${
                   homeType === opt.value
-                    ? "border-green-500 bg-green-50 text-green-700"
-                    : "border-stone-200 text-stone-600 hover:border-stone-300"
+                    ? "border-brand bg-brand-soft text-brand-ink"
+                    : "border-line text-ink-muted hover:border-stone-300"
                 }`}
               >
                 {locale === "es" ? opt.labelEs : opt.labelEn}
@@ -391,14 +391,14 @@ export function SitterSetupForm({ existing }: { existing: SitterProfile }) {
 
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" checked={hasYard} onChange={(e) => setHasYard(e.target.checked)}
-              className="w-4 h-4 rounded border-stone-300 text-green-600 focus:ring-green-500" />
-            <span className="text-sm text-stone-700">{locale === "es" ? "Tengo jardín o patio" : "I have a yard/garden"}</span>
+              className="w-4 h-4 rounded border-line text-brand focus:ring-green-500" />
+            <span className="text-sm text-ink">{locale === "es" ? "Tengo jardín o patio" : "I have a yard/garden"}</span>
           </label>
 
           <label className="flex items-center gap-3 cursor-pointer">
             <input type="checkbox" checked={hasChildren} onChange={(e) => setHasChildren(e.target.checked)}
-              className="w-4 h-4 rounded border-stone-300 text-green-600 focus:ring-green-500" />
-            <span className="text-sm text-stone-700">{locale === "es" ? "Hay niños en casa" : "Children in the home"}</span>
+              className="w-4 h-4 rounded border-line text-brand focus:ring-green-500" />
+            <span className="text-sm text-ink">{locale === "es" ? "Hay niños en casa" : "Children in the home"}</span>
           </label>
 
           <Input

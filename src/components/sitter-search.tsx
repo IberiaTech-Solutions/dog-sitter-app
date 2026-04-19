@@ -1,11 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { useTranslations, useLocale } from "next-intl";
 import { useState, useMemo, useEffect, useRef, lazy, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Link } from "@/i18n/navigation";
-import Image from "next/image";
 import { MapPin, Shield, Star, Dog, Cat, Bird, Rabbit, PawPrint, Search, Navigation, Map, List, ChevronDown, ChevronUp, X } from "lucide-react";
 import { Avatar, Badge, Card, Button, Input } from "@/components/ui";
 import { toast } from "sonner";
@@ -316,16 +316,16 @@ export function SitterSearch() {
   return (
     <div>
       {/* Search controls */}
-      <div className="mt-6 rounded-2xl bg-white border border-stone-100 p-5 shadow-sm">
+      <div className="mt-6 rounded-2xl bg-surface border border-line p-5 shadow-sm">
         <form onSubmit={handleCitySearch} className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+            <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-soft" />
             <input
               type="text"
               value={cityQuery}
               onChange={(e) => setCityQuery(e.target.value)}
               placeholder={es ? "Escribe tu ciudad (ej: Gijón, Madrid...)" : "Type your city (e.g. Gijón, Madrid...)"}
-              className="w-full pl-11 pr-4 py-3 rounded-xl border border-stone-200 bg-stone-50 text-sm placeholder:text-stone-400 focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+              className="w-full pl-11 pr-4 py-3 rounded-xl border border-line bg-canvas text-sm placeholder:text-ink-soft focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
             />
           </div>
           <div className="flex gap-2">
@@ -344,21 +344,21 @@ export function SitterSearch() {
       {/* Loading */}
       {loading && (
         <div className="mt-16 flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-[3px] border-green-200 border-t-green-600 rounded-full animate-spin" />
-          <p className="text-sm text-stone-400">{t("common.loading")}</p>
+          <div className="w-10 h-10 border-[3px] border-brand/40 border-t-brand rounded-full animate-spin" />
+          <p className="text-sm text-ink-soft">{t("common.loading")}</p>
         </div>
       )}
 
       {/* No search yet */}
       {!loading && !searched && (
         <Card className="mt-8 text-center py-12">
-          <div className="w-16 h-16 rounded-2xl bg-green-50 flex items-center justify-center mx-auto mb-4">
-            <Search className="w-7 h-7 text-green-400" />
+          <div className="w-16 h-16 rounded-2xl bg-brand-soft flex items-center justify-center mx-auto mb-4">
+            <Search className="w-7 h-7 text-brand" />
           </div>
-          <h3 className="font-semibold text-stone-900">
+          <h3 className="font-semibold text-ink">
             {es ? "Busca cuidadores en tu zona" : "Search for sitters in your area"}
           </h3>
-          <p className="mt-2 text-sm text-stone-500 max-w-sm mx-auto">
+          <p className="mt-2 text-sm text-ink-muted max-w-sm mx-auto">
             {es
               ? "Escribe tu ciudad o usa el GPS para encontrar cuidadores cerca de ti."
               : "Type your city or use GPS to find sitters near you."}
@@ -369,19 +369,25 @@ export function SitterSearch() {
       {/* Empty results */}
       {!loading && searched && sitters.length === 0 && (
         <Card className="mt-8 text-center py-16">
-          <div className="w-20 h-20 rounded-3xl bg-stone-100 flex items-center justify-center mx-auto mb-5">
-            <PawPrint className="w-9 h-9 text-stone-300" />
+          <div className="w-20 h-20 rounded-3xl bg-line/50 flex items-center justify-center mx-auto mb-5">
+            <PawPrint className="w-9 h-9 text-ink-soft" />
           </div>
-          <h3 className="text-lg font-semibold text-stone-900">
+          <h3 className="text-lg font-semibold text-ink">
             {es ? "Aún no hay cuidadores en esta zona" : "No sitters in this area yet"}
           </h3>
-          <p className="mt-2 text-sm text-stone-500 max-w-sm mx-auto">
+          <p className="mt-2 text-sm text-ink-muted max-w-sm mx-auto">
             {es
               ? "Estamos creciendo rápido. Vuelve pronto o regístrate como cuidador para ser el primero en tu zona."
               : "We're growing fast. Check back soon or sign up as a sitter to be the first in your area."}
           </p>
           <div className="mt-6 flex justify-center">
-            <Image src="/images/happy-dog.jpg" alt="" width={280} height={180} className="rounded-2xl object-cover" />
+            <Image
+              src="/images/happy-dog.jpg"
+              alt=""
+              width={280}
+              height={180}
+              className="rounded-2xl object-cover"
+            />
           </div>
         </Card>
       )}
@@ -394,25 +400,25 @@ export function SitterSearch() {
             <button
               type="button"
               onClick={() => setFiltersOpen((v) => !v)}
-              className="w-full flex items-center justify-between rounded-2xl bg-white border border-stone-100 px-5 py-3 shadow-sm"
+              className="w-full flex items-center justify-between rounded-2xl bg-surface border border-line px-5 py-3 shadow-sm"
             >
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-stone-900">
+                <span className="text-sm font-semibold text-ink">
                   {es ? "Filtros" : "Filters"}
                 </span>
                 {activeFilterCount > 0 && (
                   <Badge variant="green">{activeFilterCount}</Badge>
                 )}
               </div>
-              {filtersOpen ? <ChevronUp className="w-4 h-4 text-stone-400" /> : <ChevronDown className="w-4 h-4 text-stone-400" />}
+              {filtersOpen ? <ChevronUp className="w-4 h-4 text-ink-soft" /> : <ChevronDown className="w-4 h-4 text-ink-soft" />}
             </button>
 
             {filtersOpen && (
-            <div className="mt-2 rounded-2xl bg-white border border-stone-100 p-5 shadow-sm">
+            <div className="mt-2 rounded-2xl bg-surface border border-line p-5 shadow-sm">
               <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5">
                 {/* Dates */}
                 <div>
-                  <p className="text-xs font-medium text-stone-500 mb-2">
+                  <p className="text-xs font-medium text-ink-muted mb-2">
                     {es ? "Fechas" : "Dates"}
                   </p>
                   <div className="space-y-2">
@@ -421,21 +427,21 @@ export function SitterSearch() {
                       value={dateFrom}
                       onChange={(e) => setDateFrom(e.target.value)}
                       min={todayStr}
-                      className="w-full rounded-xl border border-stone-200 bg-stone-50 px-3 py-2 text-sm focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+                      className="w-full rounded-xl border border-line bg-canvas px-3 py-2 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
                     />
                     <input
                       type="date"
                       value={dateTo}
                       onChange={(e) => setDateTo(e.target.value)}
                       min={dateFrom || todayStr}
-                      className="w-full rounded-xl border border-stone-200 bg-stone-50 px-3 py-2 text-sm focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+                      className="w-full rounded-xl border border-line bg-canvas px-3 py-2 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
                     />
                   </div>
                 </div>
 
                 {/* Service type */}
                 <div>
-                  <p className="text-xs font-medium text-stone-500 mb-2">
+                  <p className="text-xs font-medium text-ink-muted mb-2">
                     {es ? "Tipo de servicio" : "Service type"}
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -447,8 +453,8 @@ export function SitterSearch() {
                         variant="ghost"
                         className={
                           selectedServices.has(key)
-                            ? "bg-green-600 text-white hover:bg-green-700 hover:text-white"
-                            : "border border-stone-200 text-stone-600 hover:bg-stone-50"
+                            ? "bg-brand text-white hover:bg-brand-ink hover:text-white"
+                            : "border border-line text-ink-muted hover:bg-stone-50"
                         }
                         onClick={() => setSelectedServices((s) => toggleInSet(s, key))}
                       >
@@ -460,7 +466,7 @@ export function SitterSearch() {
 
                 {/* Pet type */}
                 <div>
-                  <p className="text-xs font-medium text-stone-500 mb-2">
+                  <p className="text-xs font-medium text-ink-muted mb-2">
                     {es ? "Tipo de mascota" : "Pet type"}
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -474,8 +480,8 @@ export function SitterSearch() {
                           variant="ghost"
                           className={
                             selectedPets.has(key)
-                              ? "bg-green-600 text-white hover:bg-green-700 hover:text-white"
-                              : "border border-stone-200 text-stone-600 hover:bg-stone-50"
+                              ? "bg-brand text-white hover:bg-brand-ink hover:text-white"
+                              : "border border-line text-ink-muted hover:bg-stone-50"
                           }
                           onClick={() => setSelectedPets((s) => toggleInSet(s, key))}
                         >
@@ -489,7 +495,7 @@ export function SitterSearch() {
 
                 {/* Price range */}
                 <div>
-                  <p className="text-xs font-medium text-stone-500 mb-2">
+                  <p className="text-xs font-medium text-ink-muted mb-2">
                     {es ? "Rango de precio" : "Price range"}
                   </p>
                   <div className="flex items-center gap-2 max-w-xs">
@@ -501,7 +507,7 @@ export function SitterSearch() {
                       onChange={(e) => setPriceMin(e.target.value)}
                       className="text-center"
                     />
-                    <span className="text-stone-400 text-sm">-</span>
+                    <span className="text-ink-soft text-sm">-</span>
                     <Input
                       type="number"
                       min={0}
@@ -522,8 +528,8 @@ export function SitterSearch() {
                     onClick={() => setVerifiedOnly((v) => !v)}
                     className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
                       verifiedOnly
-                        ? "bg-green-600 border-green-600"
-                        : "border-stone-300 bg-white"
+                        ? "bg-brand border-brand"
+                        : "border-line bg-surface"
                     }`}
                   >
                     {verifiedOnly && (
@@ -533,10 +539,10 @@ export function SitterSearch() {
                     )}
                   </button>
                   <label
-                    className="text-sm text-stone-700 cursor-pointer select-none"
+                    className="text-sm text-ink cursor-pointer select-none"
                     onClick={() => setVerifiedOnly((v) => !v)}
                   >
-                    <Shield className="w-3.5 h-3.5 text-green-500 inline mr-1" />
+                    <Shield className="w-3.5 h-3.5 text-brand inline mr-1" />
                     {es ? "Solo verificados" : "Verified only"}
                   </label>
                 </div>
@@ -554,7 +560,7 @@ export function SitterSearch() {
           </div>
 
           {/* Results count */}
-          <p className="mt-4 text-sm text-stone-400">
+          <p className="mt-4 text-sm text-ink-soft">
             {filteredSitters.length !== sitters.length
               ? `${filteredSitters.length} / ${sitters.length} ${es ? "cuidadores" : "sitters"}`
               : `${sitters.length} ${es ? "cuidadores encontrados" : "sitters found"}`}
@@ -567,8 +573,8 @@ export function SitterSearch() {
               <div className="space-y-3 lg:max-h-[600px] lg:overflow-y-auto lg:pr-1">
                 {filteredSitters.length === 0 ? (
                   <Card className="text-center py-10">
-                    <PawPrint className="w-8 h-8 text-stone-300 mx-auto mb-3" />
-                    <p className="text-sm text-stone-500">
+                    <PawPrint className="w-8 h-8 text-ink-soft mx-auto mb-3" />
+                    <p className="text-sm text-ink-muted">
                       {es
                         ? "Ningún cuidador coincide con los filtros seleccionados."
                         : "No sitters match the selected filters."}
@@ -579,23 +585,23 @@ export function SitterSearch() {
                     <Link
                       key={sitter.id}
                       href={`/sitter/${sitter.id}`}
-                      className="group block rounded-2xl bg-white p-5 border border-stone-100 hover:border-stone-200 hover:shadow-lg hover:shadow-stone-100/50 transition-all"
+                      className="group block rounded-2xl bg-surface p-5 border border-line hover:border-ink-soft/30 hover:shadow-sm transition-all"
                     >
                       <div className="flex items-start gap-3.5">
                         <Avatar name={sitter.full_name} src={sitter.avatar_url} size="lg" />
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <h3 className="font-semibold text-stone-900 truncate group-hover:text-green-700 transition-colors">
+                            <h3 className="font-semibold text-ink truncate group-hover:text-brand-ink transition-colors">
                               {sitter.full_name}
                             </h3>
                             {sitter.is_verified && (
-                              <Shield className="w-4 h-4 text-green-500 shrink-0" />
+                              <Shield className="w-4 h-4 text-brand shrink-0" />
                             )}
                             {sitter.has_insurance && (
-                              <Shield className="w-4 h-4 text-blue-500 shrink-0" />
+                              <Shield className="w-4 h-4 text-ink-muted shrink-0" />
                             )}
                           </div>
-                          <div className="flex items-center gap-3 mt-1 text-xs text-stone-400">
+                          <div className="flex items-center gap-3 mt-1 text-xs text-ink-soft">
                             {sitter.city && (
                               <span className="flex items-center gap-1">
                                 <MapPin className="w-3 h-3" />
@@ -610,34 +616,34 @@ export function SitterSearch() {
                           {/* Rating */}
                           {sitter.review_count > 0 && (
                             <div className="flex items-center gap-1.5 mt-1.5">
-                              <div className="flex text-amber-400">
+                              <div className="flex text-warning">
                                 {[...Array(5)].map((_, i) => (
-                                  <Star key={i} className={`w-3 h-3 ${i < Math.round(sitter.avg_rating ?? 0) ? "fill-current" : "text-stone-200"}`} />
+                                  <Star key={i} className={`w-3 h-3 ${i < Math.round(sitter.avg_rating ?? 0) ? "fill-current" : "text-ink-soft"}`} />
                                 ))}
                               </div>
-                              <span className="text-xs text-stone-500">
+                              <span className="text-xs text-ink-muted">
                                 {sitter.avg_rating} ({sitter.review_count})
                               </span>
                             </div>
                           )}
                           {/* Repeat clients */}
                           {sitterExtras[sitter.id]?.repeatClients > 0 && (
-                            <span className="mt-1 inline-block text-xs text-green-600">
+                            <span className="mt-1 inline-block text-xs text-brand">
                               {sitterExtras[sitter.id].repeatClients} {es ? "clientes repiten" : "repeat clients"}
                             </span>
                           )}
                           {/* Top review */}
                           {sitterExtras[sitter.id]?.topReview && (
-                            <p className="mt-1.5 text-xs text-stone-400 italic line-clamp-1">
+                            <p className="mt-1.5 text-xs text-ink-soft italic line-clamp-1">
                               &ldquo;{sitterExtras[sitter.id].topReview}&rdquo;
                             </p>
                           )}
                         </div>
                         <div className="text-right shrink-0">
-                          <span className="text-lg font-bold text-stone-900">
+                          <span className="text-lg font-bold text-ink">
                             {sitter.hourly_rate.toFixed(0)}€
                           </span>
-                          <span className="block text-xs text-stone-400">
+                          <span className="block text-xs text-ink-soft">
                             {t("sitter.perVisit")}
                           </span>
                         </div>
@@ -660,8 +666,8 @@ export function SitterSearch() {
             {(
               <div className="h-[400px] lg:h-[600px] lg:sticky lg:top-20">
                 <Suspense fallback={
-                  <div className="h-full rounded-2xl bg-stone-100 border border-stone-200 flex items-center justify-center">
-                    <div className="w-8 h-8 border-[3px] border-green-200 border-t-green-600 rounded-full animate-spin" />
+                  <div className="h-full rounded-2xl bg-line/50 border border-line flex items-center justify-center">
+                    <div className="w-8 h-8 border-[3px] border-brand/40 border-t-brand rounded-full animate-spin" />
                   </div>
                 }>
                   <SitterMap sitters={mapSitters} center={searchCenter} />

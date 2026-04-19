@@ -27,27 +27,27 @@ export function VerificationForm({ userId, existing, type = "dni_nie" }: { userI
     none: {
       icon: Upload,
       label: es ? "No verificado" : "Not verified",
-      color: "text-stone-400",
+      color: "text-ink-soft",
     },
     pending: {
       icon: Clock,
       label: es ? "Pendiente de envío" : "Pending submission",
-      color: "text-amber-500",
+      color: "text-warning",
     },
     submitted: {
       icon: Clock,
       label: es ? "En revisión" : "Under review",
-      color: "text-blue-500",
+      color: "text-ink-muted",
     },
     approved: {
       icon: Check,
       label: es ? "Verificado" : "Verified",
-      color: "text-green-600",
+      color: "text-brand",
     },
     rejected: {
       icon: X,
       label: es ? "Rechazado" : "Rejected",
-      color: "text-red-500",
+      color: "text-danger",
     },
   };
 
@@ -136,8 +136,8 @@ export function VerificationForm({ userId, existing, type = "dni_nie" }: { userI
   return (
     <Card padding="lg">
       <div className="flex items-center gap-3 mb-4">
-        <TitleIcon className="w-5 h-5 text-green-600" />
-        <h3 className="font-semibold text-stone-900">{title}</h3>
+        <TitleIcon className="w-5 h-5 text-brand" />
+        <h3 className="font-semibold text-ink">{title}</h3>
       </div>
 
       <div className="flex items-center gap-2 mb-4">
@@ -146,11 +146,11 @@ export function VerificationForm({ userId, existing, type = "dni_nie" }: { userI
       </div>
 
       {status === "approved" ? (
-        <p className="text-sm text-green-700 bg-green-50 rounded-xl p-4">
+        <p className="text-sm text-brand-ink bg-brand-soft rounded-xl p-4">
           {approvedMsg}
         </p>
       ) : status === "submitted" ? (
-        <p className="text-sm text-blue-700 bg-blue-50 rounded-xl p-4">
+        <p className="text-sm text-ink bg-line/40 rounded-xl p-4">
           {es
             ? "Tu documento está siendo revisado. Te notificaremos cuando se complete."
             : "Your document is being reviewed. We'll notify you when it's done."}
@@ -158,16 +158,16 @@ export function VerificationForm({ userId, existing, type = "dni_nie" }: { userI
       ) : (
         <>
           {status === "rejected" && existing?.notes && (
-            <p className="text-sm text-red-700 bg-red-50 rounded-xl p-4 mb-4">
+            <p className="text-sm text-danger bg-danger-soft rounded-xl p-4 mb-4">
               {es ? "Motivo del rechazo: " : "Rejection reason: "}{existing.notes}
             </p>
           )}
 
-          <p className="text-sm text-stone-500 mb-4">
+          <p className="text-sm text-ink-muted mb-4">
             {description}
           </p>
 
-          <label className="inline-flex items-center gap-2 cursor-pointer rounded-xl border-2 border-green-600 text-green-600 hover:bg-green-50 px-5 py-2.5 text-sm font-semibold transition-all active:scale-[0.98]">
+          <label className="inline-flex items-center gap-2 cursor-pointer rounded-xl border-2 border-brand text-brand hover:bg-brand-soft px-5 py-2.5 text-sm font-semibold transition-all active:scale-[0.98]">
             <Upload className="w-4 h-4" />
             {uploading
               ? (es ? "Subiendo..." : "Uploading...")
@@ -181,7 +181,7 @@ export function VerificationForm({ userId, existing, type = "dni_nie" }: { userI
             />
           </label>
 
-          <p className="mt-3 text-xs text-stone-400">
+          <p className="mt-3 text-xs text-ink-soft">
             {es
               ? "Formatos: imagen o PDF. Máximo 10MB. Tu documento se almacena de forma segura."
               : "Formats: image or PDF. Max 10MB. Your document is stored securely."}

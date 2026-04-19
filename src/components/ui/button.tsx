@@ -15,19 +15,19 @@ type LinkButtonProps = BaseProps & { href: string; children: React.ReactNode };
 
 const variantStyles: Record<Variant, string> = {
   primary:
-    "bg-green-600 text-white hover:bg-green-700 shadow-sm shadow-green-600/20",
+    "bg-brand text-surface hover:bg-brand-ink shadow-sm shadow-brand/20",
   secondary:
-    "bg-stone-900 text-white hover:bg-stone-800 shadow-sm",
+    "bg-ink text-surface hover:bg-ink-muted shadow-sm",
   outline:
-    "border-2 border-green-600 text-green-600 hover:bg-green-50",
+    "border-2 border-brand text-brand hover:bg-brand-soft",
   ghost:
-    "text-stone-600 hover:text-stone-900 hover:bg-stone-100",
+    "text-ink-muted hover:text-ink hover:bg-canvas",
 };
 
 const sizeStyles: Record<Size, string> = {
-  sm: "px-4 py-2 text-xs",
-  md: "px-5 py-2.5 text-sm",
-  lg: "px-7 py-3.5 text-sm",
+  sm: "px-4 py-2.5 text-xs min-h-9",
+  md: "px-5 py-3 text-sm min-h-11",
+  lg: "px-7 py-3.5 text-sm min-h-12",
 };
 
 function getStyles(variant: Variant = "primary", size: Size = "md", className = "") {

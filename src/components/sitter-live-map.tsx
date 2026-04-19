@@ -79,7 +79,7 @@ export function SitterLiveMap({ locations, sitterName }: Props) {
 
     // Update or create marker
     const sitterIcon = L.divIcon({
-      html: `<div style="width:16px;height:16px;background:#16a34a;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(22,163,74,0.5);"></div>`,
+      html: `<div style="width:16px;height:16px;background:var(--color-brand);border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.25);"></div>`,
       className: "",
       iconSize: [16, 16],
       iconAnchor: [8, 8],
@@ -90,7 +90,7 @@ export function SitterLiveMap({ locations, sitterName }: Props) {
       markerRef.current.setPopupContent(
         `<div style="font-family:system-ui;">
           <strong>${sitterName}</strong><br/>
-          <span style="color:#78716c;font-size:12px;">${es ? "Última actualización" : "Last update"}: ${latestTime}</span>
+          <span style="color:var(--color-ink-muted);font-size:12px;">${es ? "Última actualización" : "Last update"}: ${latestTime}</span>
         </div>`
       );
     } else {
@@ -99,7 +99,7 @@ export function SitterLiveMap({ locations, sitterName }: Props) {
         .bindPopup(
           `<div style="font-family:system-ui;">
             <strong>${sitterName}</strong><br/>
-            <span style="color:#78716c;font-size:12px;">${es ? "Última actualización" : "Last update"}: ${latestTime}</span>
+            <span style="color:var(--color-ink-muted);font-size:12px;">${es ? "Última actualización" : "Last update"}: ${latestTime}</span>
           </div>`
         );
     }
@@ -109,7 +109,7 @@ export function SitterLiveMap({ locations, sitterName }: Props) {
       polylineRef.current.setLatLngs(latLngs);
     } else {
       polylineRef.current = L.polyline(latLngs, {
-        color: "#16a34a",
+        color: getComputedStyle(document.documentElement).getPropertyValue("--color-brand").trim(),
         weight: 3,
         opacity: 0.6,
         dashArray: "6 8",
@@ -123,7 +123,7 @@ export function SitterLiveMap({ locations, sitterName }: Props) {
   return (
     <div
       ref={mapRef}
-      className="h-full w-full rounded-2xl border border-stone-100"
+      className="h-full w-full rounded-2xl border border-line"
       style={{ minHeight: 300 }}
     />
   );

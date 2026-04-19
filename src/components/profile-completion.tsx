@@ -150,24 +150,24 @@ export function ProfileCompletion({
         </div>
         <div className="relative w-12 h-12">
           <svg className="w-12 h-12 -rotate-90" viewBox="0 0 36 36">
-            <circle cx="18" cy="18" r="15" fill="none" stroke="#e7e5e4" strokeWidth="3" />
+            <circle cx="18" cy="18" r="15" fill="none" style={{ stroke: "var(--color-line)" }} strokeWidth="3" />
             <circle
               cx="18" cy="18" r="15" fill="none"
-              stroke="#16a34a" strokeWidth="3"
+              style={{ stroke: "var(--color-brand)" }} strokeWidth="3"
               strokeDasharray={`${percent * 0.942} 100`}
               strokeLinecap="round"
             />
           </svg>
-          <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-stone-700">
+          <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-ink">
             {percent}%
           </span>
         </div>
       </div>
 
       {/* Progress bar */}
-      <div className="w-full h-1.5 bg-stone-100 rounded-full mb-5">
+      <div className="w-full h-1.5 bg-line rounded-full mb-5">
         <div
-          className="h-1.5 bg-green-500 rounded-full transition-all duration-500"
+          className="h-1.5 bg-brand rounded-full transition-all duration-500"
           style={{ width: `${percent}%` }}
         />
       </div>
@@ -178,15 +178,13 @@ export function ProfileCompletion({
           {reviewing.map((step) => (
             <div
               key={step.key}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-blue-50"
+              className="flex items-center gap-3 px-3 py-3 rounded-xl bg-warning/10"
             >
-              <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
-                <Clock className="w-4 h-4 text-blue-600" />
-              </div>
-              <span className="text-sm text-blue-700 flex-1">
+              <Clock className="w-5 h-5 text-warning-ink shrink-0" aria-hidden="true" />
+              <span className="text-sm text-ink flex-1">
                 {es ? step.labelEs : step.labelEn}
               </span>
-              <span className="text-xs font-medium text-blue-500">
+              <span className="text-xs font-medium text-warning-ink">
                 {es ? "En revisión" : "Under review"}
               </span>
             </div>
@@ -201,15 +199,16 @@ export function ProfileCompletion({
             <Link
               key={step.key}
               href={step.href}
-              className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-stone-50 transition-colors group"
+              className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-canvas transition-colors group"
             >
-              <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-                <step.icon className="w-4 h-4 text-amber-600" />
-              </div>
-              <span className="text-sm text-stone-700 flex-1">
+              <step.icon className="w-5 h-5 text-ink-muted shrink-0" aria-hidden="true" />
+              <span className="text-sm text-ink flex-1">
                 {es ? step.labelEs : step.labelEn}
               </span>
-              <ChevronRight className="w-4 h-4 text-stone-300 group-hover:text-stone-500 transition-colors" />
+              <ChevronRight
+                className="w-4 h-4 text-ink-soft group-hover:text-ink transition-colors"
+                aria-hidden="true"
+              />
             </Link>
           ))}
         </div>
@@ -220,7 +219,7 @@ export function ProfileCompletion({
         <div className="mt-3 pt-3 border-t border-stone-100">
           <div className="flex flex-wrap gap-2">
             {done.map((step) => (
-              <span key={step.key} className="flex items-center gap-1 text-xs text-green-600 bg-green-50 px-2.5 py-1 rounded-full">
+              <span key={step.key} className="flex items-center gap-1 text-xs text-brand-ink bg-brand-soft px-2.5 py-1 rounded-full">
                 <Check className="w-3 h-3" />
                 {es ? step.labelEs.split(" ").slice(0, 3).join(" ") : step.labelEn.split(" ").slice(0, 3).join(" ")}
               </span>

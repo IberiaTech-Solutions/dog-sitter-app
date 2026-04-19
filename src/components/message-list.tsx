@@ -124,31 +124,31 @@ export function MessageList({ conversations, currentUserId }: Props) {
   }
 
   return (
-    <div className="mt-6 flex h-[600px] rounded-2xl bg-white border border-stone-100 shadow-sm overflow-hidden">
+    <div className="mt-6 flex h-[600px] rounded-2xl bg-surface border border-line shadow-sm overflow-hidden">
       {/* Conversation list */}
-      <div className="w-80 border-r border-stone-200 overflow-y-auto">
+      <div className="w-80 border-r border-line overflow-y-auto">
         {conversations.map((conv) => (
           <button
             key={conv.userId}
             onClick={() => setSelectedUser(conv)}
-            className={`w-full px-4 py-4 text-left border-b border-stone-100 hover:bg-stone-50 transition-colors ${
-              selectedUser?.userId === conv.userId ? "bg-green-50" : ""
+            className={`w-full px-4 py-4 text-left border-b border-line hover:bg-stone-50 transition-colors ${
+              selectedUser?.userId === conv.userId ? "bg-brand-soft" : ""
             }`}
           >
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 shrink-0 rounded-full bg-green-100 flex items-center justify-center text-sm font-semibold text-green-700">
+              <div className="h-10 w-10 shrink-0 rounded-full bg-brand-soft flex items-center justify-center text-sm font-semibold text-brand-ink">
                 {conv.name.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-stone-900 truncate">
+                  <p className="text-sm font-medium text-ink truncate">
                     {conv.name}
                   </p>
                   {conv.unread && (
-                    <span className="h-2 w-2 rounded-full bg-green-500" />
+                    <span className="h-2 w-2 rounded-full bg-brand-soft0" />
                   )}
                 </div>
-                <p className="text-xs text-stone-500 truncate">
+                <p className="text-xs text-ink-muted truncate">
                   {conv.lastMessage}
                 </p>
               </div>
@@ -160,7 +160,7 @@ export function MessageList({ conversations, currentUserId }: Props) {
       {/* Chat area */}
       <div className="flex-1 flex flex-col">
         {!selectedUser ? (
-          <div className="flex-1 flex items-center justify-center text-stone-400 text-sm">
+          <div className="flex-1 flex items-center justify-center text-ink-soft text-sm">
             {locale === "es"
               ? "Selecciona una conversación"
               : "Select a conversation"}
@@ -168,8 +168,8 @@ export function MessageList({ conversations, currentUserId }: Props) {
         ) : (
           <>
             {/* Chat header */}
-            <div className="border-b border-stone-200 px-6 py-3">
-              <p className="font-medium text-stone-900">
+            <div className="border-b border-line px-6 py-3">
+              <p className="font-medium text-ink">
                 {selectedUser.name}
               </p>
             </div>
@@ -186,14 +186,14 @@ export function MessageList({ conversations, currentUserId }: Props) {
                     <div
                       className={`max-w-[70%] rounded-2xl px-4 py-2 text-sm ${
                         isMine
-                          ? "bg-green-600 text-white"
-                          : "bg-stone-100 text-stone-900"
+                          ? "bg-brand text-white"
+                          : "bg-line/50 text-ink"
                       }`}
                     >
                       <p>{msg.content}</p>
                       <p
                         className={`mt-1 text-xs ${
-                          isMine ? "text-green-200" : "text-stone-400"
+                          isMine ? "text-green-200" : "text-ink-soft"
                         }`}
                       >
                         {new Date(msg.created_at).toLocaleTimeString(
@@ -211,7 +211,7 @@ export function MessageList({ conversations, currentUserId }: Props) {
             {/* Input */}
             <form
               onSubmit={handleSend}
-              className="border-t border-stone-200 px-4 py-3 flex gap-3"
+              className="border-t border-line px-4 py-3 flex gap-3"
             >
               <input
                 type="text"
@@ -220,7 +220,7 @@ export function MessageList({ conversations, currentUserId }: Props) {
                 placeholder={
                   locale === "es" ? "Escribe un mensaje..." : "Type a message..."
                 }
-                className="flex-1 rounded-full border border-stone-200 bg-stone-50 px-4 py-2 text-sm focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+                className="flex-1 rounded-full border border-line bg-canvas px-4 py-2 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
               />
               <Button
                 type="submit"

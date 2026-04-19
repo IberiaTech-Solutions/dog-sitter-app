@@ -61,12 +61,12 @@ export function MeetGreetButton({ sitterId, sitterName }: Props) {
   return (
     <Card padding="md" className="space-y-4">
       <div className="flex items-center gap-2">
-        <Coffee className="w-4 h-4 text-green-600" />
-        <h3 className="font-semibold text-stone-900 text-sm">
+        <Coffee className="w-4 h-4 text-brand" />
+        <h3 className="font-semibold text-ink text-sm">
           {es ? "Conocer al cuidador" : "Meet & greet"}
         </h3>
       </div>
-      <p className="text-xs text-stone-500">
+      <p className="text-xs text-ink-muted">
         {es
           ? "Envía un mensaje para coordinar una cita gratuita antes de reservar. Así puedes conocer al cuidador y que conozca a tu mascota."
           : "Send a message to arrange a free meeting before booking. Get to know the sitter and let them meet your pet."}

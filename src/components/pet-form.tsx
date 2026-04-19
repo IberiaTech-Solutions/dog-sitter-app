@@ -142,25 +142,25 @@ export function PetForm({ existing }: { existing?: Pet }) {
   }
 
   const inputClass =
-    "w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm placeholder:text-stone-400 focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all";
+    "w-full rounded-xl border border-line bg-canvas px-4 py-3 text-sm placeholder:text-stone-400 focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all";
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Photo upload */}
       <Card padding="lg">
-        <label className="block text-sm font-medium text-stone-700 mb-3">
+        <label className="block text-sm font-medium text-ink mb-3">
           {es ? "Foto" : "Photo"}
         </label>
         <div className="flex items-center gap-5">
           {photoUrl ? (
             <img src={photoUrl} alt="" className="w-20 h-20 rounded-2xl object-cover" />
           ) : (
-            <div className="w-20 h-20 rounded-2xl bg-stone-100 flex items-center justify-center">
-              <PawPrint className="w-8 h-8 text-stone-300" />
+            <div className="w-20 h-20 rounded-2xl bg-line/50 flex items-center justify-center">
+              <PawPrint className="w-8 h-8 text-ink-soft" />
             </div>
           )}
           <div className="flex flex-col gap-2">
-            <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">
+            <label className="cursor-pointer inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-line text-sm font-medium text-ink-muted hover:bg-stone-50 transition-colors">
               <Upload className="w-4 h-4" />
               {uploading ? (es ? "Subiendo..." : "Uploading...") : es ? "Subir foto" : "Upload photo"}
               <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
@@ -169,7 +169,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
               <button
                 type="button"
                 onClick={() => setPhotoUrl("")}
-                className="text-xs text-red-500 hover:text-red-700 transition-colors"
+                className="text-xs text-danger hover:text-danger transition-colors"
               >
                 {es ? "Quitar foto" : "Remove photo"}
               </button>
@@ -180,7 +180,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
 
       {/* Species */}
       <Card padding="lg">
-        <label className="block text-sm font-medium text-stone-700 mb-3">
+        <label className="block text-sm font-medium text-ink mb-3">
           {es ? "Tipo de mascota" : "Pet type"}
         </label>
         <div className="grid grid-cols-5 gap-2">
@@ -191,12 +191,12 @@ export function PetForm({ existing }: { existing?: Pet }) {
               onClick={() => setSpecies(opt.value)}
               className={`flex flex-col items-center gap-1.5 rounded-xl border-2 px-3 py-3 transition-all ${
                 species === opt.value
-                  ? "border-green-500 bg-green-50"
-                  : "border-stone-200 hover:border-stone-300"
+                  ? "border-brand bg-brand-soft"
+                  : "border-line hover:border-stone-300"
               }`}
             >
-              <opt.icon className={`w-6 h-6 ${species === opt.value ? "text-green-600" : "text-stone-400"}`} />
-              <span className={`text-xs font-medium ${species === opt.value ? "text-green-700" : "text-stone-500"}`}>
+              <opt.icon className={`w-6 h-6 ${species === opt.value ? "text-brand" : "text-ink-soft"}`} />
+              <span className={`text-xs font-medium ${species === opt.value ? "text-brand-ink" : "text-ink-muted"}`}>
                 {speciesLabels[locale]?.[opt.value]}
               </span>
             </button>
@@ -207,7 +207,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
             type="text"
             value={customSpecies}
             onChange={(e) => setCustomSpecies(e.target.value)}
-            className="mt-3 w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm placeholder:text-stone-400 focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+            className="mt-3 w-full rounded-xl border border-line bg-canvas px-4 py-3 text-sm placeholder:text-stone-400 focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
             placeholder={es ? "Ej: hámster, tortuga, pez..." : "E.g. hamster, turtle, fish..."}
             maxLength={30}
           />
@@ -218,7 +218,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
       <Card padding="lg">
         <div className="space-y-4">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-stone-700 mb-1.5">
+            <label htmlFor="name" className="block text-sm font-medium text-ink mb-1.5">
               {es ? "Nombre" : "Name"} *
             </label>
             <input
@@ -234,7 +234,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
           </div>
 
           <div>
-            <label htmlFor="breed" className="block text-sm font-medium text-stone-700 mb-1.5">
+            <label htmlFor="breed" className="block text-sm font-medium text-ink mb-1.5">
               {es ? "Raza" : "Breed"}
             </label>
             <input
@@ -250,7 +250,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="age" className="block text-sm font-medium text-stone-700 mb-1.5">
+              <label htmlFor="age" className="block text-sm font-medium text-ink mb-1.5">
                 {es ? "Edad (años)" : "Age (years)"}
               </label>
               <input
@@ -264,7 +264,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
               />
             </div>
             <div>
-              <label htmlFor="weight" className="block text-sm font-medium text-stone-700 mb-1.5">
+              <label htmlFor="weight" className="block text-sm font-medium text-ink mb-1.5">
                 {es ? "Peso (kg)" : "Weight (kg)"}
               </label>
               <input
@@ -284,13 +284,13 @@ export function PetForm({ existing }: { existing?: Pet }) {
 
       {/* Health & ID */}
       <Card padding="lg">
-        <h3 className="text-sm font-semibold text-stone-900 mb-4">
+        <h3 className="text-sm font-semibold text-ink mb-4">
           {es ? "Salud e identificación" : "Health & identification"}
         </h3>
 
         <div className="space-y-4">
           <div>
-            <label htmlFor="microchip" className="block text-sm font-medium text-stone-700 mb-1.5">
+            <label htmlFor="microchip" className="block text-sm font-medium text-ink mb-1.5">
               {es ? "Número de microchip" : "Microchip number"}
             </label>
             <input
@@ -305,7 +305,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
           </div>
 
           <div>
-            <label htmlFor="medical" className="block text-sm font-medium text-stone-700 mb-1.5">
+            <label htmlFor="medical" className="block text-sm font-medium text-ink mb-1.5">
               {es ? "Notas médicas" : "Medical notes"}
             </label>
             <textarea
@@ -322,7 +322,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
           </div>
 
           <div>
-            <label htmlFor="instructions" className="block text-sm font-medium text-stone-700 mb-1.5">
+            <label htmlFor="instructions" className="block text-sm font-medium text-ink mb-1.5">
               {es ? "Instrucciones para el cuidador" : "Instructions for the sitter"}
             </label>
             <textarea
@@ -341,7 +341,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
       </Card>
 
       {error && (
-        <div className="rounded-xl bg-red-50 border border-red-100 px-4 py-3 text-sm text-red-600">
+        <div className="rounded-xl bg-danger-soft border border-danger/30 px-4 py-3 text-sm text-danger">
           {error}
         </div>
       )}

@@ -17,8 +17,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: "home" });
 
   return {
-    title: `CuidaMascotas — ${t("title")}`,
-    description: t("subtitle"),
+    title: `CuidaMascotas — ${t("metaTitle")}`,
+    description: t("metaDescription"),
   };
 }
 
@@ -40,8 +40,9 @@ export default async function LocaleLayout({ children, params }: Props) {
         position="top-right"
         toastOptions={{
           style: {
-            background: "white",
-            border: "1px solid #e7e5e4",
+            background: "var(--color-surface)",
+            border: "1px solid var(--color-line)",
+            color: "var(--color-ink)",
             borderRadius: "16px",
             padding: "16px",
             fontSize: "14px",

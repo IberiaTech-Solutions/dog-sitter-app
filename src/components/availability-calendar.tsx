@@ -123,7 +123,7 @@ export function AvailabilityCalendar({ sitterId, isEditable }: Props) {
         <Button variant="ghost" size="sm" onClick={prevMonth}>
           <ChevronLeft className="w-4 h-4" />
         </Button>
-        <h3 className="text-lg font-semibold text-stone-900">
+        <h3 className="text-lg font-semibold text-ink">
           {monthNames[lang][month]} {year}
         </h3>
         <Button variant="ghost" size="sm" onClick={nextMonth}>
@@ -133,7 +133,7 @@ export function AvailabilityCalendar({ sitterId, isEditable }: Props) {
 
       <div className="grid grid-cols-7 gap-1 mb-2">
         {dayNames[lang].map((d) => (
-          <div key={d} className="text-center text-xs font-medium text-stone-400 py-1">
+          <div key={d} className="text-center text-xs font-medium text-ink-soft py-1">
             {d}
           </div>
         ))}
@@ -153,13 +153,13 @@ export function AvailabilityCalendar({ sitterId, isEditable }: Props) {
 
           let bgClass: string;
           if (isPast) {
-            bgClass = "bg-stone-100 text-stone-300 cursor-default";
+            bgClass = "bg-line/50 text-ink-soft cursor-default";
           } else if (isAvailable) {
-            bgClass = "bg-green-50 text-green-600 border border-green-200";
+            bgClass = "bg-brand-soft text-brand border border-brand/40";
           } else if (hasEntry && !isAvailable) {
-            bgClass = "bg-stone-200 text-stone-500";
+            bgClass = "bg-stone-200 text-ink-muted";
           } else {
-            bgClass = "bg-stone-100 text-stone-500";
+            bgClass = "bg-line/50 text-ink-muted";
           }
 
           if (isEditable && !isPast) {
@@ -184,9 +184,9 @@ export function AvailabilityCalendar({ sitterId, isEditable }: Props) {
 
       {isEditable && (
         <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center gap-4 text-xs text-stone-500">
+          <div className="flex items-center gap-4 text-xs text-ink-muted">
             <span className="flex items-center gap-1.5">
-              <span className="inline-block w-3 h-3 rounded bg-green-50 border border-green-200" />
+              <span className="inline-block w-3 h-3 rounded bg-brand-soft border border-brand/40" />
               {lang === "es" ? "Disponible" : "Available"}
             </span>
             <span className="flex items-center gap-1.5">
@@ -194,7 +194,7 @@ export function AvailabilityCalendar({ sitterId, isEditable }: Props) {
               {lang === "es" ? "No disponible" : "Unavailable"}
             </span>
           </div>
-          <span className="text-xs text-stone-400">
+          <span className="text-xs text-ink-soft">
             {lang === "es" ? "Se guarda automáticamente" : "Auto-saved"}
           </span>
         </div>

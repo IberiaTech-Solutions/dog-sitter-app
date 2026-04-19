@@ -82,7 +82,7 @@ export function ReviewForm({ bookingId, revieweeId }: Props) {
     <form onSubmit={handleSubmit} className="mt-6 space-y-6">
       {/* Star rating */}
       <Card>
-        <label className="block text-sm font-medium text-stone-700">
+        <label className="block text-sm font-medium text-ink">
           {locale === "es" ? "Puntuación" : "Rating"}
         </label>
         <div className="mt-3 flex gap-2">
@@ -96,7 +96,7 @@ export function ReviewForm({ bookingId, revieweeId }: Props) {
               {star <= rating ? (
                 <span className="text-yellow-400">★</span>
               ) : (
-                <span className="text-stone-300">★</span>
+                <span className="text-ink-soft">★</span>
               )}
             </button>
           ))}
@@ -119,13 +119,13 @@ export function ReviewForm({ bookingId, revieweeId }: Props) {
       </Card>
 
       {/* Discount reminder */}
-      <div className="rounded-lg bg-green-50 p-4 text-sm text-green-800">
+      <div className="rounded-lg bg-brand-soft p-4 text-sm text-brand-ink">
         {locale === "es"
           ? "¡Gracias por dejar una opinión! Recibirás un código de descuento de nuestros partners locales."
           : "Thanks for leaving a review! You'll receive a discount code from our local partners."}
       </div>
 
-      {error && <p className="text-sm text-red-600 text-center">{error}</p>}
+      {error && <p className="text-sm text-danger text-center">{error}</p>}
 
       <Button
         type="submit"

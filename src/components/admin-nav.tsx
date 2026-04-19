@@ -25,14 +25,14 @@ export function AdminNav({ locale, active, pendingVerifications }: Props) {
           href={item.href}
           className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
             active === item.key
-              ? "bg-green-600 text-white shadow-sm shadow-green-600/20"
-              : "text-stone-500 hover:bg-stone-100 hover:text-stone-900"
+              ? "bg-brand text-white shadow-sm shadow-brand/20"
+              : "text-ink-muted hover:bg-stone-100 hover:text-stone-900"
           }`}
         >
           <item.icon className="w-4 h-4" />
           {item.label}
           {item.key === "sitters" && (pendingVerifications ?? 0) > 0 && (
-            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[10px] font-bold text-white">
+            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-danger px-1.5 text-[10px] font-bold text-white">
               {pendingVerifications}
             </span>
           )}

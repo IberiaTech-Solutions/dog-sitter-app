@@ -248,11 +248,11 @@ export function ActiveBookingView({
       {isSitter && isActive && (
         <Card>
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-stone-900">
+            <h2 className="font-semibold text-ink">
               {locale === "es" ? "Visita de hoy" : "Today's visit"}
             </h2>
             {completedVisits > 0 && (
-              <span className="text-xs text-stone-400">
+              <span className="text-xs text-ink-soft">
                 {completedVisits} {locale === "es" ? "visita(s) completada(s)" : "visit(s) completed"}
               </span>
             )}
@@ -279,7 +279,7 @@ export function ActiveBookingView({
               </Button>
             )}
             {isCheckedIn && (
-              <label className="cursor-pointer inline-flex items-center justify-center gap-2 font-semibold rounded-xl px-5 py-2.5 text-sm border-2 border-green-600 text-green-600 hover:bg-green-50 active:scale-[0.98] transition-all">
+              <label className="cursor-pointer inline-flex items-center justify-center gap-2 font-semibold rounded-xl px-5 py-2.5 text-sm border-2 border-brand text-brand hover:bg-brand-soft active:scale-[0.98] transition-all">
                 {locale === "es" ? "Subir foto" : "Upload photo"}
                 <input
                   type="file"
@@ -293,7 +293,7 @@ export function ActiveBookingView({
           </div>
 
           {gpsActive && (
-            <p className="mt-3 text-sm text-green-600">
+            <p className="mt-3 text-sm text-brand">
               {locale === "es"
                 ? "GPS activo — compartiendo ubicación"
                 : "GPS active — sharing location"}
@@ -302,8 +302,8 @@ export function ActiveBookingView({
 
           {/* Complete booking — only when not currently checked in and at least one visit done */}
           {!isCheckedIn && completedVisits > 0 && (
-            <div className="mt-5 pt-5 border-t border-stone-100">
-              <p className="text-sm text-stone-500 mb-3">
+            <div className="mt-5 pt-5 border-t border-line">
+              <p className="text-sm text-ink-muted mb-3">
                 {locale === "es"
                   ? "¿Es el último día? Marca la reserva como completada."
                   : "Last day? Mark the booking as complete."}
@@ -330,7 +330,7 @@ export function ActiveBookingView({
                   ? "Nota de salud o alimentación..."
                   : "Health or feeding note..."
               }
-              className="flex-1 rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm focus:bg-white focus:border-green-400 focus:ring-4 focus:ring-green-100 focus:outline-none transition-all"
+              className="flex-1 rounded-xl border border-line bg-canvas px-4 py-3 text-sm focus:bg-white focus:border-brand focus:ring-4 focus:ring-brand/25 focus:outline-none transition-all"
             />
             <Button
               variant="primary"
@@ -349,7 +349,7 @@ export function ActiveBookingView({
         const locs = extractLocations(logs);
         return locs.length > 0 ? (
           <Card>
-            <h2 className="font-semibold text-stone-900 mb-3">
+            <h2 className="font-semibold text-ink mb-3">
               {locale === "es" ? "Ubicación en tiempo real" : "Live location"}
             </h2>
             <SitterLiveMap locations={locs} sitterName={sitterName ?? ""} />
@@ -359,12 +359,12 @@ export function ActiveBookingView({
 
       {/* Visit log timeline */}
       <Card>
-        <h2 className="font-semibold text-stone-900">
+        <h2 className="font-semibold text-ink">
           {locale === "es" ? "Historial de visita" : "Visit log"}
         </h2>
 
         {logs.length === 0 ? (
-          <p className="mt-4 text-sm text-stone-500">
+          <p className="mt-4 text-sm text-ink-muted">
             {locale === "es"
               ? "No hay actividad registrada todavía."
               : "No activity logged yet."}
@@ -377,9 +377,9 @@ export function ActiveBookingView({
                   <div
                     className={`h-3 w-3 rounded-full ${
                       log.event_type === "check_in"
-                        ? "bg-green-500"
+                        ? "bg-brand"
                         : log.event_type === "check_out"
-                          ? "bg-red-500"
+                          ? "bg-danger"
                           : log.event_type === "photo"
                             ? "bg-blue-500"
                             : "bg-stone-400"
@@ -388,10 +388,10 @@ export function ActiveBookingView({
                   <div className="w-px flex-1 bg-stone-200" />
                 </div>
                 <div className="pb-4">
-                  <p className="text-sm font-medium text-stone-900">
+                  <p className="text-sm font-medium text-ink">
                     {eventLabels[locale]?.[log.event_type] ?? log.event_type}
                   </p>
-                  <p className="text-xs text-stone-500">
+                  <p className="text-xs text-ink-muted">
                     {new Date(log.created_at).toLocaleString(
                       locale === "es" ? "es-ES" : "en-GB",
                       {
@@ -403,7 +403,7 @@ export function ActiveBookingView({
                     )}
                   </p>
                   {log.note && (
-                    <p className="mt-1 text-sm text-stone-700">{log.note}</p>
+                    <p className="mt-1 text-sm text-ink">{log.note}</p>
                   )}
                   {log.media_url && (
                     <img

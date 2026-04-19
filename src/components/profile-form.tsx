@@ -103,10 +103,10 @@ export function ProfileForm({ profile, userId, referralCredit }: { profile: Prof
         <div className="flex items-center gap-5">
           <Avatar name={fullName} src={avatarUrl} size="xl" />
           <div>
-            <p className="text-sm font-medium text-stone-700">
+            <p className="text-sm font-medium text-ink">
               {es ? "Foto de perfil" : "Profile photo"}
             </p>
-            <label className="mt-2 inline-flex items-center gap-2 cursor-pointer rounded-xl border-2 border-green-600 text-green-600 hover:bg-green-50 px-4 py-2 text-sm font-semibold transition-all active:scale-[0.98]">
+            <label className="mt-2 inline-flex items-center gap-2 cursor-pointer rounded-xl border-2 border-brand text-brand hover:bg-brand-soft px-4 py-2 text-sm font-semibold transition-all active:scale-[0.98]">
               {uploading
                 ? es ? "Subiendo..." : "Uploading..."
                 : es ? "Cambiar foto" : "Change photo"}
@@ -133,13 +133,13 @@ export function ProfileForm({ profile, userId, referralCredit }: { profile: Prof
             maxLength={100}
           />
           <div>
-            <label className="block text-sm font-medium text-stone-700 mb-1.5">
+            <label className="block text-sm font-medium text-ink mb-1.5">
               {es ? "Correo electrónico" : "Email"}
             </label>
-            <p className="text-sm text-stone-500 bg-stone-50 rounded-xl px-4 py-3 border border-stone-200">
+            <p className="text-sm text-ink-muted bg-canvas rounded-xl px-4 py-3 border border-line">
               {profile.email}
             </p>
-            <p className="mt-1 text-xs text-stone-400">
+            <p className="mt-1 text-xs text-ink-soft">
               {es ? "No se puede cambiar" : "Cannot be changed"}
             </p>
           </div>
@@ -156,7 +156,7 @@ export function ProfileForm({ profile, userId, referralCredit }: { profile: Prof
               maxLength={20}
             />
             {phone && !/^\+\d{1,3}[\s\-]?\d[\d\s\-()]{6,16}$/.test(phone) && (
-              <p className="mt-1 text-xs text-amber-500">
+              <p className="mt-1 text-xs text-warning">
                 {es ? "Introduce un número válido con prefijo internacional" : "Enter a valid number with country code"}
               </p>
             )}
@@ -202,11 +202,11 @@ export function ProfileForm({ profile, userId, referralCredit }: { profile: Prof
     {/* Referral — outside form to avoid hydration issues */}
     {profile.referral_code ? (
       <Card className="mt-6">
-        <p className="text-sm font-medium text-stone-700 mb-2">
+        <p className="text-sm font-medium text-ink mb-2">
           {es ? "Tu código de referido" : "Your referral code"}
         </p>
         <div className="flex items-center gap-3">
-          <span className="font-mono text-lg font-bold tracking-widest bg-green-50 text-green-700 px-4 py-2 rounded-xl border border-green-200">
+          <span className="font-mono text-lg font-bold tracking-widest bg-brand-soft text-brand-ink px-4 py-2 rounded-xl border border-brand/40">
             {profile.referral_code}
           </span>
           <button
@@ -215,22 +215,22 @@ export function ProfileForm({ profile, userId, referralCredit }: { profile: Prof
               navigator.clipboard.writeText(profile.referral_code!);
               toast.success(es ? "Copiado" : "Copied");
             }}
-            className="text-sm text-green-600 hover:text-green-700 font-medium"
+            className="text-sm text-brand hover:text-brand-ink font-medium"
           >
             {es ? "Copiar" : "Copy"}
           </button>
         </div>
-        <p className="text-xs text-stone-400 mt-2">
+        <p className="text-xs text-ink-soft mt-2">
           {es
             ? "Comparte este código con amigos. Ambos recibiréis 5€ de crédito."
             : "Share this code with friends. You both get €5 credit."}
         </p>
         {typeof referralCredit === "number" && referralCredit > 0 && (
           <div className="mt-3 flex items-center gap-2">
-            <span className="text-sm font-semibold text-green-700">
+            <span className="text-sm font-semibold text-brand-ink">
               {referralCredit.toFixed(2).replace(".", ",")} €
             </span>
-            <span className="text-xs text-stone-400">
+            <span className="text-xs text-ink-soft">
               {es ? "crédito disponible" : "credit available"}
             </span>
           </div>

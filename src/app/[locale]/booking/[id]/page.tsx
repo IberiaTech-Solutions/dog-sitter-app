@@ -73,40 +73,40 @@ export default async function BookingPage({ params }: Props) {
       userRole={myProfile?.role ?? "owner"}
       avatarUrl={myProfile?.avatar_url}
     >
-      <h1 className="text-2xl font-bold text-stone-900">
+      <h1 className="text-2xl font-bold text-ink">
         {t("booking.title")}
       </h1>
 
-      <div className="mt-6 rounded-2xl bg-white border border-stone-100 p-6 shadow-sm">
+      <div className="mt-6 rounded-2xl bg-surface border border-line p-6 shadow-sm">
         <div className="flex items-start gap-4">
           <Avatar name={profile.full_name} src={profile.avatar_url} size="lg" />
           <div className="flex-1">
             <div className="flex items-center gap-2">
-              <p className="font-semibold text-stone-900">{profile.full_name}</p>
-              {sitterProfile.is_verified && <Shield className="w-4 h-4 text-green-500" />}
-              {sitterProfile.has_insurance && <Shield className="w-4 h-4 text-blue-500" />}
+              <p className="font-semibold text-ink">{profile.full_name}</p>
+              {sitterProfile.is_verified && <Shield className="w-4 h-4 text-brand" />}
+              {sitterProfile.has_insurance && <Shield className="w-4 h-4 text-ink-muted" />}
             </div>
-            <p className="text-sm text-stone-500">
+            <p className="text-sm text-ink-muted">
               {Number(sitterProfile.hourly_rate).toFixed(0)}€ {t("sitter.perVisit")}
             </p>
             {avgRating !== null && (
               <div className="flex items-center gap-1.5 mt-1">
-                <div className="flex text-amber-400">
+                <div className="flex text-warning">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className={`w-3.5 h-3.5 ${i < Math.round(avgRating) ? "fill-current" : "text-stone-200"}`} />
+                    <Star key={i} className={`w-3.5 h-3.5 ${i < Math.round(avgRating) ? "fill-current" : "text-ink-soft"}`} />
                   ))}
                 </div>
-                <span className="text-xs text-stone-500">{avgRating.toFixed(1)} ({reviewCount})</span>
+                <span className="text-xs text-ink-muted">{avgRating.toFixed(1)} ({reviewCount})</span>
               </div>
             )}
           </div>
         </div>
         {sitterProfile.cancellation_policy && (
-          <div className="mt-4 pt-4 border-t border-stone-100">
-            <p className="text-xs text-stone-400">
+          <div className="mt-4 pt-4 border-t border-line">
+            <p className="text-xs text-ink-soft">
               {es ? "Política de cancelación" : "Cancellation policy"}
             </p>
-            <p className="text-sm text-stone-600 mt-0.5">
+            <p className="text-sm text-ink-muted mt-0.5">
               {es
                 ? policyLabels[sitterProfile.cancellation_policy as string]?.es
                 : policyLabels[sitterProfile.cancellation_policy as string]?.en}

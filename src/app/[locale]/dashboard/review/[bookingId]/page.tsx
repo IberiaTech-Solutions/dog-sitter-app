@@ -59,18 +59,18 @@ export default async function ReviewPage({ params }: Props) {
       avatarUrl={profile?.avatar_url}
     >
       <div className="max-w-lg">
-        <h1 className="text-2xl font-bold text-stone-900">
+        <h1 className="text-2xl font-bold text-ink">
           {locale === "es" ? "Dejar una opinión" : "Leave a review"}
         </h1>
-        <p className="mt-1 text-stone-500">
+        <p className="mt-1 text-ink-muted">
           {locale === "es"
             ? `¿Cómo fue tu experiencia con ${revieweeName}?`
             : `How was your experience with ${revieweeName}?`}
         </p>
 
         {existingReview ? (
-          <div className="mt-6 rounded-2xl bg-green-50 border border-green-100 p-6 text-center">
-            <p className="text-green-800">
+          <div className="mt-6 rounded-2xl bg-brand-soft border border-brand-soft p-6 text-center">
+            <p className="text-brand-ink">
               {locale === "es"
                 ? "Ya has dejado una opinión para esta reserva."
                 : "You've already reviewed this booking."}

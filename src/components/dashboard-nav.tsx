@@ -25,7 +25,7 @@ export function DashboardNav({ items }: { items: NavItem[] }) {
         <Link
           key={item.href}
           href={item.href}
-          className="relative flex items-center gap-1.5 px-3 py-2 text-sm text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors"
+          className="relative flex items-center gap-1.5 px-3 py-2 text-sm text-ink-muted hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors"
         >
           {item.iconHtml}
           {item.label}
@@ -57,7 +57,7 @@ export function DashboardBottomNav({
         <Link
           key={item.href}
           href={item.href}
-          className="relative flex flex-col items-center gap-0.5 px-3 py-1.5 text-stone-400 hover:text-green-600 transition-colors"
+          className="relative flex flex-col items-center gap-0.5 px-3 py-1.5 text-ink-soft hover:text-brand transition-colors"
         >
           {item.iconHtml}
           <span className="text-[10px] font-medium">{item.label}</span>

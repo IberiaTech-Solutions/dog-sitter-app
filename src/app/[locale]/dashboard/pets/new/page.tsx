@@ -31,10 +31,10 @@ export default async function NewPetPage({ params }: Props) {
       userRole={profile?.role ?? "owner"}
       avatarUrl={profile?.avatar_url}
     >
-      <h1 className="text-2xl font-bold text-stone-900">
+      <h1 className="text-2xl font-bold text-ink">
         {es ? "Añadir mascota" : "Add a pet"}
       </h1>
-      <p className="mt-1 text-stone-500">
+      <p className="mt-1 text-ink-muted">
         {es ? "Cuéntanos sobre tu compañero peludo" : "Tell us about your furry friend"}
       </p>
       <PetForm />

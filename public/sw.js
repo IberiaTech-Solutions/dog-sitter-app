@@ -1,4 +1,4 @@
-const CACHE_NAME = "cuidamascotas-v1";
+const CACHE_NAME = "cuidamascotas-v2";
 const OFFLINE_URL = "/offline.html";
 
 const STATIC_ASSETS = [OFFLINE_URL];
@@ -73,21 +73,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Default: network-first with cache fallback
-  event.respondWith(
-    fetch(request)
-      .then((response) => {
-        if (response.ok) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
-        }
-        return response;
-      })
-      .catch(async () => {
-        const cached = await caches.match(request);
-        return cached || new Response("Network error", { status: 503 });
-      })
-  );
+  // Everything else: network-only, no HTML caching (prevents stale-page hydration mismatches on deploy).
 });
 
 // Push notification handler

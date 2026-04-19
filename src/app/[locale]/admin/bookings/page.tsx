@@ -34,12 +34,12 @@ export default async function AdminBookingsPage({ params }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f7]">
+    <div className="min-h-screen bg-canvas">
       <AdminHeader appName={t("common.appName")} locale={locale} userName={profile.full_name} avatarUrl={profile.avatar_url} />
 
       <PageShell>
         <div className="flex items-center gap-3 mb-6">
-          <h1 className="text-2xl font-bold text-stone-900">
+          <h1 className="text-2xl font-bold text-ink">
             {es ? "Todas las reservas" : "All bookings"}
           </h1>
         </div>
@@ -49,7 +49,7 @@ export default async function AdminBookingsPage({ params }: Props) {
         <div className="mt-8 space-y-3">
           {!bookings || bookings.length === 0 ? (
             <Card className="text-center py-8">
-              <p className="text-stone-400">{es ? "No hay reservas." : "No bookings yet."}</p>
+              <p className="text-ink-soft">{es ? "No hay reservas." : "No bookings yet."}</p>
             </Card>
           ) : (
             bookings.map((booking) => {
@@ -66,37 +66,37 @@ export default async function AdminBookingsPage({ params }: Props) {
                       <div className="flex items-center gap-2">
                         <Avatar name={owner?.full_name ?? "?"} size="sm" />
                         <div>
-                          <p className="text-sm font-medium text-stone-900">{owner?.full_name}</p>
-                          <p className="text-xs text-stone-400">{es ? "Dueño" : "Owner"}</p>
+                          <p className="text-sm font-medium text-ink">{owner?.full_name}</p>
+                          <p className="text-xs text-ink-soft">{es ? "Dueño" : "Owner"}</p>
                         </div>
                       </div>
-                      <span className="text-stone-300">→</span>
+                      <span className="text-ink-soft">→</span>
                       {/* Sitter */}
                       <div className="flex items-center gap-2">
                         <Avatar name={sitter?.full_name ?? "?"} size="sm" />
                         <div>
-                          <p className="text-sm font-medium text-stone-900">{sitter?.full_name}</p>
-                          <p className="text-xs text-stone-400">{es ? "Cuidador" : "Sitter"}</p>
+                          <p className="text-sm font-medium text-ink">{sitter?.full_name}</p>
+                          <p className="text-xs text-ink-soft">{es ? "Cuidador" : "Sitter"}</p>
                         </div>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-4 text-sm">
                       {pet && (
-                        <span className="text-stone-500">
+                        <span className="text-ink-muted">
                           {pet.name}
                         </span>
                       )}
-                      <span className="text-stone-400">
+                      <span className="text-ink-soft">
                         {new Date(booking.start_date).toLocaleDateString(
                           es ? "es-ES" : "en-GB",
                           { day: "numeric", month: "short" }
                         )}
                       </span>
-                      <span className="font-semibold text-stone-900">
+                      <span className="font-semibold text-ink">
                         {Number(booking.total_amount).toFixed(2).replace(".", ",")} €
                       </span>
-                      <span className="text-xs text-stone-400">
+                      <span className="text-xs text-ink-soft">
                         ({Number(booking.commission_amount).toFixed(2).replace(".", ",")} € {es ? "comisión" : "fee"})
                       </span>
                       <Badge variant={config?.variant ?? "stone"}>

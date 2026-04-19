@@ -50,7 +50,7 @@ export function SitterMap({ sitters, center, onSitterClick }: Props) {
     // User location marker
     if (center) {
       const userIcon = L.divIcon({
-        html: `<div style="width:14px;height:14px;background:#3b82f6;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(59,130,246,0.5);"></div>`,
+        html: `<div style="width:14px;height:14px;background:var(--color-ink);border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.25);"></div>`,
         className: "",
         iconSize: [14, 14],
         iconAnchor: [7, 7],
@@ -65,14 +65,14 @@ export function SitterMap({ sitters, center, onSitterClick }: Props) {
 
     sitters.forEach((sitter) => {
       const sitterIcon = L.divIcon({
-        html: `<div style="width:36px;height:36px;background:#16a34a;border:3px solid white;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:12px;">${sitter.hourly_rate.toFixed(0)}€</div>`,
+        html: `<div style="width:36px;height:36px;background:var(--color-brand);border:3px solid white;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.2);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:12px;">${sitter.hourly_rate.toFixed(0)}€</div>`,
         className: "",
         iconSize: [36, 36],
         iconAnchor: [18, 18],
       });
 
       const verified = sitter.is_verified
-        ? `<span style="color:#16a34a;font-size:11px;">✓ ${es ? "Verificado" : "Verified"}</span>`
+        ? `<span style="color:var(--color-brand);font-size:11px;">✓ ${es ? "Verificado" : "Verified"}</span>`
         : "";
 
       const distance = Math.round(sitter.distance_meters / 1000);
@@ -82,11 +82,11 @@ export function SitterMap({ sitters, center, onSitterClick }: Props) {
         .bindPopup(
           `<div style="font-family:system-ui;min-width:140px;">
             <strong style="font-size:14px;">${sitter.full_name}</strong><br/>
-            <span style="color:#16a34a;font-weight:600;">${sitter.hourly_rate.toFixed(0)}€</span>
-            <span style="color:#78716c;font-size:12px;"> / ${es ? "visita" : "visit"}</span><br/>
-            <span style="color:#78716c;font-size:12px;">${distance} km</span>
+            <span style="color:var(--color-brand);font-weight:600;">${sitter.hourly_rate.toFixed(0)}€</span>
+            <span style="color:var(--color-ink-muted);font-size:12px;"> / ${es ? "visita" : "visit"}</span><br/>
+            <span style="color:var(--color-ink-muted);font-size:12px;">${distance} km</span>
             ${verified ? `<br/>${verified}` : ""}
-            <br/><a href="/${locale}/sitter/${sitter.id}" style="color:#16a34a;font-size:12px;font-weight:600;text-decoration:none;">${es ? "Ver perfil →" : "View profile →"}</a>
+            <br/><a href="/${locale}/sitter/${sitter.id}" style="color:var(--color-brand);font-size:12px;font-weight:600;text-decoration:none;">${es ? "Ver perfil →" : "View profile →"}</a>
           </div>`,
           { closeButton: false }
         );
@@ -114,7 +114,7 @@ export function SitterMap({ sitters, center, onSitterClick }: Props) {
   return (
     <div
       ref={mapRef}
-      className="h-full w-full rounded-2xl border border-stone-100"
+      className="h-full w-full rounded-2xl border border-line"
       style={{ minHeight: 400 }}
     />
   );

@@ -60,22 +60,25 @@ export function PushPrompt() {
 
   return (
     <div className="fixed bottom-24 lg:bottom-6 left-4 right-4 sm:left-auto sm:right-6 sm:w-80 z-50 animate-in slide-in-from-bottom-4">
-      <div className="rounded-2xl bg-white border border-stone-200 shadow-lg shadow-stone-200/50 p-4">
+      <div className="rounded-2xl bg-surface border border-line shadow-md p-4">
         <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
-            <Bell className="w-5 h-5 text-green-600" />
-          </div>
+          <Bell className="w-5 h-5 text-brand shrink-0 mt-0.5" aria-hidden="true" />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-stone-900">
+            <p className="text-sm font-semibold text-ink">
               {es ? "Activa las notificaciones" : "Enable notifications"}
             </p>
-            <p className="text-xs text-stone-500 mt-0.5">
+            <p className="text-xs text-ink-muted mt-0.5">
               {es
                 ? "Recibe avisos de reservas, mensajes y actualizaciones."
                 : "Get alerts for bookings, messages, and updates."}
             </p>
             <div className="flex gap-2 mt-3">
-              <Button size="sm" variant="primary" disabled={loading} onClick={handleEnable}>
+              <Button
+                size="sm"
+                variant="primary"
+                disabled={loading}
+                onClick={handleEnable}
+              >
                 {loading ? "..." : es ? "Activar" : "Enable"}
               </Button>
               <Button size="sm" variant="ghost" onClick={handleDismiss}>
@@ -83,8 +86,12 @@ export function PushPrompt() {
               </Button>
             </div>
           </div>
-          <button onClick={handleDismiss} className="text-stone-300 hover:text-stone-500 transition-colors">
-            <X className="w-4 h-4" />
+          <button
+            onClick={handleDismiss}
+            aria-label={es ? "Cerrar" : "Dismiss"}
+            className="text-ink-soft hover:text-ink transition-colors"
+          >
+            <X className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </div>

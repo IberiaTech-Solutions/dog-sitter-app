@@ -67,10 +67,10 @@ export default async function SitterSetupPage({ params }: Props) {
       <div>
         {!hasProfile ? (
           <>
-            <h1 className="text-2xl font-bold text-stone-900">
+            <h1 className="text-2xl font-bold text-ink">
               {es ? "Configurar perfil de cuidador" : "Set up sitter profile"}
             </h1>
-            <p className="mt-1 text-stone-500">
+            <p className="mt-1 text-ink-muted">
               {es
                 ? "Completa tu perfil para empezar a recibir reservas."
                 : "Complete your profile to start receiving bookings."}
@@ -79,10 +79,10 @@ export default async function SitterSetupPage({ params }: Props) {
           </>
         ) : (
           <>
-            <h1 className="text-2xl font-bold text-stone-900">
+            <h1 className="text-2xl font-bold text-ink">
               {es ? "Mi servicio" : "My service"}
             </h1>
-            <p className="mt-1 text-stone-500">
+            <p className="mt-1 text-ink-muted">
               {es
                 ? "Gestiona tu perfil, verificación y disponibilidad."
                 : "Manage your profile, verification, and availability."}
@@ -90,16 +90,16 @@ export default async function SitterSetupPage({ params }: Props) {
 
             {/* Profile form — collapsible since it's already set up */}
             <details className="mt-6 group">
-              <summary className="cursor-pointer flex items-center justify-between rounded-2xl bg-white border border-stone-100 px-6 py-4 shadow-sm hover:shadow-md transition-shadow">
+              <summary className="cursor-pointer flex items-center justify-between rounded-2xl bg-surface border border-line px-6 py-4 shadow-sm hover:shadow-md transition-shadow">
                 <div>
-                  <p className="font-semibold text-stone-900">
+                  <p className="font-semibold text-ink">
                     {es ? "Perfil de cuidador" : "Sitter profile"}
                   </p>
-                  <p className="text-sm text-stone-400 mt-0.5">
+                  <p className="text-sm text-ink-soft mt-0.5">
                     {existing.services?.length ?? 0} {es ? "servicios" : "services"} · {Number(existing.hourly_rate).toFixed(0)}€/{es ? "visita" : "visit"}
                   </p>
                 </div>
-                <span className="text-sm text-green-600 font-medium group-open:hidden">
+                <span className="text-sm text-brand font-medium group-open:hidden">
                   {es ? "Editar" : "Edit"}
                 </span>
               </summary>
@@ -119,7 +119,7 @@ export default async function SitterSetupPage({ params }: Props) {
 
             {/* Availability */}
             <div className="mt-6">
-              <h2 className="text-lg font-semibold text-stone-900 mb-4">
+              <h2 className="text-lg font-semibold text-ink mb-4">
                 {es ? "Tu disponibilidad" : "Your availability"}
               </h2>
               <AvailabilityCalendar sitterId={user.id} isEditable />

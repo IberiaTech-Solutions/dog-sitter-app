@@ -3,6 +3,7 @@ import { ChevronLeft, MessageCircle, Search, CalendarDays, Settings, Dog } from 
 import { Avatar } from "./avatar";
 import { UserMenu } from "../user-menu";
 import { DashboardNav, DashboardBottomNav } from "../dashboard-nav";
+import { Logo } from "../logo";
 
 type Props = {
   appName: string;
@@ -56,9 +57,9 @@ export function DashboardShell({
   }));
 
   return (
-    <div className="min-h-screen bg-[#faf9f7] pb-20 lg:pb-0">
+    <div className="min-h-screen bg-canvas pb-20 lg:pb-0">
       {/* Top header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-stone-200/60">
+      <header className="sticky top-0 z-50 bg-canvas border-b border-line">
         <div className="mx-auto max-w-6xl flex items-center justify-between px-5 py-3 sm:px-8">
           {/* Left: back button or logo */}
           {backHref ? (
@@ -76,8 +77,8 @@ export function DashboardShell({
             </div>
           ) : (
             <Link href="/dashboard" className="flex items-center gap-2.5">
-              <img src="/icons/icon-192.png" alt="" width={32} height={32} className="rounded-lg" />
-              <span className="text-lg font-bold text-stone-900 tracking-tight hidden sm:inline">
+              <Logo size={32} />
+              <span className="text-lg font-bold text-ink tracking-tight hidden sm:inline">
                 {appName}
               </span>
             </Link>
@@ -101,13 +102,13 @@ export function DashboardShell({
       </main>
 
       {/* Mobile bottom tab bar */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-stone-200/60 safe-area-bottom">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-canvas border-t border-line safe-area-bottom">
         <DashboardBottomNav
           items={mobileNavItems}
           profileSlot={
             <Link
               href="/dashboard/profile"
-              className="flex flex-col items-center gap-0.5 px-3 py-1.5 text-stone-400 hover:text-green-600 transition-colors"
+              className="flex flex-col items-center justify-center gap-0.5 px-3 min-h-12 min-w-12 text-ink-soft hover:text-brand transition-colors"
             >
               <Avatar name={userName} src={avatarUrl} size="sm" className="w-5 h-5 text-[8px]" />
               <span className="text-[10px] font-medium">{es ? "Perfil" : "Profile"}</span>

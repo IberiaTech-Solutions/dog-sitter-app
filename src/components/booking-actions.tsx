@@ -166,7 +166,7 @@ export function BookingActions({ bookingId, status, isSitter, isOwner, otherPers
     if (cancelling) {
       return (
         <div className="flex items-center gap-2">
-          <span className="text-xs text-stone-500">
+          <span className="text-xs text-ink-muted">
             {es ? "¿Seguro?" : "Are you sure?"}
           </span>
           <Button
@@ -174,7 +174,7 @@ export function BookingActions({ bookingId, status, isSitter, isOwner, otherPers
             size="sm"
             disabled={loading}
             onClick={() => updateStatus("cancelled")}
-            className="bg-red-600 hover:bg-red-700 shadow-red-600/20"
+            className="bg-danger hover:bg-danger shadow-red-600/20"
           >
             {es ? "Sí, cancelar" : "Yes, cancel"}
           </Button>

@@ -1,36 +1,58 @@
 @import "tailwindcss";
 
-:root {
-  --background: #faf9f7;
-  --foreground: #1a1a1a;
-  --brand: #16a34a;
-  --brand-light: #dcfce7;
-  --brand-dark: #15803d;
-  --warm: #fef3c7;
-  --warm-dark: #d97706;
-  --surface: #ffffff;
-  --muted: #78716c;
-}
+@theme {
+  /* Neutrals — warm stone tinted toward the brand hue (95°) for Spanish-plaster warmth. */
+  --color-canvas: oklch(97% 0.008 95);
+  --color-surface: oklch(99.5% 0.003 95);
+  --color-ink: oklch(22% 0.012 95);
+  --color-ink-muted: oklch(45% 0.015 95);
+  --color-ink-soft: oklch(58% 0.015 95);
+  --color-line: oklch(92% 0.008 95);
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist);
+  /* Brand — Asturian wet-stone moss, cooler / bluer than the prior 155° (which read as Tuscan).
+     Shifted to 170° to match Cantabrian sea-foliage per design research. */
+  --color-brand: oklch(47% 0.085 170);
+  --color-brand-ink: oklch(30% 0.065 170);
+  --color-brand-soft: oklch(95% 0.022 170);
+
+  /* Pewter mist — grey-blue pulled from Cantabrian overcast skies + slate roofs.
+     For secondary surfaces, cold-weather moments, informational backgrounds. */
+  --color-mist: oklch(78% 0.012 230);
+  --color-mist-soft: oklch(94% 0.008 230);
+
+  /* Rust / oxblood — pulled from fishing-boat trim and red-tile roofs.
+     Reserved warm accent, never decoratively. */
+  --color-rust: oklch(45% 0.12 35);
+  --color-rust-soft: oklch(94% 0.025 35);
+
+  /* Legacy alias kept so any existing refs to --color-clay don't break. */
+  --color-clay: var(--color-rust);
+
+  /* Semantic. Success aliases brand. */
+  --color-success: oklch(47% 0.085 170);
+  --color-warning: oklch(68% 0.13 75);
+  --color-warning-ink: oklch(40% 0.1 75);
+  --color-danger: oklch(52% 0.17 25);
+  --color-danger-soft: oklch(95% 0.025 25);
+
+  /* Typography — Source Sans 3 for UI, Source Serif 4 for editorial display. */
+  --font-sans: var(--font-source-sans), system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-source-serif), ui-serif, Georgia, "Times New Roman", serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern", "liga";
 }
 
-/* Smooth scrolling */
 html[data-scroll-behavior="smooth"] {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -38,18 +60,16 @@ html[data-scroll-behavior="smooth"] {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d6d3d1;
+  background: var(--color-line);
   border-radius: 3px;
 }
 
-/* Focus styles for accessibility */
 *:focus-visible {
-  outline: 2px solid var(--brand);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
   border-radius: 4px;
 }
 
-/* Safe area for mobile bottom nav */
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }

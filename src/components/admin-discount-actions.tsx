@@ -71,8 +71,8 @@ export function AdminDiscountActions({ discountId, isActive, partnerName }: Prop
         disabled={loading}
         className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
           isActive
-            ? "text-green-600 hover:text-amber-600 hover:bg-amber-50"
-            : "text-stone-400 hover:text-green-600 hover:bg-green-50"
+            ? "text-brand hover:text-warning-ink hover:bg-warning/10"
+            : "text-ink-soft hover:text-brand hover:bg-brand-soft"
         }`}
       >
         <ToggleIcon className="w-4 h-4" />
@@ -82,16 +82,16 @@ export function AdminDiscountActions({ discountId, isActive, partnerName }: Prop
         <button
           onClick={() => setShowConfirm(true)}
           disabled={loading}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-ink-soft hover:text-danger hover:bg-danger-soft rounded-lg transition-colors"
         >
           <Trash2 className="w-3.5 h-3.5" />
         </button>
       ) : (
         <div className="flex items-center gap-2">
-          <span className="text-xs text-red-600">
+          <span className="text-xs text-danger">
             {es ? `Eliminar ${partnerName}?` : `Delete ${partnerName}?`}
           </span>
-          <Button variant="ghost" size="sm" disabled={loading} onClick={handleDelete} className="!text-red-600 !text-xs">
+          <Button variant="ghost" size="sm" disabled={loading} onClick={handleDelete} className="!text-danger !text-xs">
             {es ? "Si" : "Yes"}
           </Button>
           <Button variant="ghost" size="sm" disabled={loading} onClick={() => setShowConfirm(false)} className="!text-xs">

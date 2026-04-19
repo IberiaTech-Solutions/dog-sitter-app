@@ -77,22 +77,22 @@ export function AdminUserActions({ userId, userName, currentRole }: Props) {
         <button
           onClick={() => { setShowRoleMenu(!showRoleMenu); setShowConfirm(false); }}
           disabled={loading}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-stone-500 hover:text-stone-900 hover:bg-stone-100 rounded-lg transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-ink-muted hover:text-ink hover:bg-canvas rounded-lg transition-colors"
         >
           <UserCog className="w-3.5 h-3.5" />
           {es ? "Rol" : "Role"}
         </button>
         {showRoleMenu && (
-          <div className="absolute right-0 top-full mt-1 z-10 bg-white border border-stone-200 rounded-xl shadow-lg py-1 min-w-[120px]">
+          <div className="absolute right-0 top-full mt-1 z-10 bg-surface border border-line rounded-xl shadow-md py-1 min-w-[120px]">
             {roles.map((role) => (
               <button
                 key={role.value}
                 onClick={() => handleRoleChange(role.value)}
                 disabled={loading}
-                className={`w-full text-left px-4 py-2 text-sm hover:bg-stone-50 transition-colors ${
+                className={`w-full text-left px-4 py-2 text-sm hover:bg-canvas transition-colors ${
                   role.value === currentRole
-                    ? "font-semibold text-green-600"
-                    : "text-stone-700"
+                    ? "font-semibold text-brand"
+                    : "text-ink"
                 }`}
               >
                 {role.label}
@@ -108,13 +108,13 @@ export function AdminUserActions({ userId, userName, currentRole }: Props) {
         <button
           onClick={() => { setShowConfirm(true); setShowRoleMenu(false); }}
           disabled={loading}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-ink-soft hover:text-danger hover:bg-danger-soft rounded-lg transition-colors"
         >
           <Trash2 className="w-3.5 h-3.5" />
         </button>
       ) : (
         <div className="flex items-center gap-2">
-          <span className="text-xs text-red-600">
+          <span className="text-xs text-danger">
             {es ? `Eliminar ${userName}?` : `Delete ${userName}?`}
           </span>
           <Button
@@ -122,7 +122,7 @@ export function AdminUserActions({ userId, userName, currentRole }: Props) {
             size="sm"
             disabled={loading}
             onClick={handleDelete}
-            className="!text-red-600 !text-xs"
+            className="!text-danger !text-xs"
           >
             {es ? "Si" : "Yes"}
           </Button>
