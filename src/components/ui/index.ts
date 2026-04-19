@@ -7,3 +7,4 @@ export { Avatar } from "./avatar";
 export { Header } from "./header";
 export { DashboardShell } from "./dashboard-shell";
 export { PageShell } from "./page-shell";
+export { PublicHeader, PublicFooter } from "./public-shell";
