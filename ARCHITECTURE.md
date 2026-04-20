@@ -14,7 +14,7 @@ Framed as a **lifestyle business** (€0.3-1M ARR over 3-5 years is success), no
 **URL strategy:** Spanish is the default locale and renders prefix-free (`/login`, `/sitters`); English uses an `/en/` prefix (`/en/login`). Configured via `next-intl` `localePrefix: "as-needed"`.
 **Development base:** Charleston, SC, USA.
 **Jurisdiction:** Spain / EU — all users, data, and operations are Spanish-market only.
-**Business entity:** TBD — most likely a Spanish S.L. (≈€3K setup, native to market). Delaware C-corp + Spanish SL subsidiary only if US fundraising is in scope (€5-10K/year extra accounting overhead).
+**Business entity:** **Autónomo** (Phase 0 → through first 20 sitters). Founder is a Spanish citizen, so registration is free, ~48h, no NIE needed. First 12 months use tarifa plana (~€80/month cuota de autónomos vs ~€230+ standard). Realistic year-one all-in cost ~€2-2.5K including gestoría (€60-100/month). Convert to **Sociedad Limitada (S.L.)** when Phase 1 owner-flip happens and revenue clears ~€40-50K/year — at that point the SL's 15% reduced corp tax (first 2 years for new SLs) beats autónomo IRPF brackets, and limited liability matters. **Why not US LLC**: founder is a Spanish citizen+resident operating in Spain, so a US LLC adds permanent-establishment risk, GDPR Art. 27 representative fees (~€500-2K/yr), Spanish VAT fiscal-representative fees (~€1-3K/yr), Form 5472 US tax filing (~$500-2K/yr), and removes Bizum eligibility. The "$100 LLC" framing assumes no Spanish operations — false here.
 **Mobile strategy:** PWA in Phase 0 (installable on iOS/Android home screens, offline page, push notifications). React Native app in Phase 2 — design tokens, color values, type scale, spacing scale, and component contracts are intentionally portable (no `:has()`, `@container`, or `backdrop-blur` as load-bearing primitives).
 **Deployment:** Vercel (EU edge region, Frankfurt).
 
@@ -593,6 +593,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000  # App origin for redirects
 
 ### Phase 0: Supply-first Gijón (Month 0–3)
 **Goal: 5-10 partners signed + 20 sitters recruited BEFORE owner launch.**
+- **Legal setup**: register as autónomo (free, ~48h, founder is Spanish citizen with DNI). Activate tarifa plana for ~€80/month cuota. Sign with a Gijón gestoría (~€60-100/month) — handles modelos 130/303/100 and quarterly filings.
 - **Partner-first sign-ups.** Visit vets, pet shops, peluquerías caninas, dog trainers in Gijón. Sign partnership agreements (listing fee OR rev-share on referred customers). Having signed partners is a sitter-recruitment multiplier: "join and your clients get discounts at 8 Gijón businesses."
 - **Sitter recruitment** via personal network, architect/constructor friend referrals, local Facebook groups, neighborhood flyers at vet partners.
 - **Owner waitlist** live — landing form captures email + barrio so launch-day is warm, not cold.
@@ -600,6 +601,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000  # App origin for redirects
 - Waive sitter commission for first bookings; offer partner businesses free first-year listing for early signup.
 
 ### Phase 1: Owner launch in Gijón (Month 3–9)
+- **Convert autónomo → S.L.** when revenue clears ~€40-50K/year (or sooner if a co-founder joins). 15% reduced corp tax for new SLs (first 2 years) beats IRPF top brackets, and limited liability matters once owner volume scales. Plan ~€500-1K notary/registry + €3K capital (yours, returnable as company expense). Gestoría handles the conversion in ~2 weeks.
 - **Landing flips to owner-primary** once ≥20 verified sitters live.
 - **Partner-discount network** surfaces on owner booking confirmations, reviews, sitter profiles — primary differentiator vs Rover.
 - **QR-based redemption loop live end-to-end** (owner/sitter issues signed token → QR displayed in-app → partner enters token at their counter → redemption recorded for analytics). Full demo-able flow from discovery to verification.
