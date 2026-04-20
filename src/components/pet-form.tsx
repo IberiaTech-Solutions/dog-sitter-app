@@ -2,6 +2,7 @@
 
 import { useLocale } from "next-intl";
 import { useState } from "react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "@/i18n/navigation";
 import { Dog, Cat, Bird, Rabbit, PawPrint, Upload } from "lucide-react";
@@ -150,7 +151,7 @@ export function PetForm({ existing }: { existing?: Pet }) {
         </label>
         <div className="flex items-center gap-5">
           {photoUrl ? (
-            <img src={photoUrl} alt="" className="w-20 h-20 rounded-2xl object-cover" />
+            <Image src={photoUrl} alt="" width={80} height={80} className="w-20 h-20 rounded-2xl object-cover" />
           ) : (
             <div className="w-20 h-20 rounded-2xl bg-line/50 flex items-center justify-center">
               <PawPrint className="w-8 h-8 text-ink-soft" />

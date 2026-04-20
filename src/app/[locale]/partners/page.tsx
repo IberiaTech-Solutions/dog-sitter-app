@@ -3,7 +3,7 @@
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
-import { motion, useScroll, type Variants } from "framer-motion";
+import { motion, MotionConfig, useScroll, type Variants } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { PublicHeader, PublicFooter } from "@/components/ui";
 
@@ -28,6 +28,7 @@ export default function PartnersRecruitmentPage() {
   const { scrollYProgress } = useScroll();
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="flex flex-col min-h-screen bg-canvas">
       <motion.div
         aria-hidden="true"
@@ -189,5 +190,6 @@ export default function PartnersRecruitmentPage() {
 
       <PublicFooter />
     </div>
+    </MotionConfig>
   );
 }

@@ -6,7 +6,7 @@ import { useState, useMemo, useEffect, useRef, lazy, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Link } from "@/i18n/navigation";
-import { MapPin, Shield, Star, Dog, Cat, Bird, Rabbit, PawPrint, Search, Navigation, ChevronDown, ChevronUp, X } from "lucide-react";
+import { MapPin, Shield, BadgeCheck, Star, Dog, Cat, Bird, Rabbit, PawPrint, Search, Navigation, ChevronDown, ChevronUp, X } from "lucide-react";
 import { Avatar, Badge, Card, Button, Input } from "@/components/ui";
 import { toast } from "sonner";
 
@@ -454,9 +454,10 @@ export function SitterSearch() {
                         type="button"
                         size="sm"
                         variant="ghost"
+                        aria-pressed={selectedServices.has(key)}
                         className={
                           selectedServices.has(key)
-                            ? "bg-brand text-white hover:bg-brand-ink hover:text-white"
+                            ? "bg-brand text-surface hover:bg-brand-ink hover:text-surface"
                             : "border border-line text-ink-muted hover:bg-canvas"
                         }
                         onClick={() => setSelectedServices((s) => toggleInSet(s, key))}
@@ -481,9 +482,10 @@ export function SitterSearch() {
                           type="button"
                           size="sm"
                           variant="ghost"
+                          aria-pressed={selectedPets.has(key)}
                           className={
                             selectedPets.has(key)
-                              ? "bg-brand text-white hover:bg-brand-ink hover:text-white"
+                              ? "bg-brand text-surface hover:bg-brand-ink hover:text-surface"
                               : "border border-line text-ink-muted hover:bg-canvas"
                           }
                           onClick={() => setSelectedPets((s) => toggleInSet(s, key))}
@@ -524,28 +526,32 @@ export function SitterSearch() {
 
                 {/* Verified only */}
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    role="checkbox"
-                    aria-checked={verifiedOnly}
-                    onClick={() => setVerifiedOnly((v) => !v)}
-                    className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
-                      verifiedOnly
-                        ? "bg-brand border-brand"
-                        : "border-line bg-surface"
-                    }`}
-                  >
-                    {verifiedOnly && (
-                      <svg className="w-3 h-3 text-white" viewBox="0 0 12 12" fill="none">
-                        <path d="M2.5 6l2.5 2.5 4.5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    )}
-                  </button>
+                  <input
+                    id="verified-only"
+                    type="checkbox"
+                    checked={verifiedOnly}
+                    onChange={(e) => setVerifiedOnly(e.target.checked)}
+                    className="peer sr-only"
+                  />
                   <label
-                    className="text-sm text-ink cursor-pointer select-none"
-                    onClick={() => setVerifiedOnly((v) => !v)}
+                    htmlFor="verified-only"
+                    className="flex items-center gap-2 cursor-pointer select-none text-sm text-ink"
                   >
-                    <Shield className="w-3.5 h-3.5 text-brand inline mr-1" />
+                    <span
+                      aria-hidden="true"
+                      className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
+                        verifiedOnly
+                          ? "bg-brand border-brand"
+                          : "border-line bg-surface peer-focus-visible:ring-2 peer-focus-visible:ring-brand/40"
+                      }`}
+                    >
+                      {verifiedOnly && (
+                        <svg className="w-3 h-3 text-surface" viewBox="0 0 12 12" fill="none">
+                          <path d="M2.5 6l2.5 2.5 4.5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      )}
+                    </span>
+                    <BadgeCheck className="w-3.5 h-3.5 text-brand" aria-hidden="true" />
                     {es ? "Solo verificados" : "Verified only"}
                   </label>
                 </div>
@@ -598,10 +604,16 @@ export function SitterSearch() {
                               {sitter.full_name}
                             </h3>
                             {sitter.is_verified && (
-                              <Shield className="w-4 h-4 text-brand shrink-0" />
+                              <BadgeCheck
+                                className="w-4 h-4 text-brand shrink-0"
+                                aria-label={es ? "Identidad verificada" : "Identity verified"}
+                              />
                             )}
                             {sitter.has_insurance && (
-                              <Shield className="w-4 h-4 text-ink-muted shrink-0" />
+                              <Shield
+                                className="w-4 h-4 text-ink-muted shrink-0"
+                                aria-label={es ? "Con seguro" : "Insured"}
+                              />
                             )}
                           </div>
                           <div className="flex items-center gap-3 mt-1 text-xs text-ink-soft">

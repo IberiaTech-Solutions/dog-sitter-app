@@ -307,7 +307,7 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
 
             let bgClass: string;
             if (isStart || isEnd) {
-              bgClass = "bg-brand text-white font-bold";
+              bgClass = "bg-brand text-surface font-bold";
             } else if (inRange) {
               bgClass = "bg-brand-soft text-brand-ink";
             } else if (isPast || !isAvailable) {
@@ -316,15 +316,29 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
               bgClass = "bg-brand-soft text-brand border border-brand/40 cursor-pointer hover:bg-brand-soft";
             }
 
+            const dayLabel = new Date(dateStr).toLocaleDateString(es ? "es-ES" : "en-GB", {
+              day: "numeric",
+              month: "long",
+            });
+            const stateLabel = isPast || !isAvailable
+              ? (es ? "no disponible" : "unavailable")
+              : isStart || isEnd
+                ? (es ? "seleccionado" : "selected")
+                : inRange
+                  ? (es ? "en rango" : "in range")
+                  : (es ? "disponible" : "available");
+
             return (
               <button
                 key={dateStr}
                 type="button"
                 disabled={isPast || !isAvailable}
-                onClick={() => handleDayClick(dateStr)}
+                aria-pressed={isStart || isEnd || inRange}
+                aria-label={`${dayLabel}, ${stateLabel}`}
                 className={`aspect-square flex items-center justify-center rounded-lg text-sm transition-colors ${bgClass} ${
                   isToday && !isStart && !isEnd ? "ring-2 ring-brand ring-offset-1" : ""
                 }`}
+                onClick={() => handleDayClick(dateStr)}
               >
                 {day}
               </button>

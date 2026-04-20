@@ -57,7 +57,7 @@ export function DashboardBottomNav({
         <Link
           key={item.href}
           href={item.href}
-          className="relative flex flex-col items-center gap-0.5 px-3 py-1.5 text-ink-soft hover:text-brand transition-colors"
+          className="relative flex flex-col items-center justify-center gap-0.5 px-3 min-h-12 min-w-12 text-ink-soft hover:text-brand transition-colors"
         >
           {item.iconHtml}
           <span className="text-[10px] font-medium">{item.label}</span>

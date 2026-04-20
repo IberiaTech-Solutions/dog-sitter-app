@@ -30,7 +30,7 @@ export function DeletePetButton({ petId }: { petId: string }) {
         <button
           onClick={handleDelete}
           disabled={loading}
-          className="px-3 py-1.5 text-xs font-medium text-white bg-danger rounded-lg hover:bg-danger disabled:opacity-50 transition-colors"
+          className="px-3 py-1.5 text-xs font-medium text-surface bg-danger rounded-lg hover:bg-danger disabled:opacity-50 transition-colors"
         >
           {es ? "Sí, eliminar" : "Yes, delete"}
         </button>

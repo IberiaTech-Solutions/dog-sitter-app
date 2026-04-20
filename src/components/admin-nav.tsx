@@ -34,14 +34,14 @@ export function AdminNav({ locale, active, pendingVerifications, pendingPartners
             href={item.href}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
               active === item.key
-                ? "bg-brand text-white shadow-sm shadow-brand/20"
+                ? "bg-brand text-surface shadow-sm shadow-brand/20"
                 : "text-ink-muted hover:bg-line/50 hover:text-ink"
             }`}
           >
             <item.icon className="w-4 h-4" />
             {item.label}
             {badge > 0 && (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-danger px-1.5 text-[10px] font-bold text-white">
+              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-danger px-1.5 text-[10px] font-bold text-surface">
                 {badge}
               </span>
             )}

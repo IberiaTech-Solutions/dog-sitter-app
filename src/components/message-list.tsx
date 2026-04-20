@@ -186,7 +186,7 @@ export function MessageList({ conversations, currentUserId }: Props) {
                     <div
                       className={`max-w-[70%] rounded-2xl px-4 py-2 text-sm ${
                         isMine
-                          ? "bg-brand text-white"
+                          ? "bg-brand text-surface"
                           : "bg-line/50 text-ink"
                       }`}
                     >

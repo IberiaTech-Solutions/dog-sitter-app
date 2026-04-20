@@ -4,6 +4,9 @@ import { useState, useRef } from "react";
 import type { FormEvent } from "react";
 import {
   motion,
+  MotionConfig,
+  useInView,
+  useReducedMotion,
   useScroll,
   useTransform,
   type Variants,
@@ -38,7 +41,8 @@ const wordContainer: Variants = {
 
 const viewportConfig = { once: true, margin: "-80px" };
 
-function AnimatedWords({ text, className }: { text: string; className?: string }) {
+function AnimatedWords({ text, className, reduce }: { text: string; className?: string; reduce: boolean }) {
+  if (reduce) return <span className={className}>{text}</span>;
   const words = text.split(" ");
   return (
     <span className={className}>
@@ -62,12 +66,17 @@ export function LandingPage() {
   const locale = useLocale();
   const es = locale === "es";
   const [waitlistSubmitted, setWaitlistSubmitted] = useState(false);
+  const shouldReduce = useReducedMotion() ?? false;
 
   const { scrollYProgress } = useScroll();
 
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollY } = useScroll();
-  const heroParallaxY = useTransform(scrollY, [0, 600], [0, 60]);
+  const heroParallaxY = useTransform(scrollY, [0, 600], [0, shouldReduce ? 0 : 60]);
+
+  const marqueeRef = useRef<HTMLElement>(null);
+  const marqueeInView = useInView(marqueeRef, { margin: "200px" });
+  const marqueeAnimating = !shouldReduce && marqueeInView;
 
   const handleWaitlistSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -89,6 +98,7 @@ export function LandingPage() {
   };
 
   return (
+    <MotionConfig reducedMotion="user">
     <div className="flex flex-col min-h-screen bg-canvas">
       <motion.div
         aria-hidden="true"
@@ -123,10 +133,12 @@ export function LandingPage() {
                   <AnimatedWords
                     text={t("home.heroPetLine1")}
                     className="block"
+                    reduce={shouldReduce}
                   />
                   <AnimatedWords
                     text={t("home.heroPetLine2")}
                     className="block text-ink-muted"
+                    reduce={shouldReduce}
                   />
                 </motion.h1>
 
@@ -214,7 +226,7 @@ export function LandingPage() {
             <motion.div variants={container} className="mt-12 divide-y divide-line border-y border-line">
               {/* Owner */}
               <motion.div variants={fadeUp}>
-                <Link href="/signup" className="group block py-8 transition-colors">
+                <a href="#waitlist" className="group block py-8 transition-colors">
                   <div className="flex items-center justify-between gap-6">
                     <div className="flex-1 min-w-0">
                       <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-ink-muted">
@@ -237,7 +249,7 @@ export function LandingPage() {
                       aria-hidden="true"
                     />
                   </div>
-                </Link>
+                </a>
               </motion.div>
 
               {/* Sitter */}
@@ -301,12 +313,13 @@ export function LandingPage() {
 
         {/* Marquee — visual breath between text blocks. */}
         <section
+          ref={marqueeRef}
           aria-label={es ? "Categorías de la red" : "Network categories"}
           className="border-t border-line overflow-hidden py-8 bg-canvas"
         >
           <motion.div
-            animate={{ x: ["0%", "-50%"] }}
-            transition={{ duration: 40, ease: "linear", repeat: Infinity }}
+            animate={marqueeAnimating ? { x: ["0%", "-50%"] } : undefined}
+            transition={marqueeAnimating ? { duration: 40, ease: "linear", repeat: Infinity } : undefined}
             className="flex gap-12 whitespace-nowrap font-serif text-2xl sm:text-3xl text-ink-muted"
           >
             {[
@@ -361,10 +374,12 @@ export function LandingPage() {
               <AnimatedWords
                 text={es ? "Rover conoce tu ciudad." : "Rover knows your city."}
                 className="block"
+                reduce={shouldReduce}
               />
               <AnimatedWords
                 text={es ? "Nosotros conocemos tu barrio." : "We know your neighborhood."}
                 className="block text-canvas/60"
+                reduce={shouldReduce}
               />
             </motion.h2>
             <motion.p
@@ -472,7 +487,8 @@ export function LandingPage() {
 
         {/* 5. Owner waitlist. */}
         <motion.section
-          className="border-t border-line bg-surface"
+          id="waitlist"
+          className="border-t border-line bg-surface scroll-mt-20"
           initial="hidden"
           whileInView="show"
           viewport={viewportConfig}
@@ -588,5 +604,6 @@ export function LandingPage() {
 
       <PublicFooter />
     </div>
+    </MotionConfig>
   );
 }
