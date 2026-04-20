@@ -11,9 +11,11 @@ Framed as a **lifestyle business** (€0.3-1M ARR over 3-5 years is success), no
 **Target Phase 1 (owner launch):** flip landing to owner-primary once supply exists.
 **Stack:** Next.js 16 App Router + React 19 + TypeScript + Supabase + Tailwind CSS 4.
 **Languages:** Spanish (primary) + English (secondary — for expats/tourists in Spain).
+**URL strategy:** Spanish is the default locale and renders prefix-free (`/login`, `/sitters`); English uses an `/en/` prefix (`/en/login`). Configured via `next-intl` `localePrefix: "as-needed"`.
 **Development base:** Charleston, SC, USA.
 **Jurisdiction:** Spain / EU — all users, data, and operations are Spanish-market only.
-**Business entity:** TBD — will need a Spanish legal entity (S.L. or autónomo) to operate.
+**Business entity:** TBD — most likely a Spanish S.L. (≈€3K setup, native to market). Delaware C-corp + Spanish SL subsidiary only if US fundraising is in scope (€5-10K/year extra accounting overhead).
+**Mobile strategy:** PWA in Phase 0 (installable on iOS/Android home screens, offline page, push notifications). React Native app in Phase 2 — design tokens, color values, type scale, spacing scale, and component contracts are intentionally portable (no `:has()`, `@container`, or `backdrop-blur` as load-bearing primitives).
 **Deployment:** Vercel (EU edge region, Frankfurt).
 
 ---
@@ -108,6 +110,16 @@ Framed as a **lifestyle business** (€0.3-1M ARR over 3-5 years is success), no
 | Service-worker dev-mode fix | ✅ Done | SW v2 cache; does NOT cache HTML navigations (prevents stale-hydration); auto-unregisters in dev `NODE_ENV !== "production"` |
 | Full token migration | ✅ Done | 435 raw Tailwind color classes migrated to tokens (100% complete); zero residual stone/green/amber/blue/purple/red raw classes in src/ |
 | Badge variants rationalized | ✅ Done | 6 color variants → 4 semantic slots (brand/warning/danger/neutral); legacy aliases (green/amber/red/blue/purple/stone) mapped for back-compat |
+| **Sitter recruitment page** | ✅ Done | `/sitters` mirrors `/partners` (hero + 3-reasons + how-it-works + CTA). New `sitters.*` i18n namespace. Hero photo: `dog-walk.jpg`. CTA → `/signup?role=sitter`; SignupForm reads the query param and pre-selects "Quiero cuidar". |
+| **Admin owners view** | ✅ Done | `/admin/owners` — focused list of role=owner profiles with pet count, booking count, last booking date, "También cuidador" badge for `role=both`. Added to AdminNav between Cuidadores and Partners. |
+| **Legal pages** | ✅ Done | `/terms`, `/privacy`, `/legal` — Spanish-primary RGPD/LSSI-CE-aware drafts via shared `<LegalArticle>` component. Banner labels them "Borrador, pendiente de revisión legal". Footer links go live. |
+| **Spanish-default URL routing** | ✅ Done | `localePrefix: "as-needed"` in `i18n/routing.ts`. Spanish URLs render prefix-free (`/sitters`, `/login`); English URLs keep `/en/`. Existing `/${locale}/...` redirects still work via middleware. |
+| **Invite-user dropdown** | ✅ Done | `AdminInviteForm` refactored from always-visible card to button + popover (top-right of `/admin/users` header). `aria-haspopup="dialog"`, `aria-expanded`, click-outside + Escape close. Form unchanged. |
+| **Google sign-up** | ✅ Done | `SignupForm` mirrors `LoginForm`'s Google OAuth pattern. Selected role passed through OAuth state via `redirectTo=...&role=sitter`; `/api/auth/callback` reads it and promotes new sitters from the default `owner` role on first login. |
+| **Reduced-motion support** | ✅ Done | `MotionConfig reducedMotion="user"` wraps `landing-page.tsx` and `partners/page.tsx`; marquee paused via `useInView`; parallax + `AnimatedWords` per-word stagger conditionally disabled. Body grain CSS gated on `(min-width: 640px) and (prefers-reduced-motion: no-preference)`. |
+| **A11y + perf audit pass** | ✅ Done | Score 14→20: real `<input type="checkbox">` + `<label htmlFor>` for verified-only filter; `aria-pressed` on filter pills + calendar days; localized `aria-label` on day buttons; distinct `BadgeCheck` (verified) vs `Shield` (insured) icons; `next/image` everywhere (Avatar, pet-form); `Button sm` 36→44px; bottom-nav 48×48; `--color-ink-soft` 58→52% L (3.92→5.05 contrast). |
+| **Em-dash copy sweep** | ✅ Done | All AI-tell em-dashes removed from user-facing copy and i18n strings (16 instances across 11 files). Replaced with periods/commas in prose, `:` in label-description pairs, `·` (interpunct) in title separators. Tabular `"—"` placeholders kept (legitimate UI convention). |
+| **Company-voice landing closer** | ✅ Done | "Quién lo construye" / "Soy Javier..." founder note rewritten as "Cómo lo hacemos" / "Construimos CuidaMascotas en Gijón..." — collective company voice replaces personal-founder voice. |
 
 ### Not Yet Started
 
@@ -125,7 +137,8 @@ Framed as a **lifestyle business** (€0.3-1M ARR over 3-5 years is success), no
 | Phone verification (SMS OTP) | ❌ | Medium | Verify phone via Twilio/Vonage SMS — Supabase Auth built-in support |
 | In-app customer support chat | ❌ | Low | Live chat or chatbot for user issues |
 | In-app video chat | ❌ | Low | Video calls between owner and sitter — no competitor has this yet |
-| Mobile app (React Native) | ❌ | Phase 2 | PWA covers mobile for now |
+| Mobile app (React Native) | ❌ | Phase 2 | PWA covers mobile for now (installable, push, offline). RN app reuses design tokens + i18n; Capacitor wrap is the fallback if RN scope blows up. |
+| Spanish-language URL slugs | ❌ | Low | Currently English code paths (`/sitters`, `/partners`). Could map to `/cuidadores`, `/negocios` etc. via `next-intl` `pathnames`. SEO win for Spanish keywords. Rover.es uses English paths under `/es/` prefix — so this isn't industry-standard, but it's a small differentiator. |
 
 ---
 
@@ -199,8 +212,12 @@ dog_sitter_app/
 │   │   ├── [locale]/
 │   │   │   ├── layout.tsx             # Locale layout (NextIntlClientProvider, Toaster)
 │   │   │   ├── page.tsx               # Landing page (auth-aware redirect)
-│   │   │   ├── login/page.tsx
-│   │   │   ├── signup/page.tsx
+│   │   │   ├── login/page.tsx          # Public shell + split-screen quote panel + LoginForm + Google OAuth
+│   │   │   ├── signup/page.tsx         # Public shell + split-screen + SignupForm; reads ?role=sitter to pre-select
+│   │   │   ├── sitters/page.tsx        # /sitters — sitter recruitment landing (hero + why + how + CTA → /signup?role=sitter)
+│   │   │   ├── terms/page.tsx          # Public legal: Condiciones de uso (uses <LegalArticle>)
+│   │   │   ├── privacy/page.tsx        # Public legal: Política de privacidad (RGPD/LOPDGDD scaffold)
+│   │   │   ├── legal/page.tsx          # Public legal: Aviso legal (LSSI-CE scaffold)
 │   │   │   ├── search/page.tsx        # Sitter search
 │   │   │   ├── sitter/[id]/page.tsx   # Sitter profile
 │   │   │   ├── booking/[id]/page.tsx  # Booking confirmation
@@ -215,12 +232,13 @@ dog_sitter_app/
 │   │   │   ├── admin/
 │   │   │   │   ├── page.tsx           # Stats dashboard (RPC) — extended with partner + redemption metrics
 │   │   │   │   ├── sitters/          # Sitter management
+│   │   │   │   ├── owners/           # Owner-focused list (pet count, booking count, last booking date, role=both badge)
 │   │   │   │   ├── bookings/         # Booking administration
-│   │   │   │   ├── users/            # User management
+│   │   │   │   ├── users/            # User management — invite form is now a popover button (top-right) instead of always-visible card
 │   │   │   │   └── partners/         # Admin verification queue + oversight. Discounts shown inline per verified partner (admin can pause/delete via shared actions — no separate /admin/discounts page).
 │   │   │   ├── contact/              # Public /contact page — general / partners / press mailto rows
 │   │   │   ├── partners/             # Partner recruitment + signup (public)
-│   │   │   │   ├── page.tsx          # /partners — benefits, how-it-works, CTA to signup
+│   │   │   │   ├── page.tsx          # /partners — benefits, how-it-works, CTA to signup. Wrapped in <MotionConfig reducedMotion="user">.
 │   │   │   │   └── signup/page.tsx   # /partners/signup — 2-col typographic panel + business signup form
 │   │   │   └── partner/              # Partner dashboard (authed, role=partner only; guarded by requirePartner)
 │   │   │       ├── page.tsx          # Overview: verification status, stats, quick actions
@@ -238,16 +256,18 @@ dog_sitter_app/
 │   │
 │   ├── components/
 │   │   ├── ui/                       # Reusable UI library (custom, not shadcn)
-│   │   │   ├── button.tsx            # Button + LinkButton variants; sm/md/lg sizes meet WCAG 2.5.5 touch minimums
+│   │   │   ├── button.tsx            # Button + LinkButton variants; sm/md/lg → 44/44/48px (all meet WCAG 2.5.5 + brief's 44px floor)
 │   │   │   ├── input.tsx             # Input + Textarea; token-based focus ring on brand
 │   │   │   ├── select.tsx            # Select dropdown
 │   │   │   ├── card.tsx              # Card container; bg-surface + border-line, no heavy shadow
 │   │   │   ├── badge.tsx             # 4 semantic variants (brand/warning/danger/neutral) + legacy aliases for back-compat
 │   │   │   ├── dashboard-shell.tsx   # Dashboard layout (top nav + mobile bottom tabs); solid bg-canvas + hairline border — no glassmorphism
-│   │   │   ├── avatar.tsx            # Initials-based avatar; brand→brand-ink gradient (token-driven)
+│   │   │   ├── avatar.tsx            # next/image-backed; solid bg-brand fallback (no gradient — system is fully gradient-free)
 │   │   │   ├── header.tsx            # Sticky top nav; solid bg-canvas + border-b border-line
 │   │   │   ├── page-shell.tsx        # Centered content wrapper
+│   │   │   ├── public-shell.tsx      # PublicHeader + PublicFooter for unauthed pages; takes showSittersLink + showBusinessLink props
 │   │   │   └── index.ts             # Barrel export
+│   │   ├── legal-article.tsx         # Shared layout for /terms, /privacy, /legal — eyebrow + title + draft banner + prose-styled article slot
 │   │   ├── logo.tsx                  # <Logo> React component — inline SVG, 5-ellipse asymmetric paw, inherits currentColor, scales from 16px favicon to 512px PWA
 │   │   ├── partner-signup-form.tsx   # Client form: business fields + contact + password + terms; auth.signUp + partner_profiles insert
 │   │   ├── partner-profile-form.tsx  # Client form for /partner/profile edit flow
@@ -289,7 +309,7 @@ dog_sitter_app/
 │   │   └── partner.ts                # requirePartner() auth guard — loads profile + partner_profiles, redirects non-partners to their appropriate dashboard
 │   │
 │   ├── i18n/
-│   │   ├── routing.ts                # Locale routing config (es default, en)
+│   │   ├── routing.ts                # Locale routing — es default + localePrefix: "as-needed" (Spanish prefix-free, English /en/)
 │   │   ├── navigation.ts             # Link/redirect helpers
 │   │   └── request.ts               # Server-side i18n loader
 │   │

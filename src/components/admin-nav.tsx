@@ -1,9 +1,9 @@
 import { Link } from "@/i18n/navigation";
-import { BarChart3, Dog, CalendarDays, Users, Briefcase } from "lucide-react";
+import { BarChart3, Dog, CalendarDays, Users, Briefcase, Heart } from "lucide-react";
 
 type Props = {
   locale: string;
-  active: "overview" | "sitters" | "bookings" | "users" | "partners";
+  active: "overview" | "sitters" | "owners" | "bookings" | "users" | "partners";
   pendingVerifications?: number;
   pendingPartners?: number;
 };
@@ -13,6 +13,7 @@ export function AdminNav({ locale, active, pendingVerifications, pendingPartners
   const items = [
     { key: "overview" as const, href: "/admin", icon: BarChart3, label: es ? "Resumen" : "Overview" },
     { key: "sitters" as const, href: "/admin/sitters", icon: Dog, label: es ? "Cuidadores" : "Sitters" },
+    { key: "owners" as const, href: "/admin/owners", icon: Heart, label: es ? "Dueños" : "Owners" },
     { key: "partners" as const, href: "/admin/partners", icon: Briefcase, label: es ? "Partners" : "Partners" },
     { key: "bookings" as const, href: "/admin/bookings", icon: CalendarDays, label: es ? "Reservas" : "Bookings" },
     { key: "users" as const, href: "/admin/users", icon: Users, label: es ? "Usuarios" : "Users" },

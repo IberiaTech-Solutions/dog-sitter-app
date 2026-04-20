@@ -233,14 +233,14 @@ export default async function SitterProfilePage({ params }: Props) {
                 <p className="text-sm text-ink-muted mt-1">
                   {{
                     flexible: es
-                      ? "Flexible — Reembolso completo hasta 24h antes del inicio"
-                      : "Flexible — Full refund up to 24h before start",
+                      ? "Flexible: reembolso completo hasta 24h antes del inicio"
+                      : "Flexible: full refund up to 24h before start",
                     moderate: es
-                      ? "Moderada — Reembolso completo hasta 5 días antes, 50% después"
-                      : "Moderate — Full refund up to 5 days before, 50% after",
+                      ? "Moderada: reembolso completo hasta 5 días antes, 50% después"
+                      : "Moderate: full refund up to 5 days before, 50% after",
                     strict: es
-                      ? "Estricta — 50% reembolso hasta 7 días antes, sin reembolso después"
-                      : "Strict — 50% refund up to 7 days before, no refund after",
+                      ? "Estricta: 50% reembolso hasta 7 días antes, sin reembolso después"
+                      : "Strict: 50% refund up to 7 days before, no refund after",
                   }[sitterProfile.cancellation_policy as string] ?? sitterProfile.cancellation_policy}
                 </p>
               </Card>

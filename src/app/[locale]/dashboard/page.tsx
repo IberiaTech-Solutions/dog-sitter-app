@@ -155,7 +155,7 @@ export default async function DashboardPage({ params }: Props) {
                         ) : (
                           <>
                             {(booking.pet as { name: string })?.name
-                              ? `${(booking.pet as { name: string }).name} — `
+                              ? `${(booking.pet as { name: string }).name} · `
                               : ""}
                             {new Date(booking.start_date).toLocaleDateString(
                               locale === "es" ? "es-ES" : "en-GB",

@@ -254,7 +254,7 @@ export function LandingPage() {
 
               {/* Sitter */}
               <motion.div variants={fadeUp}>
-                <Link href="/signup" className="group block py-8 transition-colors">
+                <Link href="/sitters" className="group block py-8 transition-colors">
                   <div className="flex items-center justify-between gap-6">
                     <div className="flex-1 min-w-0">
                       <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.15em] text-ink-muted">
@@ -463,7 +463,7 @@ export function LandingPage() {
                   >
                     {es ? "Escríbenos" : "Write us"}
                   </a>
-                  {es ? " — vamos en orden." : " — we roll out in order."}
+                  {es ? ". Vamos en orden." : ". We roll out in order."}
                 </motion.p>
               </div>
 
@@ -561,7 +561,7 @@ export function LandingPage() {
           </div>
         </motion.section>
 
-        {/* 6. Founder note — closing, short. */}
+        {/* 6. Closer — company-voice, short. */}
         <motion.section
           className="border-t border-line"
           initial="hidden"
@@ -575,21 +575,21 @@ export function LandingPage() {
                 variants={fadeUp}
                 className="text-sm font-semibold uppercase tracking-[0.15em] text-ink-muted"
               >
-                {es ? "Quién lo construye" : "Who's building this"}
+                {es ? "Cómo lo hacemos" : "How we work"}
               </motion.p>
               <motion.p
                 variants={fadeUp}
                 className="mt-6 font-serif text-xl text-ink leading-relaxed"
               >
                 {es
-                  ? "Soy Javier, de Gijón. Construyo esto pensando en mis vecinos — en la vet de mi familia, en la peluquería canina de la esquina, en los cuidadores que nos acompañan desde hace años."
-                  : "I'm Javier, from Gijón. I'm building this for my neighborhood — the family vet, the groomer on the corner, the sitters who've looked after our pets for years."}
+                  ? "Construimos CuidaMascotas en Gijón, barrio a barrio. Verificamos cada cuidador. Firmamos cada veterinario y cada tienda con un acuerdo claro. Crecemos despacio, con gente que ya se conoce."
+                  : "We build CuidaMascotas in Gijón, neighborhood by neighborhood. We verify every sitter. We sign every vet and shop with a clear agreement. We grow slowly, with people who already know each other."}
               </motion.p>
               <motion.p
                 variants={fadeUp}
                 className="mt-4 text-sm text-ink-muted leading-relaxed"
               >
-                {es ? "¿Preguntas o ideas? " : "Questions or ideas? "}
+                {es ? "¿Preguntas o propuestas? " : "Questions or proposals? "}
                 <a
                   href="mailto:hola@cuidamascotas.es"
                   className="text-brand hover:text-brand-ink font-medium transition-colors"

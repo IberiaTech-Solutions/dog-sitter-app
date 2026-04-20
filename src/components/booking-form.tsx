@@ -422,7 +422,7 @@ export function BookingForm({ sitterId, sitterRate, services, pets }: Props) {
       >
         {loading
           ? t("common.loading")
-          : `${t("booking.confirm")} — ${days > 0 ? formatEur(total) : ""}`}
+          : `${t("booking.confirm")} · ${days > 0 ? formatEur(total) : ""}`}
       </Button>
     </form>
   );

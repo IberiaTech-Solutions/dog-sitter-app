@@ -126,7 +126,7 @@ export default async function RedLocalPage({ params }: Props) {
           <p className="mt-3 text-ink-muted max-w-2xl leading-relaxed">
             {es
               ? "Veterinarios, tiendas y peluquerías caninas de Gijón verificados por nosotros. Toca \"Usar\" para generar tu código y presentarlo en el negocio."
-              : "Vets, pet shops, and groomers in Gijón — all verified. Tap \"Use\" to generate your code and present it at the shop."}
+              : "Vets, pet shops, and groomers in Gijón. All verified. Tap \"Use\" to generate your code and present it at the shop."}
           </p>
         </div>
 
@@ -135,8 +135,8 @@ export default async function RedLocalPage({ params }: Props) {
             <Card className="text-center py-10">
               <p className="text-ink-muted">
                 {es
-                  ? "Aún no hay ofertas activas. Estamos cerrando partnerships en Gijón — vuelve pronto."
-                  : "No active offers yet. We're closing partnerships in Gijón — check back soon."}
+                  ? "Aún no hay ofertas activas. Estamos cerrando partnerships en Gijón. Vuelve pronto."
+                  : "No active offers yet. We're closing partnerships in Gijón. Check back soon."}
               </p>
             </Card>
           ) : (

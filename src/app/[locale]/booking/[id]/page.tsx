@@ -60,9 +60,9 @@ export default async function BookingPage({ params }: Props) {
   const es = locale === "es";
 
   const policyLabels: Record<string, { es: string; en: string }> = {
-    flexible: { es: "Flexible — Reembolso completo hasta 24h antes", en: "Flexible — Full refund up to 24h before" },
-    moderate: { es: "Moderada — Reembolso completo hasta 5 días antes", en: "Moderate — Full refund up to 5 days before" },
-    strict: { es: "Estricta — 50% reembolso hasta 7 días antes", en: "Strict — 50% refund up to 7 days before" },
+    flexible: { es: "Flexible: reembolso completo hasta 24h antes", en: "Flexible: full refund up to 24h before" },
+    moderate: { es: "Moderada: reembolso completo hasta 5 días antes", en: "Moderate: full refund up to 5 days before" },
+    strict: { es: "Estricta: 50% reembolso hasta 7 días antes", en: "Strict: 50% refund up to 7 days before" },
   };
 
   return (

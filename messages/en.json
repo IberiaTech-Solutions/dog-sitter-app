@@ -88,16 +88,16 @@
     "commission": "Service fee"
   },
   "partners": {
-    "metaTitle": "Join the local business network — CuidaMascotas",
+    "metaTitle": "Join the local business network · CuidaMascotas",
     "metaDescription": "Vets, pet shops, groomers, and trainers in Gijón: connect with verified local pet owners. Free first year, no subscription.",
     "recruitLabel": "For businesses",
     "recruitTitle": "Join the local network.",
-    "recruitPitch": "Gijón vets, pet shops, groomers, and trainers. Offer discounts to our sitters' clients and get real local acquisition — without national middlemen.",
+    "recruitPitch": "Gijón vets, pet shops, groomers, and trainers. Offer discounts to our sitters' clients and get real local acquisition, without national middlemen.",
     "recruitCta": "Join the network",
     "recruitProof": "Launching in Gijón · Free first year",
     "whyLabel": "Why join",
     "why1Title": "Local acquisition, not impressions",
-    "why1Desc": "We connect with real Gijón pet owners. Not drive-by clicks — clients who live 10 minutes from your shop.",
+    "why1Desc": "We connect with real Gijón pet owners. Not drive-by clicks. Clients who live 10 minutes from your shop.",
     "why2Title": "Free for the first year",
     "why2Desc": "Your listing is free. No subscription, no fine print, no exclusivity. If it doesn't bring you customers, you walk without friction.",
     "why3Title": "QR verification, no POS required",
@@ -135,6 +135,28 @@
       "nutritionist": "Pet nutritionist",
       "other": "Other"
     }
+  },
+  "sitters": {
+    "metaTitle": "Care for pets in your neighborhood · CuidaMascotas",
+    "metaDescription": "Become a sitter in Gijón. You set your prices, calendar, client records, and monthly summaries for your invoicing. Fair 18% commission.",
+    "recruitProof": "Fair commission · Real tools · Local network",
+    "recruitTitle": "Care for pets in your neighborhood.",
+    "recruitPitch": "You set the prices and the schedule. Calendar, per-client records, monthly summaries for your invoicing. And a local discount network that helps you keep clients coming back.",
+    "recruitCta": "Create sitter account",
+    "whyLabel": "Why join",
+    "why1Title": "Fair commission, no surprises",
+    "why1Desc": "18% on each confirmed booking. No monthly fees, no fine print, no cancellation penalties. What you charge is what you keep.",
+    "why2Title": "Tools for your day-to-day",
+    "why2Desc": "Calendar synced with your bookings, per-pet records with notes and photos, and monthly summaries ready for your accountant. No second app.",
+    "why3Title": "Your own local network of perks",
+    "why3Desc": "Your clients get discounts at vets, pet shops, and groomers in Gijón. That's how you build loyalty and bring them back.",
+    "howLabel": "How it works",
+    "how1Title": "Create your profile",
+    "how1Desc": "Ten minutes: your services, prices, the pets you care for, and your area of Gijón.",
+    "how2Title": "Verify your identity",
+    "how2Desc": "Upload your DNI or NIE and, if you have one, your liability insurance. Typical approval in 24 hours.",
+    "how3Title": "Receive your first booking",
+    "how3Desc": "We notify you when a verified owner in your neighborhood picks you. Accept or decline, no commitment."
   },
   "footer": {
     "about": "About us",

@@ -88,7 +88,7 @@
     "commission": "Comisión de servicio"
   },
   "partners": {
-    "metaTitle": "Únete a la red local de negocios — CuidaMascotas",
+    "metaTitle": "Únete a la red local de negocios · CuidaMascotas",
     "metaDescription": "Veterinarios, tiendas, peluquerías y adiestradores de Gijón: conecta con dueños de mascotas locales verificados. Sin coste durante el primer año.",
     "recruitLabel": "Para negocios",
     "recruitTitle": "Forma parte de la red local.",
@@ -97,7 +97,7 @@
     "recruitProof": "Lanzando en Gijón · Sin coste el primer año",
     "whyLabel": "Por qué unirte",
     "why1Title": "Adquisición local, no impresiones",
-    "why1Desc": "Conectamos con dueños de mascotas reales de Gijón. No son clics de turistas de paso — son clientes que viven a 10 minutos de tu negocio.",
+    "why1Desc": "Conectamos con dueños de mascotas reales de Gijón. No son clics de turistas de paso. Son clientes que viven a 10 minutos de tu negocio.",
     "why2Title": "Sin coste durante el primer año",
     "why2Desc": "Tu listado es gratuito. Ni suscripción, ni letra pequeña, ni exclusividad. Si no te aporta clientes, te vas sin fricción.",
     "why3Title": "Verificación por QR, no POS",
@@ -135,6 +135,28 @@
       "nutritionist": "Nutricionista canino",
       "other": "Otro"
     }
+  },
+  "sitters": {
+    "metaTitle": "Cuida mascotas en tu barrio · CuidaMascotas",
+    "metaDescription": "Conviértete en cuidador en Gijón. Pones tus precios, calendario, fichas de cliente y resúmenes para tus facturas. Comisión justa del 18%.",
+    "recruitProof": "Comisión justa · Herramientas reales · Red local",
+    "recruitTitle": "Cuida mascotas en tu barrio.",
+    "recruitPitch": "Tú pones precios y horarios. Calendario, fichas de cada cliente y resúmenes mensuales para tus facturas. Y una red local de descuentos que te ayuda a fidelizar.",
+    "recruitCta": "Crear cuenta de cuidador",
+    "whyLabel": "Por qué unirte",
+    "why1Title": "Comisión justa, sin sorpresas",
+    "why1Desc": "18% sobre cada reserva confirmada. Sin cuotas mensuales, sin letra pequeña, sin penalización por cancelar. Lo que cobras es lo que cobras.",
+    "why2Title": "Herramientas para tu día a día",
+    "why2Desc": "Calendario sincronizado con tus reservas, fichas de cada mascota con notas y fotos, y resúmenes mensuales listos para tu gestoría. Sin segundo programa.",
+    "why3Title": "Tu propia red local de ventajas",
+    "why3Desc": "Tus clientes acceden a descuentos en veterinarios, tiendas y peluquerías de Gijón. Eso te ayuda a fidelizar y a que repitan.",
+    "howLabel": "Cómo funciona",
+    "how1Title": "Crea tu perfil",
+    "how1Desc": "Diez minutos: tus servicios, precios, mascotas que cuidas y zona de Gijón.",
+    "how2Title": "Verifica tu identidad",
+    "how2Desc": "Sube tu DNI o NIE y, si tienes, tu seguro de responsabilidad civil. Aprobamos en 24 horas habituales.",
+    "how3Title": "Recibe tu primera reserva",
+    "how3Desc": "Te avisamos cuando un dueño verificado de tu barrio te elija. Aceptas o declinas, sin compromiso."
   },
   "footer": {
     "about": "Sobre nosotros",

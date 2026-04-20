@@ -32,17 +32,14 @@ export default async function AdminUsersPage({ params }: Props) {
       <AdminHeader appName={t("common.appName")} locale={locale} userName={profile.full_name} avatarUrl={profile.avatar_url} />
 
       <PageShell>
-        <div className="flex items-center gap-3 mb-6">
+        <div className="flex items-center justify-between gap-3 mb-6">
           <h1 className="font-serif text-h2 font-semibold text-ink">
             {es ? "Todos los usuarios" : "All users"} ({users?.length ?? 0})
           </h1>
+          <AdminInviteForm />
         </div>
 
         <AdminNav locale={locale} active="users" pendingVerifications={pendingVerifications} />
-
-        <div className="mt-8 max-w-md">
-          <AdminInviteForm />
-        </div>
 
         <div className="mt-8 space-y-3">
           {!users || users.length === 0 ? (

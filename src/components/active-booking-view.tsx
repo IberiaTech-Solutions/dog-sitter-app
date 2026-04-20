@@ -295,8 +295,8 @@ export function ActiveBookingView({
           {gpsActive && (
             <p className="mt-3 text-sm text-brand">
               {locale === "es"
-                ? "GPS activo — compartiendo ubicación"
-                : "GPS active — sharing location"}
+                ? "GPS activo, compartiendo ubicación"
+                : "GPS active, sharing location"}
             </p>
           )}
 

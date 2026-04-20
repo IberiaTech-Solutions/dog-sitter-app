@@ -4,7 +4,15 @@ import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Logo } from "@/components/logo";
 
-export function PublicHeader({ showBusinessLink = true }: { showBusinessLink?: boolean }) {
+type PublicHeaderProps = {
+  showBusinessLink?: boolean;
+  showSittersLink?: boolean;
+};
+
+export function PublicHeader({
+  showBusinessLink = true,
+  showSittersLink = true,
+}: PublicHeaderProps) {
   const t = useTranslations();
   const locale = useLocale();
   const es = locale === "es";
@@ -19,6 +27,14 @@ export function PublicHeader({ showBusinessLink = true }: { showBusinessLink?: b
           </span>
         </Link>
         <nav className="flex items-center gap-1">
+          {showSittersLink && (
+            <Link
+              href="/sitters"
+              className="hidden sm:inline-flex items-center px-3 py-2.5 min-h-11 text-sm font-medium text-ink-muted hover:text-ink transition-colors"
+            >
+              {es ? "Cuidadores" : "Sitters"}
+            </Link>
+          )}
           {showBusinessLink && (
             <Link
               href="/partners"
@@ -54,6 +70,9 @@ export function PublicFooter() {
             <span className="text-ink-soft">· Gijón</span>
           </div>
           <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-ink-muted">
+            <Link href="/sitters" className="hover:text-ink transition-colors">
+              {es ? "Cuidadores" : "Sitters"}
+            </Link>
             <Link href="/partners" className="hover:text-ink transition-colors">
               {es ? "Negocios" : "Businesses"}
             </Link>

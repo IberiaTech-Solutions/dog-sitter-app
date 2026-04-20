@@ -121,8 +121,8 @@ export async function POST(request: Request) {
   const es = locale === "es";
 
   const description = es
-    ? `Cuidado de ${petName} por ${sitterName} — ${days} día(s)`
-    : `Care for ${petName} by ${sitterName} — ${days} day(s)`;
+    ? `Cuidado de ${petName} por ${sitterName} · ${days} día(s)`
+    : `Care for ${petName} by ${sitterName} · ${days} day(s)`;
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   const redirectLocale = locale === "es" ? "es" : "en";
@@ -138,7 +138,7 @@ export async function POST(request: Request) {
           currency: "eur",
           unit_amount: Math.round(totalAmount * 100),
           product_data: {
-            name: es ? `Reserva — ${sitterName}` : `Booking — ${sitterName}`,
+            name: es ? `Reserva · ${sitterName}` : `Booking · ${sitterName}`,
             description,
           },
         },

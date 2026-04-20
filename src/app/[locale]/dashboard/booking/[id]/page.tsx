@@ -61,7 +61,7 @@ export default async function ActiveBookingPage({ params }: Props) {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-ink">
-              {petName} — {otherName}
+              {petName} · {otherName}
             </h1>
             <p className="mt-1 text-sm text-ink-muted">
               {new Date(booking.start_date).toLocaleDateString(
